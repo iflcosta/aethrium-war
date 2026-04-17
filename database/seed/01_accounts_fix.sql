@@ -1,0 +1,13 @@
+-- Accounts 1-7 for Aethrium War Teams
+-- Password '1' hashed with SHA1: 356a192b7913b04c54574d18c28d46e6395428ab
+
+DELETE FROM `accounts` WHERE `id` BETWEEN 1 AND 7;
+
+INSERT INTO `accounts` (`id`, `name`, `password`, `type`) VALUES
+(1, '1', '356a192b7913b04c54574d18c28d46e6395428ab', 1),
+(2, '2', '356a192b7913b04c54574d18c28d46e6395428ab', 1),
+(3, '3', '356a192b7913b04c54574d18c28d46e6395428ab', 1),
+(4, '4', '356a192b7913b04c54574d18c28d46e6395428ab', 1),
+(5, '5', '356a192b7913b04c54574d18c28d46e6395428ab', 1),
+(6, '6', '356a192b7913b04c54574d18c28d46e6395428ab', 1),
+(7, '7', '356a192b7913b04c54574d18c28d46e6395428ab', 1);

@@ -1,0 +1,19 @@
+# Compiled binaries
+*.exe
+*.dll
+*.so
+
+# Databases
+*.db
+*.db-journal
+*.db-wal
+
+# Folders to ignore
+scratch/
+client/build/
+server/logs/
+server/data/logs/
+
+# Python cache
+__pycache__/
+*.pyc
