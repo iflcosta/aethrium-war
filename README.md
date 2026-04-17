@@ -33,7 +33,7 @@ O desenvolvimento do Aethrium War é transparente e faseado.
 ## 📸 Comunidade
 Acompanhe os bastidores, enquetes e o progresso diário no nosso Instagram!
 
-👉 **[Siga-nos no Instagram](https://instagram.com/iflcosta)** *(Substitua pelo link real se houver)*
+👉 **[Siga-nos no Instagram](https://instagram.com/tibiaoldschools/)**
 
 ---
 
@@ -41,4 +41,4 @@ Acompanhe os bastidores, enquetes e o progresso diário no nosso Instagram!
 Este é um projeto em desenvolvimento ativo. Se você é um desenvolvedor ou entusiasta, sinta-se à vontade para abrir issues ou sugerir melhorias.
 
 ---
-*Aethrium War é um projeto da @iflcosta. Desenvolvido com Antigravity.*
+*Aethrium War é um projeto de @iflcosta. Desenvolvido após pedidos de jogadores que buscam um retorno ao clássico sistema de World War, em posts do perfil @tibiaoldschools.*
