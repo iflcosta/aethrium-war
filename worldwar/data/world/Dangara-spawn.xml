@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<spawns>
+<spawn centerx="1063" centery="607" centerz="7" radius="5">
+<monster name="Demodras" direction="2" spawntime="60" x="2" y="3"/>
+<monster name="Orshabaal" direction="2" spawntime="60" x="-2" y="3"/>
+<monster name="Giant butterfly" direction="2" spawntime="60" x="-2" y="-3"/>
+</spawn>
+</spawns>

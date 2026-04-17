@@ -1,0 +1,99 @@
+focus = 0
+talk_start = 0
+target = 0
+following = false
+attacking = false
+
+function onThingMove(creature, thing, oldpos, oldstackpos)
+
+end
+
+
+function onCreatureAppear(creature)
+
+end
+
+
+function onCreatureDisappear(cid, pos)
+  	if focus == cid then
+          selfSay('Good bye then.')
+          focus = 0
+          talk_start = 0
+  	end
+end
+
+
+function onCreatureTurn(creature)
+
+end
+
+
+function msgcontains(txt, str)
+  	return (string.find(txt, str) and not string.find(txt, '(%w+)' .. str) and not string.find(txt, str .. '(%w+)'))
+end
+
+
+function onCreatureSay(cid, type, msg)
+  	msg = string.lower(msg)
+
+  	if (msgcontains(msg, 'hi') and (focus == 0)) and getDistanceToCreature(cid) < 4 then
+  		selfSay('Hello ' .. creatureGetName(cid) .. '! Im changing your money. Say "help" for more information')
+  		focus = cid
+  		talk_start = os.clock()
+
+  	elseif msgcontains(msg, 'hi') and (focus ~= cid) and getDistanceToCreature(cid) < 4 then
+  		selfSay('Sorry, ' .. creatureGetName(cid) .. '! I talk to you in a minute.')
+
+	elseif focus == cid then
+		talk_start = os.clock()
+
+		if msgcontains(msg, 'change platin 1') then
+			buy(cid,2148,100,100)
+		elseif msgcontains(msg, 'change platin 2') then
+			buy(cid,2148,200,200)
+		elseif msgcontains(msg, 'change platin 5') then
+			buy(cid,2148,500,500)
+		elseif msgcontains(msg, 'change platin 10') then
+			buy(cid,2148,1000,1000)
+		elseif msgcontains(msg, 'change platin 20') then
+			buy(cid,2148,2000,2000)
+		elseif msgcontains(msg, 'change crystal 1') then
+			buy(cid,2152,100,1000)
+		elseif msgcontains(msg, 'change crystal 2') then
+			buy(cid,2152,200,2000)
+		elseif msgcontains(msg, 'change crystal 5') then
+			buy(cid,2152,500,50000)
+		elseif msgcontains(msg, 'change crystal 10') then
+			buy(cid,2152,1000,100000)
+		elseif msgcontains(msg, 'change crystal 20') then
+			buy(cid,2152,2000,200000)
+
+		elseif msgcontains(msg, 'bye') and getDistanceToCreature(cid) < 4 then
+			selfSay('Good bye, ' .. creatureGetName(cid) .. '!')
+			focus = 0
+			talk_start = 0
+		end
+	end
+end
+
+
+function onCreatureChangeOutfit(creature)
+
+end
+
+
+function onThink()
+  	if (os.clock() - talk_start) > 30 then
+  		if focus > 0 then
+  			selfSay('Next Please...')
+  		end
+  			focus = 0
+  	end
+ 	if focus ~= 0 then
+ 		if getDistanceToCreature(focus) > 5 then
+ 			selfSay('Good bye then.')
+ 			focus = 0
+ 		end
+ 	end
+end
+

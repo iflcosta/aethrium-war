@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<monster name="Beast" level="100" maglevel="100" experience="2000000" pushable="0" armor="29" defense="31" canpushitems="1" staticattack="50" changetarget="200" speed="400">
+	<health now="150000" max="150000"/>
+	<look type="62" head="20" body="30" legs="40" feet="50" corpse="2945"/>
+	<combat targetdistance="1" runonhealth="0"/>
+
+<attacks>
+	<attack type="melee" mindamage="1500" maxdamage="2500" probability="100"/>
+	<attack type="rune" name="orsha fireball" exhaustion="500" cycleticks="3000" probability="50"/>
+	<attack type="instant" name="o exori" exhaustion="500" cycleticks="8000" probability="55"/>
+	<attack type="instant" name="demon_manadrain" exhaustion="100" cycleticks="4000" probability="30"/>
+	<attack type="instant" name="orcb_haste" exhaustion="100" cycleticks="2000" probability="30"/>
+	<attack type="instant" name="banshee_mana" exhaustion="100" cycleticks="1000" probability="30"/>
+	<attack type="instant" name="banshee_sonar" exhaustion="100" cycleticks="3000" probability="30"/>
+	<attack type="rune" name="Sudden Death" exhaustion="100" cycleticks="4000" probability="30"/>
+</attacks>
+
+<defenses>
+	<defense immunity="poison"/>
+	<defense immunity="invisible"/>
+</defenses>
+
+<voices>
+	<voice sentence="Nobody can own me!!"/>
+	<voice sentence="YOU SOUL IS MINEEEEEEEEEEEEEEE!"/>
+	<voice sentence="Forget it Im GOD!!!"/>
+</voices>
+
+<loot>
+</loot>
+
+<summons maxSummons="5">
+ 	<summon name="Orshabaal" chance="500"/>
+</summons>
+
+</monster>

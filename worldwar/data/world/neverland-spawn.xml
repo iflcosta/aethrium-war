@@ -1,0 +1,211 @@
+<?xml version="1.0"?>
+<spawns>
+<spawn centerx="458" centery="479" centerz="6" radius="5">
+<monster name="Behemoth" direction="2" spawntime="60" x="3" y="1"/>
+</spawn>
+<spawn centerx="459" centery="479" centerz="5" radius="5">
+<monster name="Behemoth" direction="2" spawntime="60" x="2" y="1"/>
+<monster name="Behemoth" direction="2" spawntime="60" x="1" y="2"/>
+</spawn>
+<spawn centerx="458" centery="479" centerz="4" radius="5">
+<monster name="Behemoth" direction="2" spawntime="60" x="3" y="1"/>
+<monster name="Behemoth" direction="2" spawntime="60" x="2" y="2"/>
+</spawn>
+<spawn centerx="493" centery="522" centerz="7" radius="30">
+<monster name="Giant Spider" direction="2" spawntime="120" x="1" y="2"/>
+</spawn>
+<spawn centerx="502" centery="506" centerz="7" radius="30">
+<monster name="Giant Spider" direction="2" spawntime="120" x="0" y="1"/>
+<monster name="Giant Spider" direction="2" spawntime="120" x="-7" y="-5"/>
+</spawn>
+<spawn centerx="464" centery="490" centerz="7" radius="35">
+<monster name="Demon" direction="2" spawntime="120" x="-11" y="-3"/>
+<monster name="Ancient Scarab" direction="2" spawntime="120" x="-1" y="-31"/>
+<monster name="Ancient Scarab" direction="2" spawntime="120" x="14" y="-31"/>
+<monster name="Dragon" direction="2" spawntime="120" x="-15" y="28"/>
+<monster name="Dragon" direction="2" spawntime="120" x="-20" y="19"/>
+<monster name="Dragon Lord" direction="2" spawntime="210" x="-15" y="20"/>
+</spawn>
+<spawn centerx="477" centery="474" centerz="7" radius="10">
+<monster name="Fire Elemental" direction="2" spawntime="240" x="-2" y="1"/>
+<monster name="Fire Elemental" direction="2" spawntime="240" x="1" y="2"/>
+<monster name="Fire Elemental" direction="2" spawntime="240" x="0" y="1"/>
+</spawn>
+<spawn centerx="446" centery="516" centerz="7" radius="30">
+<monster name="Demodras" direction="2" spawntime="300" x="-4" y="9"/>
+</spawn>
+<spawn centerx="465" centery="529" centerz="7" radius="30">
+<monster name="Dragon" direction="2" spawntime="120" x="8" y="-1"/>
+<monster name="Dragon Lord" direction="2" spawntime="120" x="20" y="3"/>
+<monster name="Dragon Lord" direction="2" spawntime="120" x="19" y="5"/>
+<monster name="Dragon" direction="2" spawntime="120" x="-3" y="3"/>
+<monster name="Dragon Lord" direction="2" spawntime="210" x="-9" y="3"/>
+</spawn>
+<spawn centerx="469" centery="506" centerz="7" radius="16">
+<monster name="Hydra" direction="2" spawntime="120" x="8" y="-4"/>
+<monster name="Hydra" direction="2" spawntime="120" x="-11" y="-4"/>
+<monster name="Hydra" direction="2" spawntime="120" x="-11" y="-3"/>
+</spawn>
+<spawn centerx="481" centery="458" centerz="7" radius="37">
+<monster name="Giant Spider" direction="2" spawntime="120" x="10" y="2"/>
+<monster name="Ancient Scarab" direction="2" spawntime="120" x="12" y="5"/>
+<monster name="Giant Spider" direction="2" spawntime="60" x="5" y="-11"/>
+<monster name="Ancient Scarab" direction="2" spawntime="60" x="-17" y="-13"/>
+<monster name="Giant Spider" direction="2" spawntime="120" x="20" y="20"/>
+<monster name="The Old Widow" direction="2" spawntime="360" x="24" y="16"/>
+</spawn>
+<spawn centerx="496" centery="478" centerz="9" radius="10">
+<monster name="Fire Elemental" direction="2" spawntime="160" x="-3" y="-1"/>
+<monster name="Fire Elemental" direction="2" spawntime="160" x="-3" y="1"/>
+<monster name="Fire Elemental" direction="2" spawntime="160" x="4" y="-1"/>
+<monster name="Fire Elemental" direction="2" spawntime="160" x="4" y="1"/>
+<monster name="Fire Elemental" direction="2" spawntime="160" x="-1" y="-2"/>
+<monster name="Fire Elemental" direction="2" spawntime="160" x="-1" y="0"/>
+<monster name="Fire Elemental" direction="2" spawntime="160" x="-1" y="2"/>
+<monster name="Fire Elemental" direction="2" spawntime="160" x="2" y="2"/>
+<monster name="Fire Elemental" direction="2" spawntime="160" x="2" y="0"/>
+<monster name="Fire Elemental" direction="2" spawntime="160" x="2" y="-2"/>
+</spawn>
+<spawn centerx="528" centery="481" centerz="8" radius="12">
+<monster name="Demon" direction="2" spawntime="300" x="0" y="1"/>
+</spawn>
+<spawn centerx="541" centery="481" centerz="10" radius="42">
+<monster name="Fire Elemental" direction="2" spawntime="160" x="-2" y="-1"/>
+<monster name="Demon" direction="2" spawntime="200" x="1" y="2"/>
+<monster name="Fire Elemental" direction="2" spawntime="160" x="1" y="-4"/>
+<monster name="Demon" direction="2" spawntime="60" x="3" y="-1"/>
+</spawn>
+<spawn centerx="568" centery="482" centerz="10" radius="42">
+<monster name="Fire Elemental" direction="2" spawntime="160" x="-7" y="-3"/>
+<monster name="Fire Elemental" direction="2" spawntime="160" x="-3" y="-1"/>
+<monster name="Demon" direction="2" spawntime="150" x="1" y="-3"/>
+<monster name="Demon" direction="2" spawntime="200" x="4" y="0"/>
+</spawn>
+<spawn centerx="603" centery="483" centerz="10" radius="9">
+<monster name="Demon" direction="2" spawntime="60" x="-3" y="-2"/>
+<monster name="Demon" direction="2" spawntime="60" x="-2" y="0"/>
+<monster name="Demon" direction="2" spawntime="60" x="2" y="-4"/>
+<monster name="Demon" direction="2" spawntime="60" x="1" y="2"/>
+<monster name="Banshee" direction="2" spawntime="60" x="-2" y="1"/>
+<monster name="Banshee" direction="2" spawntime="60" x="-4" y="1"/>
+<monster name="Banshee" direction="2" spawntime="60" x="-1" y="-2"/>
+<monster name="Banshee" direction="2" spawntime="60" x="-1" y="-4"/>
+<monster name="Banshee" direction="2" spawntime="60" x="3" y="0"/>
+<monster name="Banshee" direction="2" spawntime="60" x="-1" y="2"/>
+<monster name="Banshee" direction="2" spawntime="60" x="3" y="3"/>
+<monster name="Banshee" direction="2" spawntime="60" x="2" y="-2"/>
+</spawn>
+<spawn centerx="544" centery="481" centerz="9" radius="9">
+<monster name="Demon" direction="2" spawntime="500" x="-1" y="-3"/>
+<monster name="Demon" direction="2" spawntime="500" x="3" y="-4"/>
+<monster name="Demon" direction="2" spawntime="500" x="1" y="2"/>
+<monster name="Demon" direction="2" spawntime="500" x="-3" y="0"/>
+<monster name="Demon" direction="2" spawntime="500" x="6" y="-1"/>
+</spawn>
+<spawn centerx="464" centery="487" centerz="8" radius="15">
+<monster name="Fire Elemental" direction="2" spawntime="120" x="-6" y="-6"/>
+<monster name="Fire Elemental" direction="2" spawntime="120" x="-2" y="0"/>
+<monster name="Fire Elemental" direction="2" spawntime="120" x="0" y="4"/>
+<monster name="Fire Elemental" direction="2" spawntime="120" x="1" y="5"/>
+</spawn>
+<spawn centerx="485" centery="484" centerz="8" radius="10">
+<monster name="Fire Elemental" direction="2" spawntime="300" x="-3" y="2"/>
+<monster name="Fire Elemental" direction="2" spawntime="300" x="-1" y="3"/>
+<monster name="Fire Elemental" direction="2" spawntime="300" x="-2" y="1"/>
+<monster name="Fire Elemental" direction="2" spawntime="300" x="-1" y="-5"/>
+<monster name="Fire Elemental" direction="2" spawntime="300" x="0" y="-5"/>
+</spawn>
+<spawn centerx="504" centery="473" centerz="7" radius="40">
+<monster name="Giant Spider" direction="2" spawntime="120" x="7" y="8"/>
+</spawn>
+<spawn centerx="422" centery="457" centerz="7" radius="14">
+<monster name="Demon" direction="2" spawntime="240" x="-1" y="2"/>
+</spawn>
+<spawn centerx="457" centery="512" centerz="8" radius="8">
+<monster name="Slime" direction="2" spawntime="60" x="0" y="-1"/>
+<monster name="Slime" direction="2" spawntime="60" x="1" y="0"/>
+<monster name="Slime" direction="2" spawntime="60" x="1" y="2"/>
+</spawn>
+<spawn centerx="476" centery="358" centerz="8" radius="10">
+<monster name="Mahrdis" direction="2" spawntime="30" x="1" y="0"/>
+<monster name="Flamethrower" direction="2" spawntime="1" x="-3" y="-4"/>
+<monster name="Flamethrower" direction="2" spawntime="1" x="-3" y="4"/>
+<monster name="Flamethrower" direction="2" spawntime="1" x="4" y="4"/>
+<monster name="Flamethrower" direction="2" spawntime="1" x="4" y="-4"/>
+<monster name="Dragon Lord" direction="2" spawntime="30" x="-2" y="1"/>
+<monster name="Dragon" direction="2" spawntime="30" x="3" y="1"/>
+<monster name="Dragon" direction="2" spawntime="60" x="0" y="3"/>
+</spawn>
+<spawn centerx="486" centery="461" centerz="8" radius="17">
+<monster name="Stone Golem" direction="2" spawntime="120" x="-1" y="1"/>
+<monster name="Warlock" direction="2" spawntime="60" x="12" y="0"/>
+<monster name="Stone Golem" direction="2" spawntime="120" x="-7" y="0"/>
+</spawn>
+<spawn centerx="510" centery="448" centerz="9" radius="5">
+<monster name="Flamethrower" direction="2" spawntime="60" x="-2" y="-1"/>
+<monster name="Flamethrower" direction="2" spawntime="60" x="-1" y="-1"/>
+<monster name="Flamethrower" direction="2" spawntime="60" x="2" y="-1"/>
+<monster name="Flamethrower" direction="2" spawntime="60" x="3" y="-1"/>
+<monster name="Flamethrower" direction="2" spawntime="60" x="-1" y="1"/>
+<monster name="Flamethrower" direction="2" spawntime="60" x="-2" y="1"/>
+<monster name="Flamethrower" direction="2" spawntime="60" x="2" y="1"/>
+<monster name="Flamethrower" direction="2" spawntime="60" x="3" y="1"/>
+</spawn>
+<spawn centerx="534" centery="416" centerz="10" radius="10">
+<monster name="Magicthrower" direction="2" spawntime="60" x="-6" y="-1"/>
+<monster name="Magicthrower" direction="2" spawntime="60" x="6" y="-1"/>
+<monster name="Magicthrower" direction="2" spawntime="60" x="-1" y="-1"/>
+<monster name="Magicthrower" direction="2" spawntime="60" x="6" y="1"/>
+<monster name="Omruc" direction="2" spawntime="60" x="0" y="-3"/>
+<monster name="Mimic" direction="2" spawntime="60" x="-6" y="1"/>
+<monster name="Mimic" direction="2" spawntime="60" x="-2" y="5"/>
+<monster name="Mimic" direction="2" spawntime="60" x="2" y="5"/>
+<monster name="Mimic" direction="2" spawntime="60" x="-2" y="-5"/>
+<monster name="Mimic" direction="2" spawntime="60" x="2" y="-5"/>
+<monster name="Mimic" direction="2" spawntime="60" x="-1" y="2"/>
+<monster name="Mimic" direction="2" spawntime="60" x="2" y="2"/>
+<monster name="Mimic" direction="2" spawntime="60" x="2" y="-1"/>
+</spawn>
+<spawn centerx="522" centery="440" centerz="9" radius="10">
+<monster name="Fire Elemental" direction="2" spawntime="120" x="-1" y="0"/>
+<monster name="Fire Elemental" direction="2" spawntime="120" x="3" y="-1"/>
+</spawn>
+<spawn centerx="502" centery="455" centerz="9" radius="10">
+<monster name="Fire Elemental" direction="2" spawntime="120" x="-1" y="-2"/>
+<monster name="Fire Elemental" direction="2" spawntime="120" x="1" y="3"/>
+<monster name="Fire Elemental" direction="2" spawntime="120" x="0" y="1"/>
+</spawn>
+<spawn centerx="454" centery="522" centerz="9" radius="15">
+<monster name="Fire Elemental" direction="2" spawntime="180" x="-7" y="4"/>
+<monster name="Fire Elemental" direction="2" spawntime="180" x="0" y="-7"/>
+<monster name="Fire Elemental" direction="2" spawntime="180" x="2" y="1"/>
+<monster name="Fire Elemental" direction="2" spawntime="180" x="1" y="-11"/>
+<monster name="Fire Elemental" direction="2" spawntime="180" x="1" y="-12"/>
+<monster name="Fire Elemental" direction="2" spawntime="180" x="2" y="-11"/>
+</spawn>
+<spawn centerx="435" centery="496" centerz="8" radius="5">
+<monster name="Demon" direction="4" spawntime="60" x="0" y="0"/>
+</spawn>
+<spawn centerx="401" centery="517" centerz="13" radius="15">
+<monster name="Banshee" direction="2" spawntime="180" x="-3" y="-2"/>
+<monster name="Banshee" direction="2" spawntime="180" x="0" y="-1"/>
+<monster name="Banshee" direction="2" spawntime="180" x="-1" y="2"/>
+<monster name="Banshee" direction="2" spawntime="180" x="3" y="2"/>
+<monster name="Banshee" direction="2" spawntime="180" x="7" y="1"/>
+<monster name="Dragon Lord" direction="2" spawntime="180" x="4" y="-1"/>
+<monster name="Dragon Lord" direction="2" spawntime="180" x="6" y="3"/>
+<monster name="Giant Spider" direction="2" spawntime="180" x="-5" y="2"/>
+<monster name="Giant Spider" direction="2" spawntime="180" x="0" y="5"/>
+</spawn>
+<spawn centerx="418" centery="477" centerz="12" radius="37">
+<monster name="Banshee" direction="2" spawntime="180" x="15" y="0"/>
+<monster name="Banshee" direction="2" spawntime="180" x="20" y="-2"/>
+<monster name="Banshee" direction="2" spawntime="180" x="21" y="0"/>
+<monster name="Banshee" direction="2" spawntime="180" x="18" y="3"/>
+<monster name="Mummy" direction="2" spawntime="180" x="17" y="-1"/>
+<monster name="Mummy" direction="2" spawntime="180" x="20" y="1"/>
+<monster name="Stalker" direction="2" spawntime="180" x="17" y="0"/>
+<monster name="Stalker" direction="2" spawntime="180" x="20" y="0"/>
+<monster name="Stalker" direction="2" spawntime="180" x="22" y="-1"/>
+</spawn>
+</spawns>
