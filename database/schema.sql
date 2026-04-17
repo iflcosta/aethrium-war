@@ -473,11 +473,14 @@ CREATE TABLE IF NOT EXISTS `guild_transactions` (
 DELIMITER ;
 
 -- Custom Aethrium War Scoreboard Table
+-- UNIQUE KEY (guild_id, round_id) é obrigatório para o
+-- ON DUPLICATE KEY UPDATE frags + 1 funcionar no Lua.
 CREATE TABLE IF NOT EXISTS `war_scores` (
   `id` int NOT NULL AUTO_INCREMENT,
   `guild_id` int NOT NULL,
   `frags` int NOT NULL DEFAULT '0',
   `round_id` int NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`),
+  UNIQUE KEY `guild_round` (`guild_id`, `round_id`),
   FOREIGN KEY (`guild_id`) REFERENCES `guilds` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARACTER SET=utf8;

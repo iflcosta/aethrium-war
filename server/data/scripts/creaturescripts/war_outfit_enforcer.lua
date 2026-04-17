@@ -44,32 +44,12 @@ function warOutfit.onChangeOutfit(player, outfit)
     outfit.lookFeet  = palette.feet
 
     player:setOutfit(outfit)
-    return true
+    player:sendTextMessage(MESSAGE_STATUS_SMALL, "As cores do seu time estão travadas com sucesso. Apenas o modelo foi alterado.")
+    return false -- Retorna false para rejeitar a mudança de cor original do cliente sem mostrar erro
 end
 warOutfit:register()
 
--- ─── Hook de Login para Registrar o Evento ─────────────────
-
-local warOutfitLogin = CreatureEvent("WarOutfitLogin")
-
-function warOutfitLogin.onLogin(player)
-    player:registerEvent("WarOutfitEnforcer")
-
-    -- Aplicar paleta imediatamente no login
-    local guild = player:getGuild()
-    if guild then
-        local guildId = guild:getId()
-        local palette = TEAM_PALETTE[guildId]
-        if palette then
-            local currentOutfit = player:getOutfit()
-            currentOutfit.lookHead = palette.head
-            currentOutfit.lookBody = palette.body
-            currentOutfit.lookLegs = palette.legs
-            currentOutfit.lookFeet = palette.feet
-            player:setOutfit(currentOutfit)
-        end
-    end
-
-    return true
-end
-warOutfitLogin:register()
+-- ─── Nota ─────────────────────────────────────────────────
+-- O registro do WarOutfitEnforcer e a aplicação inicial da paleta
+-- são feitos pelo hook loginMessage em player_login_logout.lua
+-- para centralizar todos os eventos War em um único ponto de entrada.

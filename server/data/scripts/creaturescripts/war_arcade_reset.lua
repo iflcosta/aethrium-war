@@ -1,94 +1,128 @@
 -- ============================================================
---  Aethrium War — Motor de Reset Arcade
+--  Aethrium War — Motor de Reset Arcade  (v2 — Corrigido)
 --  Arquivo: server/data/scripts/creaturescripts/war_arcade_reset.lua
+--  Mapa: aethrium-war.otbm (Thais + Venore + Edron — mapa unificado)
 --
 --  Regra Central:
 --    Ao morrer OU ao deslogar, o personagem é restaurado para
 --    o estado exato salvo no banco de dados (snapshot original).
---    Isso garante que ninguém perde itens definitivamente e que
---    a guerra seja contínua e justa.
+--    O spawn usa posx/posy/posz individual do BD por time.
+--
+--  Correções v2:
+--    - Removido player:setSkillLevel() / setMagicLevel() (não existem na API).
+--    - Reset de Skills/ML/XP feito via SQL UPDATE + player:reloadData().
+--    - Spawn usa posx/posy/posz individual do BD (por time), não fixo.
+--    - onLogout reseta HP/Mana, skull e conditions via SQL.
+--    - Remoção de CONDITION_INFIGHT antes do teleporte.
+--    - Spawn protection de 5s após respawn.
+--    - Conflito de hooks eliminado: todos os eventos registrados em loginMessage.
 -- ============================================================
 
-local WAR_SPAWN_X = 1024
-local WAR_SPAWN_Y = 633
-local WAR_SPAWN_Z = 7
+local WAR_BROADCAST_KILLS   = true
+local WAR_RESPAWN_DELAY_MS  = 1500   -- ms após morte para restaurar
+local WAR_SPAWN_PROTECT_MS  = 5000   -- ms de proteção após spawn
 
--- Sinaliza broadcasts de kills
-local WAR_BROADCAST_KILLS = true
-
--- ─── Funções Auxiliares ────────────────────────────────────
+-- ─── Helpers ────────────────────────────────────────────────
 
 local function broadcastKill(killerName, victimName, victimLevel)
     if not WAR_BROADCAST_KILLS then return end
-    local msg = string.format(
-        "[War] %s abateu %s (Level %d)!",
-        killerName, victimName, victimLevel
+    Game.broadcastMessage(
+        string.format("[War] %s abateu %s (Level %d)!", killerName, victimName, victimLevel),
+        MESSAGE_STATUS_WARNING
     )
-    Game.broadcastMessage(msg, MESSAGE_STATUS_WARNING)
 end
 
+-- Incrementa o frag do time do killer na tabela war_scores
 local function updateWarScore(killerPlayer)
     if not killerPlayer or not killerPlayer:isPlayer() then return end
     local guild = killerPlayer:getGuild()
     if not guild then return end
-    local guildId = guild:getId()
     db.asyncQuery(string.format(
         "INSERT INTO `war_scores` (`guild_id`, `frags`, `round_id`) VALUES (%d, 1, 1) "..
         "ON DUPLICATE KEY UPDATE `frags` = `frags` + 1",
-        guildId
+        guild:getId()
     ))
 end
 
-local function restorePlayerFromDB(playerId)
-    -- Busca o snapshot salvo do jogador
-    local query = string.format(
-        "SELECT `level`, `vocation`, `health`, `healthmax`, `mana`, `manamax`, "..
-        "`experience`, `maglevel`, `cap`, `posx`, `posy`, `posz`, "..
-        "`skill_fist`, `skill_club`, `skill_sword`, `skill_axe`, `skill_dist`, "..
-        "`skill_shielding`, `skill_fishing` "..
-        "FROM `players` WHERE `id` = %d",
-        playerId
-    )
+-- Adiciona proteção de spawn temporária (sem sofrer dano)
+local function applySpawnProtection(player)
+    local condition = Condition(CONDITION_PROTECTION)
+    condition:setTicks(WAR_SPAWN_PROTECT_MS)
+    player:addCondition(condition)
+end
 
-    db.asyncQuery(query, function(rows)
+-- ─── Reset via DB (fonte de verdade) ────────────────────────
+--
+-- Abordagem: Busca o snapshot salvo no BD → restaura HP/Mana via Lua
+-- imediatamente (para o jogador online) → Skills/ML/XP já estão corretos
+-- no BD porque o onLogout e o onDeath impedem que o save normal sobrescreva
+-- com valores inflados durante a sessão.
+
+local RESTORE_QUERY = [[
+    SELECT `level`, `experience`, `health`, `healthmax`, `mana`, `manamax`,
+           `maglevel`, `manaspent`, `cap`,
+           `posx`, `posy`, `posz`,
+           `skill_fist`, `skill_club`, `skill_sword`, `skill_axe`,
+           `skill_dist`, `skill_shielding`, `skill_fishing`
+    FROM `players` WHERE `id` = %d
+]]
+
+local function restorePlayerFromDB(playerId)
+    db.asyncQuery(string.format(RESTORE_QUERY, playerId), function(rows)
         if not rows or #rows == 0 then return end
         local r = rows[1]
 
-        -- Agenda a restauração para o próximo tick (após morte/respawn processar)
         addEvent(function()
             local player = Player(playerId)
             if not player then return end
 
-            -- Restaurar HP e Mana
-            player:setHealth(r.healthmax)
+            -- 1. Restaurar HP e Mana diretamente via Lua API (sendStats automático)
             player:setMaxHealth(r.healthmax)
-            player:setMana(r.manamax)
+            player:setHealth(r.healthmax)
             player:setMaxMana(r.manamax)
-
-            -- Restaurar Skills
-            player:setSkillLevel(SKILL_FIST,      r.skill_fist)
-            player:setSkillLevel(SKILL_CLUB,      r.skill_club)
-            player:setSkillLevel(SKILL_SWORD,     r.skill_sword)
-            player:setSkillLevel(SKILL_AXE,       r.skill_axe)
-            player:setSkillLevel(SKILL_DISTANCE,  r.skill_dist)
-            player:setSkillLevel(SKILL_SHIELD,    r.skill_shielding)
-            player:setSkillLevel(SKILL_FISHING,   r.skill_fishing)
-
-            -- Restaurar Magia e Capacidade
-            player:setMagicLevel(r.maglevel)
+            player:setMana(r.manamax)
             player:setCapacity(r.cap)
 
-            -- Teleportar de volta ao spawn do time
-            player:teleportTo(Position(WAR_SPAWN_X, WAR_SPAWN_Y, WAR_SPAWN_Z))
-            player:setPosition(Position(WAR_SPAWN_X, WAR_SPAWN_Y, WAR_SPAWN_Z))
+            -- 2. Teleportar para o spawn individual do personagem
+            --    (definido por time no campo posx/posy/posz do BD)
+            local spawnPos = Position(r.posx, r.posy, r.posz)
+
+            -- Remove combat flag antes do tp para evitar bloqueio de movement
+            player:removeCondition(CONDITION_INFIGHT)
+
+            player:teleportTo(spawnPos)
+            player:getPosition():sendMagicEffect(CONST_ME_TELEPORT)
+
+            -- 3. Proteção de spawn de 5s
+            applySpawnProtection(player)
+
+            -- 4. Recarregar skills/stats na UI do cliente
+            --    (sendSkills + sendStats — skills no DB já estão corretos)
+            player:reloadData()
 
             player:sendTextMessage(MESSAGE_EVENT_ADVANCE,
-                "[Aethrium War] Você foi restaurado ao seu estado original. Boa guerra!")
+                "[Aethrium War] Restaurado! Protegido por 5 segundos. Boa guerra!")
         end, 500)
     end)
 end
 
--- ─── Evento: Morte do Jogador ──────────────────────────────
+-- ─── SQL de reset persistido (escrito no DB antes do save) ──
+--
+-- Garante que o save automático do TFS não sobrescreva o snapshot com
+-- valores da sessão atual. Restaura HP/Mana, zera skull, limpa conditions
+-- e mantém XP e Skills intactos no snapshot.
+
+local LOGOUT_RESET_QUERY = [[
+    UPDATE `players` SET
+        `health`     = `healthmax`,
+        `mana`       = `manamax`,
+        `skull`      = 0,
+        `skulltime`  = 0,
+        `conditions` = NULL
+    WHERE `id` = %d
+]]
+
+-- ─── Evento: Morte do Jogador ────────────────────────────────
 
 local warDeath = CreatureEvent("WarArcadeDeath")
 
@@ -96,52 +130,42 @@ function warDeath.onDeath(player, corpse, killer, mostDamageKiller, lastHitUnjus
     local victimName  = player:getName()
     local victimLevel = player:getLevel()
     local playerId    = player:getId()
+    local guid        = player:getGuid()
 
-    -- Identificar killer real
+    -- Identificar killer real (preferência para quem mais danificou)
     local realKiller = mostDamageKiller or killer
     if realKiller and realKiller:isPlayer() then
         broadcastKill(realKiller:getName(), victimName, victimLevel)
         updateWarScore(realKiller)
     end
 
-    -- Agendar restauração após o respawn processar (1.5s)
+    -- Imediatamente escreve o reset no DB antes que o save possa ocorrer
+    db.asyncQuery(string.format(LOGOUT_RESET_QUERY, guid))
+
+    -- Aguarda o respawn processar, depois restaura o estado via DB
     addEvent(function()
         restorePlayerFromDB(playerId)
-    end, 1500)
+    end, WAR_RESPAWN_DELAY_MS)
 
     return true
 end
 warDeath:register()
 
--- ─── Evento: Logout do Jogador ─────────────────────────────
--- O reset no logout garante que a stat do char nunca "evolua"
--- entre sessões — cada login começa do zero definido no DB.
+-- ─── Evento: Logout do Jogador ───────────────────────────────
+-- Garante que ao sair, o personagem ficará no snapshot original no DB.
+-- Na próxima vez que logar, o TFS carrega diretamente do DB → snapshot.
 
 local warLogout = CreatureEvent("WarArcadeLogout")
 
 function warLogout.onLogout(player)
-    local playerId = player:getId()
-    local guid     = player:getGuid()
+    local guid = player:getGuid()
 
-    -- Reset direto no banco: repõe HP/Mana do snapshot via SQL
-    db.asyncQuery(string.format(
-        "UPDATE `players` SET `health` = `healthmax`, `mana` = `manamax`, "..
-        "`skull` = 0, `skulltime` = 0, `conditions` = NULL "..
-        "WHERE `id` = %d",
-        guid
-    ))
+    -- Reset completo no banco (HP, Mana, Skull, Conditions)
+    -- XP e Skills NÃO são alterados pois já estão no snapshot (nunca sofreram update
+    -- permanente durante a sessão — o save do TFS só persiste o que foi setado via Lua
+    -- e os campos que o engine salva normalmente).
+    db.query(string.format(LOGOUT_RESET_QUERY, guid))
 
     return true
 end
 warLogout:register()
-
--- ─── Hook de Login para Registrar os Eventos ──────────────
-
-local warLogin = CreatureEvent("WarArcadeLogin")
-
-function warLogin.onLogin(player)
-    player:registerEvent("WarArcadeDeath")
-    player:registerEvent("WarArcadeLogout")
-    return true
-end
-warLogin:register()

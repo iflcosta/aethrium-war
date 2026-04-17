@@ -28,9 +28,10 @@ boostedSpawnMultiplier = 0.5     -- Spawn interval factor (0.5 = half the time)
 accountManager = true
 namelockManager = true
 newPlayerChooseVoc = true
-newPlayerSpawnPosX = 0
-newPlayerSpawnPosY = 0
-newPlayerSpawnPosZ = 0
+-- Spawn inicial: centro do mapa Aethrium War (Thais arena)
+newPlayerSpawnPosX = 1024
+newPlayerSpawnPosY = 633
+newPlayerSpawnPosZ = 7
 newPlayerTownId = 1
 newPlayerLevel = 8
 newPlayerMagicLevel = 0
@@ -167,7 +168,8 @@ RANGE_ROTATE_ITEM_INTERVAL = 250
 
 -- Map
 -- NOTE: set mapName WITHOUT .otbm at the end
-mapName = "world"
+-- aethrium-war.otbm = mapa unificado com Thais, Venore e Edron (13 MB)
+mapName = "aethrium-war"
 mapAuthor = "Skyyzyy"
 
 -- Market

@@ -55,6 +55,39 @@ function loginMessage.onLogin(player)
 
     player:registerEvent("logoutMessage")
 
+    -- Aethrium War: Registra os eventos do Motor Arcade para este jogador
+    player:registerEvent("WarArcadeDeath")
+    player:registerEvent("WarArcadeLogout")
+    player:registerEvent("WarOutfitEnforcer")
+    player:registerEvent("WarKillfeed")
+
+    -- Aplica a paleta de cores do time imediatamente no login
+    local warGuild = player:getGuild()
+    if warGuild then
+        local WAR_TEAM_PALETTE = {
+            [1] = { head = 113, body = 113, legs = 95,  feet = 95  }, -- Antica   → Vermelho
+            [2] = { head = 5,   body = 5,   legs = 23,  feet = 23  }, -- Nova     → Azul
+            [3] = { head = 50,  body = 50,  legs = 68,  feet = 68  }, -- Secura   → Verde
+            [4] = { head = 210, body = 210, legs = 192, feet = 192 }, -- Amera    → Dourado
+            [5] = { head = 132, body = 132, legs = 114, feet = 114 }, -- Calmera  → Roxo
+            [6] = { head = 172, body = 172, legs = 154, feet = 154 }, -- Hiberna  → Ciano
+            [7] = { head = 31,  body = 31,  legs = 13,  feet = 13  }, -- Harmonia → Laranja
+        }
+        local palette = WAR_TEAM_PALETTE[warGuild:getId()]
+        if palette then
+            local outfit = player:getOutfit()
+            outfit.lookHead = palette.head
+            outfit.lookBody = palette.body
+            outfit.lookLegs = palette.legs
+            outfit.lookFeet = palette.feet
+            player:setOutfit(outfit)
+        end
+    end
+
+    -- Mensagem de boas-vindas da War
+    player:sendTextMessage(MESSAGE_STATUS_DEFAULT,
+        "[Aethrium War] !frags = placar | !warteams = times online | !warhelp = comandos")
+
     player:openChannel(10)
 
     if configManager.getBoolean(RESET_SYSTEM_ENABLED) then

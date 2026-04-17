@@ -1,25 +1,31 @@
 -- ============================================================
 --  Aethrium War — Seamless Map Rotation (Unified Map)
 --  Arquivo: server/data/scripts/globalevents/war_score_rotation.lua
---  
+--
+--  Mapa: aethrium-war.otbm (13 MB — Thais + Venore + Edron unificados)
+--
 --  Lógica:
---    A cada 10 segundos, verifica se algum time atingiu a meta.
---    Em vez de reiniciar, teletransporta todos para a próxima cidade.
+--    A cada 10 segundos, verifica se algum time atingiu a meta de frags.
+--    Em vez de reiniciar o servidor, teletransporta todos para a próxima
+--    cidade do mapa unificado (seamless rotation).
 -- ============================================================
 
 local WAR_FRAG_GOAL  = 100    -- Frags para vencer o round
-local WAR_CHECK_SECS = 10     -- Intervalo de verificação
-local WAR_COUNTDOWN  = 15     -- Segundos antes do teleporte
+local WAR_CHECK_SECS = 10     -- Intervalo de verificação (segundos)
+local WAR_COUNTDOWN  = 15     -- Countdown antes do teleporte (segundos)
 
--- Definição das Arenas (Cidades no Mapa Unificado)
+-- Arenas do mapa unificado aethrium-war.otbm
+-- pos = ponto de spawn central da arena (templo da cidade)
+-- Coordenadas derivadas dos spawns dos heróis migrados (04_players_all.sql)
 local ARENAS = {
-    { id = 1, name = "Thais",  pos = Position(174, 239, 7) },
-    { id = 2, name = "Venore", pos = Position(585, 163, 7) },
-    { id = 3, name = "Edron",  pos = Position(1031, 264, 8) }
+    { id = 1, name = "Thais",  pos = Position(1024, 633, 7) },   -- Arena central
+    { id = 2, name = "Venore", pos = Position(1063, 607, 7) },   -- Arena norte
+    { id = 3, name = "Edron",  pos = Position(1004, 574, 6) },   -- Arena sul
 }
 
 local currentArenaIndex = 1
 local isRotating = false
+
 
 -- ─── Funções Auxiliares ─────────────────────────────────────
 
@@ -117,28 +123,4 @@ end
 warScoreMonitor:interval(WAR_CHECK_SECS * 1000)
 warScoreMonitor:register()
 
--- ─── Comando !frags (Mantido) ──────────────────────────────
-
-local fragsCommand = TalkAction("!frags")
-function fragsCommand.onSay(player, words, param)
-    db.asyncQuery(
-        "SELECT g.`name`, SUM(ws.`frags`) AS total "..
-        "FROM `war_scores` ws JOIN `guilds` g ON g.`id` = ws.`guild_id` "..
-        "GROUP BY ws.`guild_id` ORDER BY total DESC",
-        function(rows)
-            local lines = { "[=== Placar da Guerra ===]" }
-            if rows and #rows > 0 then
-                for i, row in ipairs(rows) do
-                    table.insert(lines, string.format("%d. %s — %d frags", i, row.name, tonumber(row.total)))
-                end
-            else
-                table.insert(lines, "Nenhum combate registrado ainda.")
-            end
-            table.insert(lines, string.format("[Próxima Arena: %s]", ARENAS[(currentArenaIndex % #ARENAS) + 1].name))
-            table.insert(lines, string.format("[Meta: %d frags]", WAR_FRAG_GOAL))
-            player:sendTextMessage(MESSAGE_STATUS_CONSOLE_BLUE, table.concat(lines, "\n"))
-        end
-    )
-    return false
-end
-fragsCommand:register()
+-- Fim do sistema de Rotação
