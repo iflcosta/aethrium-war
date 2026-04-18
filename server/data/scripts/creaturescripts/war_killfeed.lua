@@ -12,7 +12,8 @@
 --    3. Combo streak: broadcast especial a cada 5 kills consecutivos
 -- ============================================================
 
--- ─── Paleta de nomes de time ─────────────────────────────────
+-- ─── Configuração Global do Killfeed ────────────────────────
+WarKillfeed = {}
 
 local TEAM_NAME = {
     [1] = "Antica",   [2] = "Nova",    [3] = "Secura",
@@ -24,7 +25,7 @@ local TEAM_NAME = {
 local killStreaks = {}
 local STREAK_WINDOW_SECS = 120  -- janela de 2 min para contar streak
 
-local function getTeamName(player)
+function WarKillfeed.getTeamName(player)
     local guild = player:getGuild()
     if not guild then return "Sem Time" end
     return TEAM_NAME[guild:getId()] or guild:getName()
@@ -57,7 +58,7 @@ local DEATH_EFFECTS = {
     CONST_ME_EXPLOSIONAREA,
 }
 
-local function playDeathEffect(position)
+function WarKillfeed.playDeathEffect(position)
     -- Efeito primário: explosão
     position:sendMagicEffect(CONST_ME_EXPLOSIONAREA)
     -- Efeito secundário: névoa (500ms depois)
@@ -70,70 +71,75 @@ end
 
 local function buildKillMessage(killerName, killerTeam, victimName, victimTeam, victimLevel, streak)
     local base = string.format(
-        "⚔ [%s] %s eliminou [%s] %s (LV %d)",
+        "** [%s] %s eliminou [%s] %s (LV %d)",
         killerTeam, killerName, victimTeam, victimName, victimLevel
     )
 
     -- Streak announcements
     if streak == 5 then
-        return base .. " — KILLING SPREE! 🔥"
+        return base .. " -- KILLING SPREE! !!!"
     elseif streak == 10 then
-        return base .. " — RAMPAGE!! 💀💀"
+        return base .. " -- RAMPAGE!! !!!"
     elseif streak == 15 then
-        return base .. " — UNSTOPPABLE!!! 👑"
+        return base .. " -- UNSTOPPABLE!!! !!!"
     elseif streak > 0 and streak % 5 == 0 then
-        return base .. string.format(" — %dx STREAK!", streak)
+        return base .. string.format(" -- %dx STREAK!", streak)
     end
 
     return base
 end
 
--- ─── CreatureEvent: onDeath (Killfeed) ───────────────────────
-
-local killfeed = CreatureEvent("WarKillfeed")
-
-function killfeed.onDeath(player, corpse, killer, mostDamageKiller, lastHitUnjustified, mostDamageUnjustified)
+-- 🚀 FUNÇÃO MESTRE: Registro Manual de Kill (Para Arcade Engine)
+function WarKillfeed.recordKill(player, killer)
     local victimName  = player:getName()
     local victimLevel = player:getLevel()
-    local victimTeam  = getTeamName(player)
+    local victimTeam  = WarKillfeed.getTeamName(player)
     local deathPos    = player:getPosition()
 
-    -- Efeito mágico no local da morte
-    playDeathEffect(deathPos)
+    -- Efeito mágico no local da "morte"
+    WarKillfeed.playDeathEffect(deathPos)
 
     -- Identificar killer
-    local realKiller = mostDamageKiller or killer
-    if realKiller and realKiller:isPlayer() then
-        local killerName  = realKiller:getName()
-        local killerTeam  = getTeamName(realKiller)
-        local killerId    = realKiller:getId()
+    if killer and killer:isPlayer() then
+        local killerName  = killer:getName()
+        local killerTeam  = WarKillfeed.getTeamName(killer)
+        local killerId    = killer:getId()
 
         -- Streak do killer
         local streak = updateStreak(killerId)
 
         -- Efeito de conquista no killer
-        realKiller:getPosition():sendMagicEffect(CONST_ME_MAGIC_BLUE)
+        killer:getPosition():sendMagicEffect(CONST_ME_MAGIC_BLUE)
 
-        -- Mensagem de kill no chat global (WARNING = laranja vivo)
+        -- Mensagem de kill no chat global
         local msg = buildKillMessage(killerName, killerTeam, victimName, victimTeam, victimLevel, streak)
         Game.broadcastMessage(msg, MESSAGE_STATUS_WARNING)
 
-        realKiller:sendTextMessage(MESSAGE_EVENT_ADVANCE,
+        killer:sendTextMessage(MESSAGE_EVENT_ADVANCE,
             string.format("[+Frag] %s eliminado! Streak: %d kill%s",
                 victimName, streak, streak > 1 and "s" or ""))
-
-    else
-        -- Morte por campo/magia sem killer identificado
-        Game.broadcastMessage(
-            string.format("☠ %s [%s] caiu em batalha!", victimName, victimTeam),
-            MESSAGE_STATUS_WARNING
-        )
+        
+        -- Reset streak da vítima
+        resetStreak(player:getId())
+        
+        return true
     end
 
-    -- Reset streak da vítima ao morrer
+    -- Morte sem killer identificado
+    Game.broadcastMessage(
+        string.format("!! %s [%s] caiu em batalha!", victimName, victimTeam),
+        MESSAGE_STATUS_WARNING
+    )
     resetStreak(player:getId())
-
     return true
+end
+
+-- ─── CreatureEvent: onDeath (Legado/Suporte) ─────────────────
+local killfeed = CreatureEvent("WarKillfeed")
+
+function killfeed.onDeath(player, corpse, killer, mostDamageKiller, lastHitUnjustified, mostDamageUnjustified)
+    local realKiller = mostDamageKiller or killer
+    return WarKillfeed.recordKill(player, realKiller)
 end
 killfeed:register()
 

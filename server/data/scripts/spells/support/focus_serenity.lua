@@ -7,7 +7,7 @@ function spell.onCastSpell(creature, var)
 
 	creature:clearSpellCooldowns()
 
-	local cooldown = spell:cooldown()
+	local cooldown = spell:cooldown(0)
 	if cooldown and cooldown > 0 then
 		local condition = Condition(CONDITION_SPELLCOOLDOWN)
 		condition:setParameter(CONDITION_PARAM_TICKS, cooldown)
@@ -15,7 +15,7 @@ function spell.onCastSpell(creature, var)
 		creature:addCondition(condition)
 	end
 
-	local groupCooldown = spell:groupCooldown()
+	local groupCooldown = spell:groupCooldown(2000)
 	if groupCooldown and groupCooldown > 0 then
 		local conditionGroup = Condition(CONDITION_SPELLGROUPCOOLDOWN)
 		conditionGroup:setParameter(CONDITION_PARAM_TICKS, groupCooldown)
@@ -34,7 +34,7 @@ spell:level(150)
 spell:mana(500)
 spell:isPremium(false)
 spell:needLearn(false)
-spell:groupCooldown(2 * 1000)
-spell:cooldown(10 * 60 * 1000)
+spell:groupCooldown(2000)
+spell:cooldown(0)
 spell:vocation("monk", "exalted monk")
 spell:register()

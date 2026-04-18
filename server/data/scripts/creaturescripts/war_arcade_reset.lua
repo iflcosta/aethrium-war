@@ -29,6 +29,11 @@ local WAR_STATS = {
 
 -- ─── Helpers ────────────────────────────────────────────────
 
+local function formatNumber(n)
+    local s = tostring(math.floor(n))
+    return s:reverse():gsub("(%d%d%d)" , "%1."):reverse():gsub("^%.", "")
+end
+
 local function updateWarScore(killerPlayer)
     if not killerPlayer or not killerPlayer:isPlayer() then return end
     local guild = killerPlayer:getGuild()
@@ -94,7 +99,33 @@ local warLogin = CreatureEvent("WarArcadeLogin")
 function warLogin.onLogin(player)
     resetPlayerToArcadeState(player)
     
-    -- Liberação de todos os Addons do Tibia 8.60
+    -- ─── Configuração de Outfit Inicial por Vocação ───────────
+    local vocationId = player:getVocation():getId()
+    local isMale = player:getSex() == PLAYERSEX_MALE
+    local newLookType = nil
+
+    if vocationId == 4 or vocationId == 8 then -- Knight
+        newLookType = isMale and 134 or 142 -- Warrior
+    elseif vocationId == 2 or vocationId == 6 then -- Druid
+        newLookType = isMale and 133 or 141 -- Summoner
+    elseif vocationId == 1 or vocationId == 5 then -- Sorcerer
+        newLookType = isMale and 130 or 138 -- Mage
+    elseif vocationId == 3 or vocationId == 7 then -- Paladin
+        newLookType = isMale and 129 or 137 -- Hunter
+    end
+
+    if newLookType then
+        local currentOutfit = player:getOutfit()
+        currentOutfit.lookType = newLookType
+        currentOutfit.lookAddons = 3
+        player:setOutfit(currentOutfit)
+    end
+
+    -- ─── Registro de Eventos Críticos ──────────────────────────
+    player:registerEvent("WarArcadeDeath")
+    player:registerEvent("WarKillfeed")
+
+    -- Liberação massiva de Addons para todos os outfits (8.60)
     if player:getStorageValue(88888) ~= 1 then
         for i = 128, 367 do
             player:addOutfitAddon(i, 3)
@@ -106,33 +137,80 @@ function warLogin.onLogin(player)
 end
 warLogin:register()
 
+local function distributePvPExperience(player)
+    local victimXp = player:getExperience()
+    local xpLossPool = math.floor(victimXp * 0.10) -- 10% da XP total conforme solicitado
+    
+    local damageMap = player:getDamageMap()
+    if not damageMap then return end
+
+    local totalPlayerDamage = 0
+    local contributors = {}
+
+    -- 1. Filtrar apenas jogadores e calcular dano total
+    for cid, data in pairs(damageMap) do
+        local attacker = Creature(cid)
+        if attacker and attacker:isPlayer() and attacker:getId() ~= player:getId() then
+            totalPlayerDamage = totalPlayerDamage + data.total
+            table.insert(contributors, {p = attacker, dmg = data.total})
+        end
+    end
+
+    if totalPlayerDamage <= 0 then return end
+
+    -- 2. Distribuir XP proporcionalmente
+    for _, entry in ipairs(contributors) do
+        local share = entry.dmg / totalPlayerDamage
+        local reward = math.floor(xpLossPool * share)
+        if reward > 0 then
+            entry.p:addExperience(reward, true)
+            entry.p:sendTextMessage(MESSAGE_EVENT_ADVANCE, 
+                string.format("[WAR XP] Você recebeu %s de XP pela participação no abate de %s (%d%% do dano).", 
+                formatNumber(reward), player:getName(), math.floor(share * 100)))
+        end
+    end
+end
+
 -- ─── Evento: Preparo para a Morte (Instant Respawn) ──────────
 
 local warDeath = CreatureEvent("WarArcadeDeath")
 function warDeath.onPrepareDeath(player, killer)
-    if killer and killer:isPlayer() then
-        updateWarScore(killer)
-        -- Opção de killfeed dinâmico se existir:
-        -- broadcastMessage(killer:getName() .. " fragged " .. player:getName(), MESSAGE_STATUS_WARNING)
+    -- 1. Identificar o Assassino Real para o Killfeed/Score
+    local realKiller = killer
+    if not realKiller or not realKiller:isPlayer() then
+        -- Fallback para quem deu mais dano caso o killer direto seja monstro/campo
+        -- mas para o reset arcade focamos na distribuição global.
+    end
+
+    -- 2. Processamento Dinâmico de Kill
+    -- [FRAG] Atualiza o placar das Guildas (usa o killer principal)
+    if realKiller and realKiller:isPlayer() and realKiller:getId() ~= player:getId() then
+        updateWarScore(realKiller)
+    end
+
+    -- [XP] Distribuição Proporcional de 10% do XP da vítima
+    distributePvPExperience(player)
+    
+    -- [VISUAL] Dispara o KillFeed
+    if WarKillfeed and WarKillfeed.recordKill then
+        WarKillfeed.recordKill(player, realKiller)
     end
     
-    -- Aplica o reset de guerra instantâneo
+    -- 3. Aplica o reset de guerra instantâneo (Restore HP/Mana/Skills)
     resetPlayerToArcadeState(player)
+
     
-    -- Teleporta o jogador de volta para a sua base (Town do Templo)
+    -- 4. Teleporta o jogador de volta para a sua base (Town do Templo)
     local town = player:getTown()
-    if town then
-        player:teleportTo(town:getTemplePosition())
-    else
-        -- Fallback se a town estiver bugada
-        player:teleportTo(Position(32369, 32241, 7))
-    end
+    local spawnPos = town and town:getTemplePosition() or Position(1024, 633, 7)
+    player:teleportTo(spawnPos)
     
-    -- Envia um pequeno alerta gráfico ao invés da tela preta de morte
-    player:getPosition():sendMagicEffect(CONST_ME_HOLYAREA)
+    -- 5. Feedback Visual no Vítima
+    spawnPos:sendMagicEffect(CONST_ME_TELEPORT)
     player:sendTextMessage(MESSAGE_STATUS_CONSOLE_RED, "Você foi derrotado e restaurado à base.")
     
-    -- Retorna FALSO para cancelar a morte original do Tibia (bloqueia perda de item, skull e you are dead screen)
+    -- Retorna FALSO para cancelar a morte original do Tibia
+    -- Isso evita a tela de "You are Dead", perda de itens e queda de level real.
     return false
 end
 warDeath:register()

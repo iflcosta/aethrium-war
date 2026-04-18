@@ -12,7 +12,7 @@ spell:words("utevo gran res eq")
 spell:level(200)
 spell:mana(1000)
 spell:cooldown(0) -- calculated in CreateFamiliarSpell
-spell:groupCooldown(2 * 1000)
+spell:groupCooldown(2000)
 spell:needLearn(false)
 spell:isAggressive(false)
 spell:vocation("knight;true", "elite knight;true")
