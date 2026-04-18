@@ -200,6 +200,10 @@ do
 			self:type("extendedopcode")
 			self:onExtendedOpcode(value)
 			return
+		elseif key == "onChangeOutfit" then
+			self:type("changeoutfit")
+			self:onChangeOutfit(value)
+			return
 		end
 		rawset(self, key, value)
 	end

@@ -98,29 +98,35 @@ local function startRotationCountdown(winnerName, frags)
     end
 end
 
--- ─── GlobalEvent: Monitor de Placar ────────────────────────
+WarRotation = {}
 
-local warScoreMonitor = GlobalEvent("WarScoreMonitor")
+-- ─── GlobalEvent (Desativado para remover lag) ──────────────
+-- Agora a verificação é disparada via gatilho no onDeath.
+-- ────────────────────────────────────────────────────────────
 
-function warScoreMonitor.onThink(interval)
+function WarRotation.checkScores()
     if isRotating then return true end
 
-    db.asyncQuery(
+    db.asyncStoreQuery(
         "SELECT `guild_id`, SUM(`frags`) AS total_frags FROM `war_scores` "..
         "GROUP BY `guild_id` HAVING total_frags >= " .. WAR_FRAG_GOAL ..
         " ORDER BY total_frags DESC LIMIT 1",
-        function(rows)
-            if not rows or #rows == 0 then return end
-            local winner = rows[1]
-            getGuildName(tonumber(winner.guild_id), function(name)
-                startRotationCountdown(name, tonumber(winner.total_frags))
+        function(resultId)
+            if not resultId or resultId == false then return end
+
+            local guildId = result.getNumber(resultId, "guild_id")
+            local totalFrags = result.getNumber(resultId, "total_frags")
+            result.free(resultId)
+
+            getGuildName(tonumber(guildId), function(name)
+                startRotationCountdown(name, tonumber(totalFrags))
             end)
         end
     )
     return true
 end
 
-warScoreMonitor:interval(WAR_CHECK_SECS * 1000)
-warScoreMonitor:register()
+-- warScoreMonitor:interval(WAR_CHECK_SECS * 1000)
+-- warScoreMonitor:register()
 
 -- Fim do sistema de Rotação

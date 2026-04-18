@@ -1,5 +1,5 @@
--- Native SQLite Schema for Aethrium War (TFS 1.8)
--- Generated to ensure compatibility with SQLite 3
+-- Native SQLite Schema for Aethrium War (TFS 1.8) - Updated for Sync Phase 6
+-- Includes all necessary tables for War KillFeed, Scoreboard and AutoLoot
 
 CREATE TABLE IF NOT EXISTS `accounts` (
   `id` INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -91,12 +91,43 @@ CREATE TABLE IF NOT EXISTS `towns` (
   `posz` INTEGER NOT NULL DEFAULT 0
 );
 
+-- Updated Table for War scoreboard with UNIQUE constraint
 CREATE TABLE IF NOT EXISTS `war_scores` (
   `id` INTEGER PRIMARY KEY AUTOINCREMENT,
   `guild_id` INTEGER NOT NULL,
   `frags` INTEGER NOT NULL DEFAULT 0,
   `round_id` INTEGER NOT NULL DEFAULT 1,
+  UNIQUE (`guild_id`, `round_id`),
   FOREIGN KEY (`guild_id`) REFERENCES `guilds` (`id`) ON DELETE CASCADE
+);
+
+-- Missing Tables found in setup_aethrium_war.sql (Sync Phase 6)
+CREATE TABLE IF NOT EXISTS `player_autolootconfig` (
+  `player_id` INTEGER PRIMARY KEY,
+  `config` BLOB NOT NULL,
+  FOREIGN KEY (`player_id`) REFERENCES `players` (`id`) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS `account_bans` (
+  `account_id` INTEGER PRIMARY KEY,
+  `reason` VARCHAR(255) NOT NULL,
+  `banned_at` BIGINT NOT NULL,
+  `expires_at` BIGINT NOT NULL,
+  `banned_by` INTEGER NOT NULL,
+  FOREIGN KEY (`account_id`) REFERENCES `accounts` (`id`) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS `player_deaths` (
+  `player_id` INTEGER NOT NULL,
+  `time` BIGINT NOT NULL DEFAULT 0,
+  `level` INTEGER NOT NULL DEFAULT 1,
+  `killed_by` VARCHAR(255) NOT NULL,
+  `is_player` INTEGER NOT NULL DEFAULT 1,
+  `mostdamage_by` VARCHAR(100) NOT NULL,
+  `mostdamage_is_player` INTEGER NOT NULL DEFAULT 0,
+  `unjustified` INTEGER NOT NULL DEFAULT 0,
+  PRIMARY KEY (`player_id`, `time`),
+  FOREIGN KEY (`player_id`) REFERENCES `players` (`id`) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS `server_config` (

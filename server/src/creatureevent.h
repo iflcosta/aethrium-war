@@ -27,6 +27,7 @@ enum CreatureEventType_t
 	CREATURE_EVENT_HEALTHCHANGE,
 	CREATURE_EVENT_MANACHANGE,
 	CREATURE_EVENT_EXTENDED_OPCODE, // otclient additional network opcodes
+	CREATURE_EVENT_CHANGEOUTFIT,
 };
 
 class CreatureEvent final : public Event
@@ -59,6 +60,7 @@ public:
 	void executeHealthChange(Creature* creature, Creature* attacker, CombatDamage& damage);
 	void executeManaChange(Creature* creature, Creature* attacker, CombatDamage& damage);
 	void executeExtendedOpcode(Player* player, uint8_t opcode, std::string_view buffer);
+	bool executeOnChangeOutfit(Player* player, Outfit_t& outfit) const;
 	//
 
 private:
@@ -83,6 +85,7 @@ public:
 	bool playerLogout(Player* player) const;
 	void playerReconnect(Player* player) const;
 	bool playerAdvance(Player* player, skills_t, uint32_t, uint32_t);
+	bool playerChangeOutfit(Player* player, Outfit_t& outfit) const;
 
 	CreatureEvent* getEventByName(std::string_view name, bool forceLoaded = true);
 

@@ -3665,6 +3665,17 @@ void Game::playerChangeOutfit(uint32_t playerId, Outfit_t outfit, bool randomize
 			outfit.lookMount = mount->clientId;
 		}
 
+		if (player->isChangingOutfit) {
+			return;
+		}
+
+		player->isChangingOutfit = true;
+		if (!g_creatureEvents->playerChangeOutfit(player, outfit)) {
+			player->isChangingOutfit = false;
+			return;
+		}
+		player->isChangingOutfit = false;
+
 		internalCreatureChangeOutfit(player, outfit);
 	}
 

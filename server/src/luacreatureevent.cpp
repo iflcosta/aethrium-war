@@ -64,6 +64,8 @@ int luaCreatureEventType(lua_State* L)
 			creature->setEventType(CREATURE_EVENT_MANACHANGE);
 		} else if (tmpStr == "extendedopcode") {
 			creature->setEventType(CREATURE_EVENT_EXTENDED_OPCODE);
+		} else if (tmpStr == "changeoutfit") {
+			creature->setEventType(CREATURE_EVENT_CHANGEOUTFIT);
 		} else {
 			LOG_ERROR(fmt::format("[Error - CreatureEvent::configureLuaEvent] Invalid type for creature event: {}", typeName));
 			pushBoolean(L, false);
@@ -144,4 +146,5 @@ void LuaScriptInterface::registerCreatureEvents()
 	registerMethod("CreatureEvent", "onHealthChange", luaCreatureEventOnCallback);
 	registerMethod("CreatureEvent", "onManaChange", luaCreatureEventOnCallback);
 	registerMethod("CreatureEvent", "onExtendedOpcode", luaCreatureEventOnCallback);
+	registerMethod("CreatureEvent", "onChangeOutfit", luaCreatureEventOnCallback);
 }

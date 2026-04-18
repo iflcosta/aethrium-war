@@ -36,27 +36,31 @@ end
 local fragsCmd = TalkAction("!frags")
 
 function fragsCmd.onSay(player, words, param)
-    db.asyncQuery(
+    db.asyncStoreQuery(
         "SELECT g.`id`, g.`name`, IFNULL(SUM(ws.`frags`), 0) AS total "..
         "FROM `guilds` g "..
         "LEFT JOIN `war_scores` ws ON ws.`guild_id` = g.`id` "..
         "WHERE g.`id` BETWEEN 1 AND 7 "..
         "GROUP BY g.`id` ORDER BY total DESC",
-        function(rows)
+        function(resultId)
             local lines = { "⚔ [=== PLACAR DA GUERRA ===] ⚔" }
-            if rows and #rows > 0 then
-                for i, row in ipairs(rows) do
-                    local guildId  = tonumber(row.id)
+            if resultId ~= false then
+                local i = 1
+                repeat
+                    local guildId  = result.getNumber(resultId, "id")
+                    local guildName = result.getString(resultId, "name")
                     local teamInfo = TEAM_INFO[guildId]
-                    local teamName = teamInfo and teamInfo.name or row.name
-                    local frags    = tonumber(row.total)
+                    local teamName = teamInfo and teamInfo.name or guildName
+                    local frags    = tonumber(result.getNumber(resultId, "total"))
                     local bar      = string.rep("█", math.floor(frags / WAR_FRAG_GOAL * 10))
                     local pct      = math.floor(frags / WAR_FRAG_GOAL * 100)
                     lines[#lines + 1] = string.format(
                         "%d. %-10s %3d frags  [%s%s] %d%%",
                         i, teamName, frags, bar, string.rep("░", 10 - #bar), pct
                     )
-                end
+                    i = i + 1
+                until not result.next(resultId)
+                result.free(resultId)
             else
                 lines[#lines + 1] = "Nenhum combate registrado ainda."
             end

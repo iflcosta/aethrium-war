@@ -1380,6 +1380,7 @@ private:
 	std::string tokenHash;
 	bool tokenLocked = false;
 	bool staminaPzActive = false;
+	bool isChangingOutfit = false;
 	bool staminaTrainerActive = false;
 	uint8_t m_harmony = 0;
 	bool m_serene = false;

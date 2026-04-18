@@ -118,10 +118,9 @@ function killfeed.onDeath(player, corpse, killer, mostDamageKiller, lastHitUnjus
         local msg = buildKillMessage(killerName, killerTeam, victimName, victimTeam, victimLevel, streak)
         Game.broadcastMessage(msg, MESSAGE_STATUS_WARNING)
 
-        -- Mensagem específica para o killer
         realKiller:sendTextMessage(MESSAGE_EVENT_ADVANCE,
             string.format("[+Frag] %s eliminado! Streak: %d kill%s",
-                victimName, streak, streak > 1 and "s" and ""))
+                victimName, streak, streak > 1 and "s" or ""))
 
     else
         -- Morte por campo/magia sem killer identificado

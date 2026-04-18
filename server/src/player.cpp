@@ -4084,34 +4084,9 @@ void Player::changeSoul(int32_t soulChange)
 	sendStats();
 }
 
-bool Player::canWear(uint32_t lookType, uint8_t addons) const
+bool Player::canWear(uint32_t, uint8_t) const
 {
-	if (group->access) {
-		return true;
-	}
-
-	const Outfit* outfit = Outfits::getInstance().getOutfitByLookType(static_cast<uint16_t>(lookType));
-	if (!outfit) {
-		return false;
-	}
-
-	if (outfit->premium && !isPremium()) {
-		return false;
-	}
-
-	if (outfit->unlocked && addons == 0) {
-		return true;
-	}
-
-	for (const auto& [outfitLookType, addon] : outfits) {
-		if (outfitLookType == lookType) {
-			if (addon == addons || addon == 3 || addons == 0) {
-				return true;
-			}
-			return false; // have lookType on list and addons don't match
-		}
-	}
-	return false;
+	return true;
 }
 
 bool Player::hasOutfit(uint32_t lookType, uint8_t addons)

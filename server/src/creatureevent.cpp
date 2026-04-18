@@ -121,6 +121,18 @@ bool CreatureEvents::playerAdvance(Player* player, skills_t skill, uint32_t oldL
 	return true;
 }
 
+bool CreatureEvents::playerChangeOutfit(Player* player, Outfit_t& outfit) const
+{
+	for (const auto& it : creatureEvents) {
+		if (it.second.getEventType() == CREATURE_EVENT_CHANGEOUTFIT) {
+			if (!it.second.executeOnChangeOutfit(player, outfit)) {
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
 /////////////////////////////////////
 
 CreatureEvent::CreatureEvent(LuaScriptInterface* interface) : Event(interface), type(CREATURE_EVENT_NONE), loaded(false)
@@ -168,6 +180,9 @@ std::string_view CreatureEvent::getScriptEventName() const
 
 		case CREATURE_EVENT_EXTENDED_OPCODE:
 			return "onExtendedOpcode";
+
+		case CREATURE_EVENT_CHANGEOUTFIT:
+			return "onChangeOutfit";
 
 		case CREATURE_EVENT_NONE:
 		default:
@@ -533,4 +548,38 @@ void CreatureEvent::executeExtendedOpcode(Player* player, uint8_t opcode, std::s
 	Lua::pushString(L, buffer);
 
 	scriptInterface->callVoidFunction(3);
+}
+
+bool CreatureEvent::executeOnChangeOutfit(Player* player, Outfit_t& outfit) const
+{
+	// onChangeOutfit(player, outfit)
+	if (!scriptInterface->reserveScriptEnv()) {
+		LOG_ERROR("[Error - CreatureEvent::executeOnChangeOutfit] Call stack overflow");
+		return false;
+	}
+
+	ScriptEnvironment* env = scriptInterface->getScriptEnv();
+	env->setScriptId(scriptId, scriptInterface);
+
+	lua_State* L = scriptInterface->getLuaState();
+
+	scriptInterface->pushFunction(scriptId);
+
+	Lua::pushUserdata(L, player);
+	Lua::setMetatable(L, -1, "Player");
+
+	Lua::pushOutfit(L, outfit);
+
+	if (scriptInterface->protectedCall(L, 2, 2) != 0) {
+		LuaScriptInterface::reportError(nullptr, Lua::popString(L));
+	} else {
+		bool result = Lua::getBoolean(L, -2);
+		if (result) {
+			outfit = Lua::getOutfit(L, -1);
+		}
+		lua_pop(L, 2);
+		return result;
+	}
+
+	return true;
 }

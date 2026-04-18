@@ -3018,17 +3018,6 @@ void ProtocolGame::AddPlayerStats(NetworkMessage& msg)
 			msg.add<uint16_t>(player->getOfflineTrainingTime() / 60 / 1000);
 		}
 	}
-
-	/*msg.add<uint16_t>(player->getBaseSpeed() / 2);
-
-	Condition* condition = player->getCondition(CONDITION_REGENERATION, CONDITIONID_DEFAULT);
-	msg.add<uint16_t>(condition ? condition->getTicks() / 1000 : 0x00);
-
-	msg.add<uint16_t>(player->getOfflineTrainingTime() / 60 / 1000);
-
-	msg.add<uint16_t>(0); // xp boost time (seconds)
-	msg.addByte(0); // enables exp boost in the store
-	*/
 }
 
 void ProtocolGame::AddPlayerSkills(NetworkMessage& msg)
@@ -3054,6 +3043,36 @@ void ProtocolGame::AddPlayerSkills(NetworkMessage& msg)
 			}
 			msg.add<uint16_t>(static_cast<uint16_t>(std::min<int32_t>(10000, player->varSpecialSkills[i])));
 			msg.add<uint16_t>(0);
+		}
+
+		// Redemption client (mehah) expects Fatal, Dodge, Momentum, Transcendence
+		// after the standard special skills.
+		if (isMehah) {
+			uint16_t fatalValue = 0;
+			if (Item* weapon = player->getWeapon()) {
+				fatalValue = static_cast<uint16_t>(std::round(weapon->getFatalChance() * 100.0));
+			}
+			uint16_t dodgeValue = 0;
+			if (Item* armor = player->getInventoryItem(CONST_SLOT_ARMOR)) {
+				dodgeValue = static_cast<uint16_t>(std::round(armor->getDodgeChance() * 100.0));
+			}
+			uint16_t momentumValue = 0;
+			if (Item* boots = player->getInventoryItem(CONST_SLOT_FEET)) {
+				momentumValue = static_cast<uint16_t>(std::round(boots->getMomentumChance() * 100.0));
+			}
+			uint16_t transcendenceValue = 0;
+			if (Item* legs = player->getInventoryItem(CONST_SLOT_LEGS)) {
+				transcendenceValue = static_cast<uint16_t>(std::round(legs->getTranscendenceChance() * 100.0));
+			}
+
+			msg.add<uint16_t>(fatalValue);
+			msg.add<uint16_t>(0); // base
+			msg.add<uint16_t>(dodgeValue);
+			msg.add<uint16_t>(0); // base
+			msg.add<uint16_t>(momentumValue);
+			msg.add<uint16_t>(0); // base
+			msg.add<uint16_t>(transcendenceValue);
+			msg.add<uint16_t>(0); // base
 		}
 	}
 }
@@ -3268,6 +3287,11 @@ void ProtocolGame::parseNewPing(NetworkMessage& msg)
 // OTCv8 and Mehah
 void ProtocolGame::sendFeatures()
 {
+    // Always send features for OTClient/Mehah to ensure 32-bit HP/Mana alignment
+    if (!isOTC) return;
+
+void ProtocolGame::sendFeatures()
+{
 	if (!isOTCv8 || isMehah) return;
 
 	std::unordered_map<GameFeature, bool> features;
@@ -3280,8 +3304,19 @@ void ProtocolGame::sendFeatures()
 	features[GameFeature::BaseSkillU16] = true;
 	features[GameFeature::AdditionalSkills] = true;
 	features[GameFeature::ExtendedClientPing] = true;
+	features[GameFeature::IngameStore] = true;
 
 	if (features.empty()) return;
+
+	NetworkMessage msg;
+	msg.addByte(0x43);
+	msg.add<uint16_t>(features.size());
+	for (auto& feature : features) {
+		msg.addByte(static_cast<uint8_t>(feature.first));
+		msg.addByte(feature.second ? 1 : 0);
+	}
+	writeToOutputBuffer(msg);
+}
 
 	NetworkMessage msg;
 	msg.addByte(0x43);
