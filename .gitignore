@@ -1,19 +1,36 @@
-# Compiled binaries
-*.exe
-*.dll
-*.so
+# Visual Studio & Build
+.vs/
+x64/
+Debug/
+Release/
+vc17/
+*.user
+*.suo
+*.pdb
+*.obj
+*.tlog
+*.log
+*.lastbuildstate
+*.idb
+*.cache
+build*/
+ipch/
 
-# Databases
-*.db
-*.db-journal
-*.db-wal
+# Dependencies & Package Managers
+vcpkg_installed/
+vcpkg/
 
-# Folders to ignore
-scratch/
-client/build/
-server/logs/
-server/data/logs/
+# Logs & Temporary
+*.log
+packet.log
+otclient.log
+*.bak
+*.old
+server/aethrium-server.exe.old
+server/data/world/* - Copia.otbm
 
-# Python cache
-__pycache__/
-*.pyc
+# Assets (Managed by LFS, but ignore duplicates if any)
+# (Optionally exclude sound folders if extremely large and not needed for dev)
+
+# Git specific
+.DS_Store

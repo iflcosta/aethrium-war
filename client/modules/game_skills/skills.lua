@@ -185,7 +185,8 @@ local SKILL_GROUPS = {
         'skillId2', 'skillId3', 'skillId4', 'skillId5', 'skillId6'
     },
     GameAdditionalSkills = {
-        'skillId7', 'skillId8', 'skillId9', 'skillId10', 'skillId11', 'skillId12'
+        'skillId7', 'skillId8', 'skillId9', 'skillId10', 'skillId11', 'skillId12',
+        'skillId13', 'skillId14', 'skillId15', 'skillId16'
     },
     GameForgeSkillStats = {
         'skillId13', 'skillId14', 'skillId15'
@@ -299,8 +300,11 @@ local function hideOldClientStats()
     setSkillGroupVisibility('defence', features.charSkills)
     setSkillGroupVisibility('misc', features.charSkills)
     setSkillGroupVisibility('GameAdditionalSkills', features.additionalSkills)
-    setSkillGroupVisibility('GameForgeSkillStats1332', features.forgeSkills and version >= 1332)
-    setSkillGroupVisibility('GameForgeSkillStats', features.forgeSkills)
+    -- only hide forge skill groups if GameAdditionalSkills is not covering them
+    if not features.additionalSkills then
+        setSkillGroupVisibility('GameForgeSkillStats1332', features.forgeSkills and version >= 1332)
+        setSkillGroupVisibility('GameForgeSkillStats', features.forgeSkills)
+    end
 end
 
 local function hideMenuOptionsForOldClients(menu)

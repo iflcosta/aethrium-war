@@ -59,6 +59,22 @@ controller:registerEvents(g_game, {
 
         if version >= 860 then
             g_game.enableFeature(GameAttackSeq)
+            g_game.enableFeature(GameBot)
+            g_game.enableFeature(GameExtendedOpcode)
+            g_game.enableFeature(GameSkillsBase)
+            g_game.enableFeature(GamePlayerMounts)
+            g_game.enableFeature(GameMagicEffectU16)
+            g_game.enableFeature(GameDistanceEffectU16)
+            g_game.enableFeature(GameDoubleHealth)
+            g_game.enableFeature(GameDoubleSkills)
+            g_game.enableFeature(GameOfflineTrainingTime)
+            g_game.enableFeature(GameBaseSkillU16)
+            g_game.enableFeature(GameAdditionalSkills)
+            g_game.enableFeature(GameIdleAnimations)
+            g_game.enableFeature(GameEnhancedAnimations)
+            g_game.enableFeature(GameExtendedClientPing)
+            g_game.enableFeature(GameSpritesU32)
+            g_game.enableFeature(GameDoublePlayerGoodsMoney)
         end
 
         if version >= 862 then
@@ -71,11 +87,15 @@ controller:registerEvents(g_game, {
             g_game.enableFeature(GameSpellList)
         end
 
+        if version >= 860 then
+            g_game.disableFeature(GamePlayerRegenerationTime)
+        end
+
         if version >= 910 then
             g_game.enableFeature(GameNameOnNpcTrade)
-            g_game.enableFeature(GameTotalCapacity)
-            g_game.enableFeature(GameSkillsBase)
-            g_game.enableFeature(GamePlayerRegenerationTime)
+            g_game.disableFeature(GameTotalCapacity)
+-- g_game.enableFeature(GameSkillsBase) -- Forced OFF
+            g_game.disableFeature(GamePlayerRegenerationTime)
             g_game.enableFeature(GameChannelPlayerList)
             g_game.enableFeature(GameEnvironmentEffect)
             g_game.enableFeature(GameItemAnimationPhase)
@@ -124,8 +144,8 @@ controller:registerEvents(g_game, {
         end
 
         if version >= 1035 then
-            g_game.enableFeature(GameDoubleSkills)
-            g_game.enableFeature(GameBaseSkillU16)
+-- g_game.enableFeature(GameDoubleSkills) -- Forced OFF
+-- g_game.enableFeature(GameBaseSkillU16) -- Forced OFF
         end
 
         if version >= 1036 then
@@ -186,7 +206,7 @@ controller:registerEvents(g_game, {
         end
 
         if version >= 1094 then
-            g_game.enableFeature(GameAdditionalSkills)
+-- g_game.enableFeature(GameAdditionalSkills) -- Forced OFF
             g_game.enableFeature(GameLeechAmount)
         end
 
@@ -231,7 +251,7 @@ controller:registerEvents(g_game, {
         end
 
         if version >= 1300 then
-            g_game.enableFeature(GameDoubleHealth)
+-- g_game.enableFeature(GameDoubleHealth) -- Forced OFF
             g_game.enableFeature(GameUshortSpell)
             g_game.enableFeature(GameConcotions)
             g_game.enableFeature(GameAnthem)

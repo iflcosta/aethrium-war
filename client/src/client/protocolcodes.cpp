@@ -164,6 +164,15 @@ namespace Proto
             messageModesMap[Otc::MessageFailure] = 20;
             messageModesMap[Otc::MessageBlue] = 21;
             messageModesMap[Otc::MessageRed] = 22;
+            messageModesMap[Otc::MessageLoot] = 23;
+            messageModesMap[Otc::MessageTradeNpc] = 24;
+            messageModesMap[Otc::MessageGuild] = 25;
+            messageModesMap[Otc::MessagePartyManagement] = 26;
+            messageModesMap[Otc::MessageParty] = 27;
+            messageModesMap[Otc::MessageBarkLow] = 28;
+            messageModesMap[Otc::MessageBarkLoud] = 29;
+            messageModesMap[Otc::MessageReport] = 30;
+            messageModesMap[Otc::MessageHotkeyUse] = 31;
         } else if (version >= 840) {
             messageModesMap[Otc::MessageNone] = 0;
             messageModesMap[Otc::MessageSay] = 1;
@@ -183,7 +192,8 @@ namespace Proto
             messageModesMap[Otc::MessageGamemasterPrivateFrom] = 14;
             messageModesMap[Otc::MessageGamemasterPrivateTo] = 14;
             messageModesMap[Otc::MessageChannelHighlight] = 15;
-            // 16, 17 ??
+            messageModesMap[Otc::MessageBarkLow] = 16;
+            messageModesMap[Otc::MessageBarkLoud] = 17;
             messageModesMap[Otc::MessageRed] = 18;
             messageModesMap[Otc::MessageMonsterSay] = 19;
             messageModesMap[Otc::MessageMonsterYell] = 20;

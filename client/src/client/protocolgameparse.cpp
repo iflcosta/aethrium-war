@@ -2549,8 +2549,8 @@ void ProtocolGame::parsePlayerSkills(const InputMessagePtr& msg) const
     }
 
     if (g_game.getFeature(Otc::GameAdditionalSkills)) {
-        // Critical, Life Leech, Mana Leech
-        for (int_fast32_t skill = Otc::CriticalChance; skill <= Otc::ManaLeechAmount; ++skill) {
+        // Critical, Life Leech, Mana Leech, Fatal, Dodge, Momentum, Transcendence
+        for (int_fast32_t skill = Otc::CriticalChance; skill < Otc::LastSkill; ++skill) {
             if (!g_game.getFeature(Otc::GameLeechAmount)) {
                 if (skill == Otc::LifeLeechAmount || skill == Otc::ManaLeechAmount) {
                     continue;
@@ -2558,9 +2558,8 @@ void ProtocolGame::parsePlayerSkills(const InputMessagePtr& msg) const
             }
 
             const uint16_t level = msg->getU16();
-            const uint16_t baseLevel = msg->getU16();
+            msg->getU16(); // base level or extra data (0) sent by TFS 1.x backports
             m_localPlayer->setSkill(static_cast<Otc::Skill>(skill), level, 0);
-            m_localPlayer->setBaseSkill(static_cast<Otc::Skill>(skill), baseLevel);
         }
     }
 

@@ -126,8 +126,11 @@ function destroy()
 end
 
 function onGameShopFetchBase(data)
+    g_logger.info("[SHOP] URL: " .. tostring(data.url))
     for i = 1, #data.categories do
-        addCategory(data.categories[i])
+        local cat = data.categories[i]
+        g_logger.info("[SHOP] Category: " .. tostring(cat.title) .. " iconId: " .. tostring(cat.iconId))
+        addCategory(cat)
     end
 
     DONATION_URL = data.url
@@ -155,6 +158,17 @@ function hide()
     hideTransferWindow()
     if gameShopWindow then
         gameShopWindow:hide()
+    end
+end
+
+function toggle()
+    if not gameShopWindow then
+        return
+    end
+    if gameShopWindow:isVisible() then
+        hide()
+    else
+        show()
     end
 end
 
@@ -263,21 +277,57 @@ function onGameShopFetchOffers(data)
     end
 end
 
+local function sanitizeCategoryTitle(title)
+    if type(title) ~= "string" then
+        return ""
+    end
+
+    -- Keep only alphanumeric characters, common punctuation and spaces
+    -- This is much more robust than block-listing specific mojibake sequences
+    local cleaned = title:gsub("[^%w%s%p]", "")
+    
+    -- Normalize spacing
+    cleaned = cleaned:gsub("%s+", " ")
+    cleaned = cleaned:gsub("^%s+", "")
+    cleaned = cleaned:gsub("%s+$", "")
+
+    -- If cleaning left nothing (e.g. title was only emojis), return the original
+    -- but this case is rare for store categories
+    if cleaned == "" then
+        return title
+    end
+    return cleaned
+end
+
 function addCategory(data)
-    categories[data.title] = data
+    local cleanTitle = sanitizeCategoryTitle(data.title)
+    local cleanParent = data.parent and sanitizeCategoryTitle(data.parent) or nil
+
+    data.title = cleanTitle
+    data.parent = cleanParent
+    categories[cleanTitle] = data
+
     local categoriesList = gameShopWindow:getChildById("categoriesList")
     local category
-    if data.parent then
-        local parentPanel = categoriesList:getChildById(data.parent)
-        category = g_ui.createWidget("ShopSubCategory", parentPanel:getChildById("subCategories"))
-        parentPanel:getChildById("expandArrow"):show()
+    if cleanParent then
+        local parentPanel = categoriesList:getChildById(cleanParent)
+        if not parentPanel then
+            category = g_ui.createWidget("ShopCategory", categoriesList)
+            cleanParent = nil
+        else
+            category = g_ui.createWidget("ShopSubCategory", parentPanel:getChildById("subCategories"))
+            parentPanel:getChildById("expandArrow"):show()
+        end
     else
         category = g_ui.createWidget("ShopCategory", categoriesList)
     end
 
-    category:setId(data.title)
-    category:getChildById("button"):setIconClip(data.iconId * 13 .. " 0 13 13")
-    category:getChildById("name"):setText(data.title)
+    category:setId(cleanTitle)
+    local button = category:getChildById("button")
+    if button then
+        button:setIconClip(data.iconId * 13 .. " 0 13 13")
+    end
+    category:getChildById("name"):setText(cleanTitle)
 end
 
 function onGameShopUpdatePoints(data)

@@ -3,11 +3,20 @@ UIWidget
   visible: false
 
   Label
+    id: rendererLabel
+    !text: tr('Renderer Version: %s', g_graphics.getRenderer())
+    anchors.left: parent.left
+    margin-left: 18
+    color: #00ff00ff
+    anchors.top: parent.top
+
+  Label
     !text: 'Antialiasing Mode:'
     anchors.left: parent.left
     margin-left: 18
     color: #c0c0c0ff
-    anchors.top: parent.top
+    anchors.top: prev.bottom
+    margin-top: 10
 
   QtComboBox
     id: antialiasingMode

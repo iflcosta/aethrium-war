@@ -67,7 +67,7 @@ endif()
 if (TOGGLE_FRAMEWORK_EDITOR)
   set(FRAMEWORK_DEFINITIONS ${FRAMEWORK_DEFINITIONS} -DFRAMEWORK_EDITOR)
 endif()
-if (ANDROID OR WASM)
+if (ANDROID OR WASM OR USE_ANGLE)
   set(FRAMEWORK_DEFINITIONS ${FRAMEWORK_DEFINITIONS} -DOPENGL_ES=2)
 endif()
 
@@ -528,6 +528,11 @@ if(MSVC)
           ${NLOHMANN_JSON_INCLUDE_DIR}
           ${CPPCODEC_INCLUDE_DIRS}
   )
+  if(USE_ANGLE)
+    find_library(EGL_LIBRARY_PATH libEGL REQUIRED)
+    find_library(GLESV2_LIBRARY_PATH libGLESv2 REQUIRED)
+  endif()
+
   target_link_libraries(otclient_core
           PUBLIC
           ${LUAJIT_LIBRARY}
@@ -535,7 +540,9 @@ if(MSVC)
           ${PHYSFS_LIBRARY}
           ${ZLIB_LIBRARY}
           ${NLOHMANN_JSON_LIBRARY}
-          ${OPENGL_LIBRARIES}
+          $<$<NOT:$<BOOL:${USE_ANGLE}>>:${OPENGL_LIBRARIES}>
+          $<$<BOOL:${USE_ANGLE}>:${EGL_LIBRARY_PATH}>
+          $<$<BOOL:${USE_ANGLE}>:${GLESV2_LIBRARY_PATH}>
           ${DirectX_LIBRARY}
           ${DirectX_LIBRARIES}
           ${OGG_LIBRARY}
@@ -549,7 +556,7 @@ if(MSVC)
           protobuf::libprotobuf protobuf
           absl::log_internal_check_op
           Threads::Threads
-          GLEW::GLEW
+          $<$<NOT:$<BOOL:${USE_ANGLE}>>:GLEW::GLEW>
           asio::asio
           OpenAL::OpenAL
           LibLZMA::LibLZMA

@@ -415,10 +415,33 @@ function gameShopInitialize()
 	shopInitialized = true
 end
 
+local function sanitizeStoreText(text)
+	if type(text) ~= "string" then
+		return ""
+	end
+
+	local cleaned = text
+		:gsub("[%z\1-\31]", "")            -- control chars
+		:gsub("�", "")                     -- replacement char
+		:gsub("ðŸ[%z\1-\127]*", "")        -- common broken emoji prefix
+		:gsub("â[%z\1-\127]*", "")         -- common mojibake prefix
+		:gsub("ï[%z\1-\127]*", "")         -- common mojibake prefix
+		:gsub("[%*•·▪■□◆◇◉◎¤]+", "")     -- decorative symbols
+		:gsub("%s+", " ")
+		:gsub("^%s+", "")
+		:gsub("%s+$", "")
+
+	if cleaned == "" then
+		return text
+	end
+	return cleaned
+end
+
 function addCategory(parent, title, iconId, categoryId, description)
-	GAME_SHOP.categoriesId[title] = categoryId
+	local cleanTitle = sanitizeStoreText(title)
+	GAME_SHOP.categoriesId[cleanTitle] = categoryId
 	table.insert(GAME_SHOP.categories, {
-		title = title,
+		title = cleanTitle,
 		parent = parent,
 		iconId = iconId,
 		categoryId = categoryId,
@@ -427,27 +450,30 @@ function addCategory(parent, title, iconId, categoryId, description)
 end
 
 function addItem(parent, name, id, price, isSecondPrice, count, description)
-	if not GAME_SHOP.offers[parent] then
-		GAME_SHOP.offers[parent] = {}
+	local cleanParent = sanitizeStoreText(parent)
+	local cleanName = sanitizeStoreText(name)
+
+	if not GAME_SHOP.offers[cleanParent] then
+		GAME_SHOP.offers[cleanParent] = {}
 	end
 
 	local serverId = id
 	if type(id) == "number" then
-		if GAME_SHOP.categoriesId[parent] == CATEGORY_ITEM or GAME_SHOP.categoriesId[parent] == CATEGORY_EXTRAS then
+		if GAME_SHOP.categoriesId[cleanParent] == CATEGORY_ITEM or GAME_SHOP.categoriesId[cleanParent] == CATEGORY_EXTRAS then
 			id = ItemType(id):getClientId()
 		end
 	end
 
-	table.insert(GAME_SHOP.offers[parent], {
-		parent = parent,
-		name = name,
+	table.insert(GAME_SHOP.offers[cleanParent], {
+		parent = cleanParent,
+		name = cleanName,
 		serverId = serverId,
 		id = id,
 		price = price,
 		isSecondPrice = isSecondPrice,
 		count = count,
 		description = description,
-		categoryId = GAME_SHOP.categoriesId[parent]
+		categoryId = GAME_SHOP.categoriesId[cleanParent]
 	})
 end
 
