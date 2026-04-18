@@ -570,16 +570,17 @@ bool CreatureEvent::executeOnChangeOutfit(Player* player, Outfit_t& outfit) cons
 
 	Lua::pushOutfit(L, outfit);
 
+	bool result = true;
 	if (scriptInterface->protectedCall(L, 2, 2) != 0) {
 		LuaScriptInterface::reportError(nullptr, Lua::popString(L));
 	} else {
-		bool result = Lua::getBoolean(L, -2);
+		result = Lua::getBoolean(L, -2);
 		if (result) {
 			outfit = Lua::getOutfit(L, -1);
 		}
 		lua_pop(L, 2);
-		return result;
 	}
 
-	return true;
+	scriptInterface->resetScriptEnv();
+	return result;
 }
