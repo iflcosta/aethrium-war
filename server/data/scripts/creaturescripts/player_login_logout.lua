@@ -18,16 +18,7 @@ function loginMessage.onLogin(player)
 
     logger.info("%s%s has logged in.%s [Lvl: %d] [Voc: %s] [IP: %s]", prevColor, player:getName(), resetColor, level, vocation, ipStr)
 
-    local rewardChest = player:getRewardChest()
-    local rewardContainerCount = 0
-    for _, item in ipairs(rewardChest:getItems()) do
-        if item:getId() == ITEM_REWARD_CONTAINER then
-            rewardContainerCount = rewardContainerCount + 1
-        end
-    end
-    if rewardContainerCount > 0 then
-        player:sendTextMessage(MESSAGE_STATUS_DEFAULT, string.format("You have %d reward%s in your reward chest.", rewardContainerCount, rewardContainerCount > 1 and "s" or ""))
-    end
+
 
     -- DEBUG:
     print("[DEBUG] Player: " .. player:getName() .. " logged in. Sex: " .. player:getSex() .. ", Group: " .. player:getGroup():getId() .. ", isPremium: " .. tostring(player:isPremium()))
@@ -53,8 +44,7 @@ function loginMessage.onLogin(player)
         player:setVocation(vocation:getDemotion())
     end
 
-    -- Update Experience Rate Stamina
-    player:updateStamina()
+
 
     player:registerEvent("logoutMessage")
 
@@ -102,9 +92,7 @@ function logoutMessage.onLogout(player)
     logger.info("%s%s has logged out.%s [Lvl: %d] [Voc: %s] [IP: %s]", prevColor, player:getName(), resetColor, level, vocation, ipStr)
     local playerId = player:getId()
     nextUseStaminaTime[playerId] = nil
-    if Game.getStorageValue(GlobalStorageKeys.workbenchOwner) == playerId then
-        Game.setStorageValue(GlobalStorageKeys.workbenchOwner, -1)
-    end
+
     return true
 end
 logoutMessage:register()
