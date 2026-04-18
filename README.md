@@ -50,4 +50,4 @@ Faça parte da história do Aethrium e acompanhe os updates diários:
 ---
 
 ### 🏛️ Créditos
-*Desenvolvido por **@iflcosta** para a comunidade **Open Tibia**. Um tributo aos grandes World Wars que definiram a história do Tibia.*
+*Desenvolvido por **[@iflcosta](https://www.instagram.com/iflcosta/)** para a comunidade **Open Tibia**. Um tributo aos grandes World Wars que definiram a história do Tibia.*
