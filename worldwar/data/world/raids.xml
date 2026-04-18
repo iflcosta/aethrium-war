@@ -1,6 +1,0 @@
-<?xml version="1.0" ?> 
-<raids>  
-<raid name="Orsh" message="Orshabaal has been sumoned...Be careful" brodcaster="GM De'vil">
-<area monster="Orshabaal" count="5" posxfrom="475" posyfrom="470" poszfrom="7" posxto="475" posyto="470" poszto="7" />
-</raid>
-</raids>

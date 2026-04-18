@@ -1,44 +1,53 @@
-# 🛡️ Aethrium War — O Próximo Nível do PvP Classificado
+# 🛡️ Aethrium War — Ultimate 8.60 PvP Arcade
 
 ![Aethrium War Banner](assets/banner.png)
 
-Bem-vindo ao **Aethrium War**, um servidor de guerra de alta performance que combina a nostalgia dos combates clássicos em times com as tecnologias mais modernas do ecossistema OpenTibia.
+O **Aethrium War** é um servidor de guerra (**War Server**) de alta performance, focado em recriar a era de ouro do combate competitivo do **Tibia 8.60**. Com um motor customizado em **C++ (TFS 1.x Fork)** e uma lógica de scripts otimizada para combates massivos, oferecemos uma experiência equilibrada, frenética e totalmente focada em habilidade.
 
 ---
 
-## 🎯 A Visão
-O **Aethrium War** foi projetado para jogadores que buscam habilidade pura, estratégia de time e adrenalina constante. Revisitamos o lendário sistema de "World War" 7.6 e o elevamos para o protocolo 8.6, utilizando o **TFS 1.8** e o **OTClient Redemption**.
+## ⚔️ Mecânicas Core (Arcade Style)
 
-### ⚔️ Destaques do Gameplay
-- **Motor Arcade (Anti-Snowball)**: Progressão abolida. Foco total em combate. Morreu ou deslogou? Você volta ao estado original instantaneamente.
-- **Login Instantâneo (1/1 a 7/7)**: Entre na arena em segundos escolhendo seu time favorito (Antica, Nova, Secura, etc.).
-- **Identidade Visual por Guild**: Cores forçadas e travadas por time, garantindo clareza tática no meio do caos das batalhas massivas.
-- **Rotação de Mapas E-Sport**: Rounds dinâmicos que terminam por pontuação (frags). Vença e veja a arena mudar automaticamente.
+Esqueça o "farme" e a progressão lenta. O Aethrium War é um ambiente **Arcade Dinâmico** onde a burocracia do MMORPG dá lugar ao combate de arena puro.
+
+- **Dynamic Level 250 Engine**: Nivelamento imediato para todos os jogadores. O servidor recalcula HP, Mana e Cap em tempo real, sem dependência de banco de dados.
+- **Instant Respawn (Anti-Death Popup)**: Morreu? Você é teleportado imediatamente para a base, curado e com status resetados. Sem janelas de "You are Dead", sem perda de itens.
+- **Pure 8.60 Physics**: Velocidade base cravada nas fórmulas originais (`110 + Level`), exaustão de magias e janelas de runas calibradas para o meta clássico.
+- **Guild Team Visual**: Cores e Outfits forçados por time (Team Antica, Nova, Secura), garantindo clareza tática no meio do caos de batalhas massivas.
+
+---
+
+## 🛠️ Stack Técnica
+
+Utilizamos o estado da arte do ecossistema **Open Tibia**:
+
+- **Engine**: The Forgotten Server 1.x (Customized Fork)
+- **Protocolo**: 8.60 (Classic Meta)
+- **Client**: OTClient Redemption (4.0+)
+- **Map System**: Rotação dinâmica de arenas baseada em Rounds e Frags.
+- **Sync**: Sistema de login instantâneo (Manager) e proteção de base via scripts nativos.
 
 ---
 
 ## 🗺️ Roadmap de Desenvolvimento
-O desenvolvimento do Aethrium War é transparente e faseado.
 
-- **✅ Fase 1**: Estrutura de Repositório e Documentação (Concluída)
-- **🚀 Fase 2**: Implementação do Banco de Dados e Migração dos 235 Heróis Originais (Em Progresso)
-- **📅 Fase 3**: Lógica de Core War & Motor de Reset Arcade
-- **📅 Fase 4**: Integração com OTClient Redemption & HUD Visual
+Acompanhe o estado atual das funcionalidades:
 
-> [!TIP]
-> Confira o [Roadmap Detalhado](docs/ROADMAP.md) para entender cada etapa do projeto.
-
----
-
-## 📸 Comunidade
-Acompanhe os bastidores, enquetes e o progresso diário no nosso Instagram!
-
-👉 **[Siga-nos no Instagram](https://instagram.com/tibiaoldschools/)**
+- **[X] Motor de Reset Dynamic 250 (Lua In-Memory)**: Substituição de Snapshots SQL por matemática rápida O(1).
+- **[X] Sincronização de Protocolo 8.6**: Ajustes estritos de rede para o Redemption Client.
+- **[X] Sistema de Addons & Outfits Free**: Desbloqueio automático de todos os addons 8.60.
+- **[ ] Global Frag Display**: Interface visual no client para exibir o placar da war em tempo real.
+- **[ ] Map Pack World War**: Arenas lendárias (Thais, Edron, Venore) totalmente adaptadas.
 
 ---
 
-## 🛠️ Contribuindo
-Este é um projeto em desenvolvimento ativo. Se você é um desenvolvedor ou entusiasta, sinta-se à vontade para abrir issues ou sugerir melhorias.
+## 📸 Comunidade & Contato
+
+Faça parte da história do Aethrium e acompanhe os updates diários:
+
+👉 **[Instagram - Tibia Old Schools](https://instagram.com/tibiaoldschools/)**
 
 ---
-*Aethrium War é um projeto de @iflcosta. Desenvolvido após pedidos de jogadores que buscam um retorno ao clássico sistema de World War, em posts do perfil @tibiaoldschools.*
+
+### 🏛️ Créditos
+*Desenvolvido por **@iflcosta** para a comunidade **Open Tibia**. Um tributo aos grandes World Wars que definiram a história do Tibia.*
