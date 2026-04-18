@@ -57,30 +57,42 @@ local RESET_TO_SNAPSHOT_QUERY = [[
 ]]
 
 local function resetPlayerToSnapshot(player)
-    if not player then return end
+    if not player or not player:isPlayer() then return end
+    
+    -- Ignora GODs e personagens sem snapshot
+    if player:getGroup():getId() >= 4 then
+        return
+    end
+
     local guid = player:getGuid()
     
-    -- Executa o reset no banco para persistência
+    -- 1. Executa o reset no banco para persistência
     db.query(string.format(RESET_TO_SNAPSHOT_QUERY, guid))
     
-    -- Busca os valores exatos para aplicar via Lua (atualização instantânea da UI)
+    -- 2. Busca os valores exatos para aplicar via Lua (atualização instantânea da UI)
     local resultId = db.storeQuery(string.format("SELECT `experience`, `maglevel`, `healthmax`, `manamax` FROM `players_snapshot` WHERE `id` = %d", guid))
     if resultId ~= false then
-        local targetExp = result.getNumber(resultId, "experience")
-        local targetMag = result.getNumber(resultId, "maglevel")
-        local targetHealth = result.getNumber(resultId, "healthmax")
-        local targetMana = result.getNumber(resultId, "manamax")
-        result.free(resultId)
+        -- Uso seguro da API de resultados (global result ou objeto resultId)
+        local targetExp = (type(result) == "table" and result.getNumber) and result.getNumber(resultId, "experience") or 0
+        local targetHealth = (type(result) == "table" and result.getNumber) and result.getNumber(resultId, "healthmax") or 100
+        local targetMana = (type(result) == "table" and result.getNumber) and result.getNumber(resultId, "manamax") or 100
+        
+        if type(result) == "table" and result.free then
+            result.free(resultId)
+        end
 
         -- Ajusta a experiência (substancial para mudar o Level na UI)
         local currentExp = player:getExperience()
-        if currentExp ~= targetExp then
+        if targetExp > 0 and currentExp ~= targetExp then
             player:addExperience(targetExp - currentExp, false)
         end
         
         -- Garante vida e mana cheias
         player:addHealth(targetHealth - player:getHealth())
         player:addMana(targetMana - player:getMana())
+        
+        -- Remove sinal de batalha residual
+        player:removeCondition(CONDITION_INFIGHT)
     end
 end
 
@@ -97,7 +109,7 @@ warLogin:register()
 -- ─── Evento: Morte do Jogador (Registro de Frag) ─────────────
 
 local warDeath = CreatureEvent("WarArcadeDeath")
-function warDeath.onDeath(player, corpse, killer, mostDamageKiller, lastHitUnjustified, mostDamageUnjustified)
+function warDeath.onDeath(player, corpse, killer)
     if killer and killer:isPlayer() then
         updateWarScore(killer)
     end

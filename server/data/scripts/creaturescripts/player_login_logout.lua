@@ -29,6 +29,9 @@ function loginMessage.onLogin(player)
         player:sendTextMessage(MESSAGE_STATUS_DEFAULT, string.format("You have %d reward%s in your reward chest.", rewardContainerCount, rewardContainerCount > 1 and "s" or ""))
     end
 
+    -- DEBUG:
+    print("[DEBUG] Player: " .. player:getName() .. " logged in. Sex: " .. player:getSex() .. ", Group: " .. player:getGroup():getId() .. ", isPremium: " .. tostring(player:isPremium()))
+
     local serverName = configManager.getString(configKeys.SERVER_NAME)
     local loginStr = "Welcome to " .. serverName .. "!"
     if player:getLastLoginSaved() <= 0 then

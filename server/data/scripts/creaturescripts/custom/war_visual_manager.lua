@@ -23,6 +23,11 @@ local STORAGE_FIRST_OUTFIT = 45001
 local visualManager = CreatureEvent("WarVisualManager")
 
 function visualManager.onLogin(player)
+    local pSex = player:getSex()
+    if pSex ~= PLAYERSEX_MALE and pSex ~= PLAYERSEX_FEMALE then
+        player:setSex(PLAYERSEX_MALE)
+    end
+
     -- ─── 1. Desbloqueio Global de Outfits & Addons (Até 8.6) ─────
     local maleOutfits = {
         128, 129, 130, 131, 132, 133, 134, 143, 144, 145, 146, 151, 152, 153, 154,

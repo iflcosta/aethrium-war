@@ -1,6 +1,6 @@
 function Creature:onChangeOutfit(outfit)
 	if hasEvent.onChangeOutfit then return Event.onChangeOutfit(self, outfit) end
-	return true
+	return true, outfit
 end
 
 function Creature:onAreaCombat(tile, isAggressive)

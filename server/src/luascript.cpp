@@ -876,6 +876,12 @@ Position Lua::getPosition(lua_State* L, int32_t arg)
 
 Outfit_t Lua::getOutfit(lua_State* L, int32_t arg)
 {
+	// Normalize to absolute index: relative indices (negative) become invalid as
+	// each getField call pushes a value onto the stack, shifting relative positions.
+	if (arg < 0) {
+		arg = lua_gettop(L) + arg + 1;
+	}
+
 	Outfit_t outfit;
 	outfit.lookAddons = getField<uint8_t>(L, arg, "lookAddons");
 
@@ -886,6 +892,7 @@ Outfit_t Lua::getOutfit(lua_State* L, int32_t arg)
 
 	outfit.lookTypeEx = getField<uint16_t>(L, arg, "lookTypeEx");
 	outfit.lookType = getField<uint16_t>(L, arg, "lookType");
+	outfit.lookMount = getField<uint16_t>(L, arg, "lookMount");
 
 	lua_pop(L, 8);
 	return outfit;

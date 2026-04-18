@@ -3287,11 +3287,6 @@ void ProtocolGame::parseNewPing(NetworkMessage& msg)
 // OTCv8 and Mehah
 void ProtocolGame::sendFeatures()
 {
-    // Always send features for OTClient/Mehah to ensure 32-bit HP/Mana alignment
-    if (!isOTC) return;
-
-void ProtocolGame::sendFeatures()
-{
 	if (!isOTCv8 || isMehah) return;
 
 	std::unordered_map<GameFeature, bool> features;
@@ -3307,16 +3302,6 @@ void ProtocolGame::sendFeatures()
 	features[GameFeature::IngameStore] = true;
 
 	if (features.empty()) return;
-
-	NetworkMessage msg;
-	msg.addByte(0x43);
-	msg.add<uint16_t>(features.size());
-	for (auto& feature : features) {
-		msg.addByte(static_cast<uint8_t>(feature.first));
-		msg.addByte(feature.second ? 1 : 0);
-	}
-	writeToOutputBuffer(msg);
-}
 
 	NetworkMessage msg;
 	msg.addByte(0x43);
