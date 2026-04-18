@@ -18,6 +18,16 @@ local VOC_OUTFITS = {
     [8] = { male = 131, female = 139 }, -- EK
 }
 
+local TEAM_COLORS = {
+    [1] = { head = 88,  body = 88,  legs = 107, feet = 126 }, -- Antica   → Azul Reais
+    [2] = { head = 94,  body = 94,  legs = 113, feet = 132 }, -- Nova     → Vermelho Reais
+    [3] = { head = 50,  body = 82,  legs = 68,  feet = 86  }, -- Secura   → Verde
+    [4] = { head = 210, body = 192, legs = 174, feet = 156 }, -- Amera    → Dourado
+    [5] = { head = 132, body = 131, legs = 114, feet = 133 }, -- Calmera  → Roxo
+    [6] = { head = 172, body = 154, legs = 136, feet = 118 }, -- Hiberna  → Ciano
+    [7] = { head = 11,  body = 31,  legs = 13,  feet = 15  }, -- Harmonia → Laranja
+}
+
 local STORAGE_FIRST_OUTFIT = 45001
 
 local visualManager = CreatureEvent("WarVisualManager")
@@ -56,7 +66,28 @@ function visualManager.onLogin(player)
         player:setStorageValue(STORAGE_FIRST_OUTFIT, 1)
     end
 
+    -- ─── 3. Forçar Cores do Time (Todo Login) ──────────────────
+    local guild = player:getGuild()
+    if guild and player:getGroup():getId() < 4 then
+        local colors = TEAM_COLORS[guild:getId()]
+        if colors then
+            -- Pequeno delay de 200ms para evitar kick do OTClient por spam de pacotes no login
+            addEvent(function(cid)
+                local p = Player(cid)
+                if p then
+                    local current = p:getOutfit()
+                    current.lookHead = colors.head
+                    current.lookBody = colors.body
+                    current.lookLegs = colors.legs
+                    current.lookFeet = colors.feet
+                    p:setOutfit(current)
+                end
+            end, 200, player:getId())
+        end
+    end
+
     return true
 end
 
+visualManager:type("login")
 visualManager:register()

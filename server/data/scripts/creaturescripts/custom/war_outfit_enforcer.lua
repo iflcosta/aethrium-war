@@ -2,8 +2,8 @@ local WarOutfitEnforcer = CreatureEvent("WarOutfitEnforcer")
 
 -- Paleta de cores degradê artística por time (Guild ID)
 local TEAM_PALETTE = {
-    [1] = { head = 94,  body = 113, legs = 95,  feet = 114 }, -- Antica   → Vermelho
-    [2] = { head = 105, body = 5,   legs = 23,  feet = 10  }, -- Nova     → Azul
+    [1] = { head = 88,  body = 88,  legs = 107, feet = 126 }, -- Antica   → Azul Reais
+    [2] = { head = 94,  body = 94,  legs = 113, feet = 132 }, -- Nova     → Vermelho Reais
     [3] = { head = 50,  body = 82,  legs = 68,  feet = 86  }, -- Secura   → Verde
     [4] = { head = 210, body = 192, legs = 174, feet = 156 }, -- Amera    → Dourado
     [5] = { head = 132, body = 131, legs = 114, feet = 133 }, -- Calmera  → Roxo

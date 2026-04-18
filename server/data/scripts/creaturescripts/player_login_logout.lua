@@ -65,28 +65,8 @@ function loginMessage.onLogin(player)
     player:registerEvent("WarOutfitEnforcer")
     player:registerEvent("WarKillfeed")
 
-    -- Aplica a paleta de cores do time imediatamente no login (com degradê harmônico)
-    local warGuild = player:getGuild()
-    if warGuild and player:getGroup():getId() < 4 then
-        local WAR_TEAM_PALETTE = {
-            [1] = { head = 94,  body = 113, legs = 95,  feet = 114 }, -- Antica   → Vermelho Degradê
-            [2] = { head = 105, body = 5,   legs = 23,  feet = 10  }, -- Nova     → Azul Degradê
-            [3] = { head = 50,  body = 82,  legs = 68,  feet = 86  }, -- Secura   → Verde Degradê
-            [4] = { head = 210, body = 192, legs = 174, feet = 156 }, -- Amera    → Dourado Degradê
-            [5] = { head = 132, body = 131, legs = 114, feet = 133 }, -- Calmera  → Roxo Degradê
-            [6] = { head = 172, body = 154, legs = 136, feet = 118 }, -- Hiberna  → Ciano Degradê
-            [7] = { head = 11,  body = 31,  legs = 13,  feet = 15  }, -- Harmonia → Laranja Degradê
-        }
-        local palette = WAR_TEAM_PALETTE[warGuild:getId()]
-        if palette then
-            local outfit = player:getOutfit()
-            outfit.lookHead = palette.head
-            outfit.lookBody = palette.body
-            outfit.lookLegs = palette.legs
-            outfit.lookFeet = palette.feet
-            player:setOutfit(outfit)
-        end
-    end
+    -- [Aethrium War] As cores e Outfits agora são gerenciados de forma modular 
+    -- pelos scripts WarVisualManager e WarOutfitEnforcer registrados acima.
 
     -- Mensagem de boas-vindas da War
     player:sendTextMessage(MESSAGE_STATUS_DEFAULT,
