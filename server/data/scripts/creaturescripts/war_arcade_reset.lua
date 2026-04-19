@@ -11,20 +11,20 @@ local L = WAR_LEVEL - 1
 local WAR_EXP = math.floor((50 * (L * L * L) - 150 * (L * L) + 400 * L) / 3)
 
 local WAR_STATS = {
-    -- Knights (Level 1-8 Sem Voc = 185 HP, 90 Mana, 470 Cap | Level 8-250 = +3630 HP, +1210 Mana, +6050 Cap)
-    [4] = { hp = 3815, mana = 1300, cap = 6520, ml = 9, defaultSkill = 100 },
-    [8] = { hp = 3815, mana = 1300, cap = 6520, ml = 9, defaultSkill = 100 },
-    -- Paladins (Level 8-250 = +2420 HP, +3630 Mana, +4840 Cap)
-    [3] = { hp = 2605, mana = 3720, cap = 5310, ml = 25, defaultSkill = 100 },
-    [7] = { hp = 2605, mana = 3720, cap = 5310, ml = 25, defaultSkill = 100 },
-    -- Mages (Sorcerer/Druid) (Level 8-250 = +1210 HP, +7260 Mana, +2420 Cap)
-    [1] = { hp = 1395, mana = 7350, cap = 2890, ml = 80, defaultSkill = 20 },
-    [5] = { hp = 1395, mana = 7350, cap = 2890, ml = 80, defaultSkill = 20 },
-    [2] = { hp = 1395, mana = 7350, cap = 2890, ml = 80, defaultSkill = 20 },
-    [6] = { hp = 1395, mana = 7350, cap = 2890, ml = 80, defaultSkill = 20 },
-    -- Custom (Monks com stats baseados em paladin)
-    [9] = { hp = 2605, mana = 3720, cap = 5310, ml = 15, defaultSkill = 100 },
-    [10]= { hp = 2605, mana = 3720, cap = 5310, ml = 15, defaultSkill = 100 }
+    -- Knight (Level 1-250: 3850 HP, 1245 Mana, 6520 Cap)
+    [4] = { hp = 3850, mana = 1245, cap = 6520, ml = 10, defaultSkill = 120 },
+    [8] = { hp = 3850, mana = 1245, cap = 6520, ml = 10, defaultSkill = 120 },
+    -- Paladin (Level 1-250: 2640 HP, 3665 Mana, 5310 Cap)
+    [3] = { hp = 2640, mana = 3665, cap = 5310, ml = 30, defaultSkill = 120 },
+    [7] = { hp = 2640, mana = 3665, cap = 5310, ml = 30, defaultSkill = 120 },
+    -- Mages (Level 1-250: 1430 HP, 7295 Mana, 2890 Cap)
+    [1] = { hp = 1430, mana = 7295, cap = 2890, ml = 120, defaultSkill = 30 },
+    [5] = { hp = 1430, mana = 7295, cap = 2890, ml = 120, defaultSkill = 30 },
+    [2] = { hp = 1430, mana = 7295, cap = 2890, ml = 120, defaultSkill = 30 },
+    [6] = { hp = 1430, mana = 7295, cap = 2890, ml = 120, defaultSkill = 30 },
+    -- Monks (HP/Mana Paladin, Cap Knight)
+    [9] = { hp = 2640, mana = 3665, cap = 6520, ml = 20, defaultSkill = 120 },
+    [10]= { hp = 2640, mana = 3665, cap = 6520, ml = 20, defaultSkill = 120 }
 }
 
 -- ─── Helpers ────────────────────────────────────────────────
@@ -73,9 +73,10 @@ local function resetPlayerToArcadeState(player)
     end
     
     -- Ajusta Max HP, Max Mana e Cap instantaneamente
+    -- setCapacity() usa gramas internamente (oz * 100), por isso multiplicamos por 100
     player:setMaxHealth(targetStats.hp)
     player:setMaxMana(targetStats.mana)
-    player:setCapacity(targetStats.cap)
+    player:setCapacity(targetStats.cap * 100)
     
     -- Cura completamente
     player:addHealth(player:getMaxHealth())
@@ -91,6 +92,12 @@ local function resetPlayerToArcadeState(player)
     player:removeCondition(CONDITION_CURSED)
     player:removeCondition(CONDITION_PARALYZE)
     player:setSkull(SKULL_NONE)
+    player:addSoul(200 - player:getSoul())
+
+    -- Restaura o equipamento de guerra
+    if restoreWarItems then
+        restoreWarItems(player)
+    end
 end
 
 -- ─── Evento: Login do Jogador ────────────────────────────────
@@ -199,15 +206,25 @@ function warDeath.onPrepareDeath(player, killer)
     -- 3. Aplica o reset de guerra instantâneo (Restore HP/Mana/Skills)
     resetPlayerToArcadeState(player)
 
-    
-    -- 4. Teleporta o jogador de volta para a sua base (Town do Templo)
-    local town = player:getTown()
-    local spawnPos = town and town:getTemplePosition() or Position(1024, 633, 7)
-    player:teleportTo(spawnPos)
-    
-    -- 5. Feedback Visual no Vítima
-    spawnPos:sendMagicEffect(CONST_ME_TELEPORT)
-    player:sendTextMessage(MESSAGE_STATUS_CONSOLE_RED, "Você foi derrotado e restaurado à base.")
+    -- 4. Respawn dinâmico com 2s de delay (estilo CS2 Deathmatch)
+    local pid = player:getId()
+    addEvent(function(cid)
+        local p = Player(cid)
+        if not p then return end
+        local spawnPos
+        if WarGetBestSpawnPoint then
+            spawnPos = WarGetBestSpawnPoint(p)
+        else
+            local town = p:getTown()
+            spawnPos = town and town:getTemplePosition() or Position(1024, 633, 7)
+        end
+        p:teleportTo(spawnPos)
+        spawnPos:sendMagicEffect(CONST_ME_TELEPORT)
+        p:sendTextMessage(MESSAGE_STATUS_CONSOLE_RED, "Você foi derrotado e voltou ao campo.")
+        if applySpawnProtection then
+            applySpawnProtection(p)
+        end
+    end, 2000, pid)
     
     -- Retorna FALSO para cancelar a morte original do Tibia
     -- Isso evita a tela de "You are Dead", perda de itens e queda de level real.

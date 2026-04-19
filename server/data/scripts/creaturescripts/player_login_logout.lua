@@ -33,15 +33,11 @@ function loginMessage.onLogin(player)
     end
     player:sendTextMessage(MESSAGE_STATUS_DEFAULT, loginStr)
 
+    -- Aethrium War: todos os players recebem vocação promovida automaticamente
     local vocation = player:getVocation()
     local promotion = vocation:getPromotion()
-    if player:isPremium() then
-        local value = player:getStorageValue(PlayerStorageKeys.promotion)
-        if value and value == 1 then
-            player:setVocation(promotion)
-        end
-    elseif not promotion then
-        player:setVocation(vocation:getDemotion())
+    if promotion then
+        player:setVocation(promotion)
     end
 
 
@@ -61,6 +57,15 @@ function loginMessage.onLogin(player)
     -- Mensagem de boas-vindas da War
     player:sendTextMessage(MESSAGE_STATUS_DEFAULT,
         "[Aethrium War] !frags = placar | !warteams = times online | !warhelp = comandos")
+
+    -- Aethrium War: verifica balanceamento de times e popula WarCurrentTeam
+    -- Delay de 500ms para deixar o login inicial (outfit, skills) se estabilizar
+    if checkWarLobbyOnLogin then
+        addEvent(function(cid)
+            local p = Player(cid)
+            if p then checkWarLobbyOnLogin(p) end
+        end, 500, player:getId())
+    end
 
     player:openChannel(10)
 
