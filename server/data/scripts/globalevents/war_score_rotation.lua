@@ -1,132 +1,163 @@
 -- ============================================================
---  Aethrium War — Seamless Map Rotation (Unified Map)
---  Arquivo: server/data/scripts/globalevents/war_score_rotation.lua
---
---  Mapa: aethrium-war.otbm (13 MB — Thais + Venore + Edron unificados)
---
---  Lógica:
---    A cada 10 segundos, verifica se algum time atingiu a meta de frags.
---    Em vez de reiniciar o servidor, teletransporta todos para a próxima
---    cidade do mapa unificado (seamless rotation).
+--  Aethrium War — Rotação de Mapa por Tempo (20 minutos)
+--  Mapa: aethrium-war.otbm (Thais + Venore + Edron unificados)
 -- ============================================================
 
-local WAR_FRAG_GOAL  = 100    -- Frags para vencer o round
-local WAR_CHECK_SECS = 10     -- Intervalo de verificação (segundos)
-local WAR_COUNTDOWN  = 15     -- Countdown antes do teleporte (segundos)
+local WAR_ROUND_MINUTES  = 20
+local WAR_COUNTDOWN_SECS = 15
 
--- Arenas do mapa unificado aethrium-war.otbm
--- pos = ponto de spawn central da arena (templo da cidade)
--- Coordenadas derivadas dos spawns dos heróis migrados (04_players_all.sql)
-local ARENAS = {
-    { id = 1, name = "Thais",  pos = Position(1024, 633, 7) },   -- Arena central
-    { id = 2, name = "Venore", pos = Position(1063, 607, 7) },   -- Arena norte
-    { id = 3, name = "Edron",  pos = Position(1004, 574, 6) },   -- Arena sul
-}
+-- Stub de compatibilidade — war_arcade_reset.lua referencia WarRotation.checkScores
+WarRotation = { checkScores = function() end }
 
-local currentArenaIndex = 1
+WAR_CURRENT_MAP = 1  -- índice ativo em WAR_MAPS (definido em war_spawn.lua)
+
 local isRotating = false
 
+-- ─── Avisos de countdown ─────────────────────────────────────
 
--- ─── Funções Auxiliares ─────────────────────────────────────
-
-local function getGuildName(guildId, callback)
-    db.asyncQuery(
-        string.format("SELECT `name` FROM `guilds` WHERE `id` = %d", guildId),
-        function(rows)
-            local name = (rows and rows[1]) and rows[1].name or ("Time " .. guildId)
-            callback(name)
-        end
-    )
+local function scheduleCountdownWarnings()
+    local interval = WAR_ROUND_MINUTES * 60
+    addEvent(function()
+        Game.broadcastMessage("[ Aethrium War ] Novo mapa em 5 minutos!", MESSAGE_STATUS_WARNING)
+    end, (interval - 5 * 60) * 1000)
+    addEvent(function()
+        Game.broadcastMessage("[ Aethrium War ] Novo mapa em 1 minuto!", MESSAGE_STATUS_WARNING)
+    end, (interval - 60) * 1000)
 end
 
-local function resetAllWarScores()
-    db.asyncQuery("DELETE FROM `war_scores`")
-end
+-- ─── Reset + teleporte de todos os players ───────────────────
 
-local function applySeamlessRotation()
-    currentArenaIndex = (currentArenaIndex % #ARENAS) + 1
-    local arena = ARENAS[currentArenaIndex]
-    
-    -- 1. Atualiza Town ID globalmente no DB para jogadores offline
-    db.asyncQuery(string.format("UPDATE `players` SET `town_id` = %d", arena.id))
-    
-    -- 2. Teletransporta jogadores online e atualiza seu respawn
+local function resetAndSpawnAll()
     local players = Game.getPlayers()
     for _, player in ipairs(players) do
-        -- Reset de status (Cura total)
-        player:addHealth(player:getMaxHealth())
-        player:addMana(player:getMaxMana())
-        player:removeConditions(CONDITION_INFIGHT)
-        
-        -- Atualiza respawn
-        player:setTown(arena.id)
-        
-        -- Teleporte
-        player:teleportTo(arena.pos)
-        arena.pos:sendMagicEffect(CONST_ME_TELEPORT)
-    end
-    
-    Game.broadcastMessage(
-        string.format("⚔ [ARENA ATIVA] ⚔  Bem-vindos a %s! Que a guerra recomece!", arena.name),
-        MESSAGE_STATUS_WARNING
-    )
-    
-    isRotating = false
-end
-
-local function startRotationCountdown(winnerName, frags)
-    isRotating = true
-    local msg = string.format("⚔ [ROUND FINALIZADO] ⚔ %s venceu com %d frags!", winnerName, frags)
-    Game.broadcastMessage(msg, MESSAGE_STATUS_WARNING)
-
-    local countdown = WAR_COUNTDOWN
-    for i = 0, countdown do
-        addEvent(function()
-            if countdown > 0 then
-                if countdown <= 5 or countdown % 5 == 0 then
-                    Game.broadcastMessage(
-                        string.format("[Aethrium War] Próxima arena em %d segundos...", countdown),
-                        MESSAGE_STATUS_DEFAULT
-                    )
-                end
-                countdown = countdown - 1
-            else
-                resetAllWarScores()
-                applySeamlessRotation()
+        if player:getGroup():getId() < 4 then
+            if resetPlayerToArcadeState then
+                resetPlayerToArcadeState(player)
             end
-        end, i * 1000)
+            -- Stagger para não criar pico no servidor
+            addEvent(function(cid)
+                local p = Player(cid)
+                if not p then return end
+                local pos = WarGetBestSpawnPoint and WarGetBestSpawnPoint(p)
+                    or Position(1024, 633, 7)
+                p:teleportTo(pos)
+                pos:sendMagicEffect(CONST_ME_TELEPORT)
+                if applySpawnProtection then applySpawnProtection(p) end
+            end, math.random(500, 3000), player:getId())
+        end
     end
 end
 
-WarRotation = {}
+-- ─── Execução da rotação ─────────────────────────────────────
 
--- ─── GlobalEvent (Desativado para remover lag) ──────────────
--- Agora a verificação é disparada via gatilho no onDeath.
--- ────────────────────────────────────────────────────────────
+local function getMapCount()
+    if not WAR_MAPS then return 1 end
+    local count = 0
+    for _ in pairs(WAR_MAPS) do count = count + 1 end
+    return count
+end
 
-function WarRotation.checkScores()
-    if isRotating then return true end
+local function findMVP(winnerTeamId)
+    if not WarPlayerKills or not winnerTeamId then return nil, 0 end
+    local mvpName, mvpKills = nil, 0
+    for _, data in pairs(WarPlayerKills) do
+        if data.teamId == winnerTeamId and data.kills > mvpKills then
+            mvpName  = data.name
+            mvpKills = data.kills
+        end
+    end
+    return mvpName, mvpKills
+end
 
+local function executeRotation()
+    if isRotating then return end
+    isRotating = true
+
+    -- 1. Busca time vencedor do round pelo placar atual
     db.asyncStoreQuery(
-        "SELECT `guild_id`, SUM(`frags`) AS total_frags FROM `war_scores` "..
-        "GROUP BY `guild_id` HAVING total_frags >= " .. WAR_FRAG_GOAL ..
-        " ORDER BY total_frags DESC LIMIT 1",
+        "SELECT g.`id`, g.`name`, IFNULL(SUM(ws.`frags`), 0) AS total " ..
+        "FROM `guilds` g " ..
+        "LEFT JOIN `war_scores` ws ON ws.`guild_id` = g.`id` " ..
+        "WHERE g.`id` BETWEEN 1 AND 7 " ..
+        "GROUP BY g.`id` ORDER BY total DESC LIMIT 1",
         function(resultId)
-            if not resultId or resultId == false then return end
+            local winnerTeamId   = nil
+            local winnerTeamName = nil
+            local winnerFrags    = 0
 
-            local guildId = result.getNumber(resultId, "guild_id")
-            local totalFrags = result.getNumber(resultId, "total_frags")
-            result.free(resultId)
+            if resultId ~= false then
+                winnerTeamId   = result.getNumber(resultId, "id")
+                winnerTeamName = result.getString(resultId, "name")
+                winnerFrags    = result.getNumber(resultId, "total")
+                result.free(resultId)
+            end
 
-            getGuildName(tonumber(guildId), function(name)
-                startRotationCountdown(name, tonumber(totalFrags))
-            end)
+            -- 2. Monta anúncio com time vencedor + MVP
+            local lines = { "[ FIM DO ROUND ]" }
+            if winnerTeamName and winnerFrags > 0 then
+                lines[#lines + 1] = string.format(
+                    "Time vencedor: %s com %d frags!", winnerTeamName, winnerFrags)
+                local mvpName, mvpKills = findMVP(winnerTeamId)
+                if mvpName then
+                    lines[#lines + 1] = string.format(
+                        "MVP: %s (%d kills)", mvpName, mvpKills)
+                end
+            else
+                lines[#lines + 1] = "Nenhum frag registrado neste round."
+            end
+            lines[#lines + 1] = string.format(
+                "Novo mapa em %d segundos...", WAR_COUNTDOWN_SECS)
+
+            Game.broadcastMessage(table.concat(lines, " | "), MESSAGE_STATUS_WARNING)
+
+            -- 3. Reseta placar e tracking de kills
+            db.asyncQuery("UPDATE `war_scores` SET `frags` = 0 WHERE `round_id` = 1")
+            WarPlayerKills = {}
+
+            -- 4. Após o countdown: avança mapa + reseta todos
+            addEvent(function()
+                local mapCount = getMapCount()
+                WAR_CURRENT_MAP = (WAR_CURRENT_MAP % mapCount) + 1
+
+                local mapName = WAR_MAPS and WAR_MAPS[WAR_CURRENT_MAP]
+                    and WAR_MAPS[WAR_CURRENT_MAP].name or ("Mapa " .. WAR_CURRENT_MAP)
+
+                Game.broadcastMessage(
+                    string.format("[ NOVO MAPA: %s ] Que a guerra recomece!", mapName),
+                    MESSAGE_STATUS_WARNING)
+
+                resetAndSpawnAll()
+                isRotating = false
+            end, WAR_COUNTDOWN_SECS * 1000)
         end
     )
-    return true
 end
 
--- warScoreMonitor:interval(WAR_CHECK_SECS * 1000)
--- warScoreMonitor:register()
+-- ─── GlobalEvent: a cada 20 minutos ──────────────────────────
 
--- Fim do sistema de Rotação
+local rotEvent = GlobalEvent("WarMapRotation")
+function rotEvent.onThink(interval)
+    executeRotation()
+    scheduleCountdownWarnings()  -- agenda avisos para o próximo ciclo
+    return true
+end
+rotEvent:interval(WAR_ROUND_MINUTES * 60 * 1000)
+rotEvent:register()
+
+-- ─── Startup: anuncia arena inicial e agenda avisos ──────────
+
+local startupEvent = GlobalEvent("WarRotationStartup")
+function startupEvent.onStartup()
+    scheduleCountdownWarnings()
+    addEvent(function()
+        local mapName = WAR_MAPS and WAR_MAPS[WAR_CURRENT_MAP]
+            and WAR_MAPS[WAR_CURRENT_MAP].name or "Arena"
+        Game.broadcastMessage(
+            string.format("[ Aethrium War ] Arena: %s | Rotacao em %d minutos.",
+                mapName, WAR_ROUND_MINUTES),
+            MESSAGE_STATUS_DEFAULT)
+    end, 3000)  -- delay para os outros scripts terminarem de carregar
+    return true
+end
+startupEvent:type("startup")
+startupEvent:register()

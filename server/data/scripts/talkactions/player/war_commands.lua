@@ -27,8 +27,17 @@ local WAR_FRAG_GOAL = 100  -- deve coincidir com war_score_rotation.lua
 -- ─── Helpers ─────────────────────────────────────────────────
 
 local function getPlayerTeamId(player)
-    local guild = player:getGuild()
-    return guild and guild:getId() or 0
+    if WarCurrentTeam and WarCurrentTeam[player:getId()] then
+        return WarCurrentTeam[player:getId()]
+    end
+    local res = db.storeQuery(string.format(
+        "SELECT `guild_id` FROM `guild_membership` WHERE `player_id` = %d LIMIT 1",
+        player:getGuid()
+    ))
+    if not res then return 0 end
+    local guildId = result.getNumber(res, "guild_id")
+    result.free(res)
+    return guildId > 0 and guildId or 0
 end
 
 -- ─── Comando: !frags ─────────────────────────────────────────
@@ -83,18 +92,19 @@ function onlineCmd.onSay(player, words, param)
     local teams   = {}  -- [guildId] = { name=..., players={...} }
 
     for _, p in ipairs(players) do
-        local guild = p:getGuild()
-        if guild then
-            local gid = guild:getId()
-            if not teams[gid] then
-                local info = TEAM_INFO[gid]
-                teams[gid] = {
-                    name    = info and info.name or guild:getName(),
-                    players = {}
-                }
+        if p:getGroup():getId() < 4 then
+            local gid = getPlayerTeamId(p)
+            if gid and gid > 0 then
+                if not teams[gid] then
+                    local info = TEAM_INFO[gid]
+                    teams[gid] = {
+                        name    = info and info.name or ("Time " .. gid),
+                        players = {}
+                    }
+                end
+                teams[gid].players[#teams[gid].players + 1] =
+                    string.format("%s[%d]", p:getName(), p:getLevel())
             end
-            teams[gid].players[#teams[gid].players + 1] =
-                string.format("%s[%d]", p:getName(), p:getLevel())
         end
     end
 

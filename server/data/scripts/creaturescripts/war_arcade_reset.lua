@@ -34,11 +34,24 @@ local function formatNumber(n)
     return s:reverse():gsub("(%d%d%d)" , "%1."):reverse():gsub("^%.", "")
 end
 
+local function getKillerTeamId(killerPlayer)
+    if WarCurrentTeam and WarCurrentTeam[killerPlayer:getId()] then
+        return WarCurrentTeam[killerPlayer:getId()]
+    end
+    local res = db.storeQuery(string.format(
+        "SELECT `guild_id` FROM `guild_membership` WHERE `player_id` = %d LIMIT 1",
+        killerPlayer:getGuid()
+    ))
+    if not res then return nil end
+    local guildId = result.getNumber(res, "guild_id")
+    result.free(res)
+    return guildId > 0 and guildId or nil
+end
+
 local function updateWarScore(killerPlayer)
     if not killerPlayer or not killerPlayer:isPlayer() then return end
-    local guild = killerPlayer:getGuild()
-    if not guild then return end
-    local guildId = guild:getId()
+    local guildId = getKillerTeamId(killerPlayer)
+    if not guildId then return end
     db.asyncQuery(string.format(
         "INSERT INTO `war_scores` (`guild_id`, `frags`, `round_id`) VALUES (%d, 1, 1) "..
         "ON DUPLICATE KEY UPDATE `frags` = `frags` + 1",
@@ -53,7 +66,7 @@ end
 -- Proteção de spawn removida pois o jogador nasce no Templo (PZ).
 
 
-local function resetPlayerToArcadeState(player)
+function resetPlayerToArcadeState(player)
     if not player or not player:isPlayer() then return end
     
     -- Ignora GODs
@@ -82,6 +95,18 @@ local function resetPlayerToArcadeState(player)
     player:addHealth(player:getMaxHealth())
     player:addMana(player:getMaxMana())
     
+    -- Reseta skills de combate para o valor base da vocação
+    local baseSkill = targetStats.defaultSkill
+    local combatSkills = { SKILL_SWORD, SKILL_AXE, SKILL_CLUB, SKILL_DISTANCE, SKILL_SHIELD }
+    for _, sk in ipairs(combatSkills) do
+        local diff = baseSkill - player:getSkillLevel(sk)
+        if diff ~= 0 then player:addSkillLevel(sk, diff) end
+    end
+    if SKILL_MAGLEVEL then
+        local diff = targetStats.ml - player:getMagicLevel()
+        if diff ~= 0 then player:addSkillLevel(SKILL_MAGLEVEL, diff) end
+    end
+
     -- Limpa conditions adversas e skulls temporárias
     player:removeCondition(CONDITION_INFIGHT)
     player:removeCondition(CONDITION_FIRE)
@@ -93,6 +118,11 @@ local function resetPlayerToArcadeState(player)
     player:removeCondition(CONDITION_PARALYZE)
     player:setSkull(SKULL_NONE)
     player:addSoul(200 - player:getSoul())
+
+    -- Zera tokens e bônus comprados (perdidos na morte)
+    if resetTokensOnDeath then
+        resetTokensOnDeath(player)
+    end
 
     -- Restaura o equipamento de guerra
     if restoreWarItems then
@@ -193,6 +223,36 @@ function warDeath.onPrepareDeath(player, killer)
     -- [FRAG] Atualiza o placar das Guildas (usa o killer principal)
     if realKiller and realKiller:isPlayer() and realKiller:getId() ~= player:getId() then
         updateWarScore(realKiller)
+    end
+
+    -- [TOKENS] Killer ganha 1 token; assistências ganham 1 fração (2 = 1 token)
+    if addTokens and realKiller and realKiller:isPlayer() and realKiller:getId() ~= player:getId() then
+        addTokens(realKiller, 1)
+    end
+
+    -- [MVP] Tracking de kills por player durante o round (em memória, reseta na rotação)
+    if realKiller and realKiller:isPlayer() and realKiller:getId() ~= player:getId() then
+        WarPlayerKills = WarPlayerKills or {}
+        local kid = realKiller:getId()
+        if not WarPlayerKills[kid] then
+            local teamId = WarCurrentTeam and WarCurrentTeam[kid]
+            WarPlayerKills[kid] = { name = realKiller:getName(), teamId = teamId, kills = 0 }
+        end
+        WarPlayerKills[kid].kills = WarPlayerKills[kid].kills + 1
+    end
+    if addTokenFraction then
+        local killerId = realKiller and realKiller:getId() or 0
+        local damageMap = player:getDamageMap()
+        if damageMap then
+            for cid, _ in pairs(damageMap) do
+                if cid ~= player:getId() and cid ~= killerId then
+                    local assistant = Creature(cid)
+                    if assistant and assistant:isPlayer() then
+                        addTokenFraction(assistant)
+                    end
+                end
+            end
+        end
     end
 
     -- [XP] Distribuição Proporcional de 10% do XP da vítima

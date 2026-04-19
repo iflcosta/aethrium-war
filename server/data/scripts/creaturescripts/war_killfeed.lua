@@ -26,9 +26,18 @@ local killStreaks = {}
 local STREAK_WINDOW_SECS = 120  -- janela de 2 min para contar streak
 
 function WarKillfeed.getTeamName(player)
-    local guild = player:getGuild()
-    if not guild then return "Sem Time" end
-    return TEAM_NAME[guild:getId()] or guild:getName()
+    local teamId = WarCurrentTeam and WarCurrentTeam[player:getId()]
+    if not teamId then
+        local res = db.storeQuery(string.format(
+            "SELECT `guild_id` FROM `guild_membership` WHERE `player_id` = %d LIMIT 1",
+            player:getGuid()
+        ))
+        if not res then return "Sem Time" end
+        teamId = result.getNumber(res, "guild_id")
+        result.free(res)
+        if not teamId or teamId == 0 then return "Sem Time" end
+    end
+    return TEAM_NAME[teamId] or ("Time " .. teamId)
 end
 
 -- ─── Atualizar e verificar streak ────────────────────────────

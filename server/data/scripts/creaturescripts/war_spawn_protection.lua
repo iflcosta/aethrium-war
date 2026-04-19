@@ -6,6 +6,7 @@ WarSpawnProtection = {}  -- [playerId] = true
 
 local PROTECT_MS      = 5000
 local EFFECT_INTERVAL = 600
+local MOVE_POLL_MS    = 200   -- intervalo de checagem de movimento
 local EFFECT_TYPE     = CONST_ME_MAGIC_BLUE
 
 local function pulseEffect(cid)
@@ -28,13 +29,32 @@ local function expireProtection(cid)
     end
 end
 
+-- Polling de movimento: compara posição atual com a do spawn
+local function watchMovement(cid, ox, oy, oz)
+    if not WarSpawnProtection[cid] then return end
+    local p = Player(cid)
+    if not p then
+        WarSpawnProtection[cid] = nil
+        return
+    end
+    local pos = p:getPosition()
+    if pos.x ~= ox or pos.y ~= oy or pos.z ~= oz then
+        WarSpawnProtection[cid] = nil
+        p:sendTextMessage(MESSAGE_STATUS_SMALL, "[ Proteção de spawn removida (você se moveu). ]")
+        return
+    end
+    addEvent(watchMovement, MOVE_POLL_MS, cid, ox, oy, oz)
+end
+
 -- Ativa 5s de invulnerabilidade com efeito visual pulsante.
 function applySpawnProtection(player)
     if not player or not player:isPlayer() then return end
     if player:getGroup():getId() >= 4 then return end
     local cid = player:getId()
+    local pos = player:getPosition()
     WarSpawnProtection[cid] = true
     pulseEffect(cid)
+    addEvent(watchMovement, MOVE_POLL_MS, cid, pos.x, pos.y, pos.z)
     addEvent(expireProtection, PROTECT_MS, cid)
     player:sendTextMessage(MESSAGE_STATUS_SMALL, "[ Proteção de spawn ativa por 5 segundos. ]")
 end
@@ -57,19 +77,3 @@ function hcEvent.onHealthChange(creature, attacker, primaryDamage, primaryType, 
 end
 hcEvent:type("healthchange")
 hcEvent:register()
-
--- ─── Quebra proteção ao mover ────────────────────────────────
-
-local moveEvent = CreatureEvent("WarSpawnProtectMove")
-function moveEvent.onMove(creature, oldPos, newPos)
-    if creature:isPlayer() then
-        local cid = creature:getId()
-        if WarSpawnProtection[cid] then
-            WarSpawnProtection[cid] = nil
-            creature:sendTextMessage(MESSAGE_STATUS_SMALL, "[ Proteção de spawn removida (você se moveu). ]")
-        end
-    end
-    return true
-end
-moveEvent:type("move")
-moveEvent:register()

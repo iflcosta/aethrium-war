@@ -1,31 +1,84 @@
 -- ============================================================
 --  Aethrium War — Sistema de Spawn Dinâmico (CS2 Deathmatch)
+--  Três arenas no mapa aethrium-war.otbm: Thais, Venore, Edron
 -- ============================================================
 
--- Zonas de spawn por população — coordenadas a definir após mapeamento do mapa
+WAR_CURRENT_MAP = 1  -- índice da arena ativa; atualizado pela rotação
+
+-- Spawn points por arena e por zona de população.
 -- center: sempre ativo
 -- mid:    ativo com >= 6 players online
 -- edge:   ativo com >= 12 players online
-WAR_SPAWN_ZONES = {
-    center = {
-        { x = 1000, y = 1000, z = 7 },  -- TODO: substituir pelas coordenadas reais do mapa
-        { x = 1005, y = 1000, z = 7 },
-        { x = 1000, y = 1005, z = 7 },
-        { x = 1005, y = 1005, z = 7 },
-        { x = 1002, y = 1002, z = 7 },
-        { x = 1003, y = 998,  z = 7 },
+-- TODO: substituir offsets placeholder pelas coordenadas reais após mapeamento
+WAR_MAPS = {
+    [1] = {
+        name = "Thais",
+        center = {
+            { x = 1024, y = 633, z = 7 },
+            { x = 1030, y = 633, z = 7 },
+            { x = 1018, y = 633, z = 7 },
+            { x = 1024, y = 639, z = 7 },
+            { x = 1024, y = 627, z = 7 },
+            { x = 1030, y = 639, z = 7 },
+        },
+        mid = {
+            { x = 1038, y = 633, z = 7 },
+            { x = 1010, y = 633, z = 7 },
+            { x = 1024, y = 645, z = 7 },
+            { x = 1024, y = 621, z = 7 },
+        },
+        edge = {
+            { x = 1048, y = 633, z = 7 },
+            { x = 1000, y = 633, z = 7 },
+            { x = 1024, y = 653, z = 7 },
+            { x = 1024, y = 613, z = 7 },
+        },
     },
-    mid = {
-        { x = 990,  y = 990,  z = 7 },
-        { x = 1015, y = 990,  z = 7 },
-        { x = 990,  y = 1015, z = 7 },
-        { x = 1015, y = 1015, z = 7 },
+    [2] = {
+        name = "Venore",
+        center = {
+            { x = 1063, y = 607, z = 7 },
+            { x = 1069, y = 607, z = 7 },
+            { x = 1057, y = 607, z = 7 },
+            { x = 1063, y = 613, z = 7 },
+            { x = 1063, y = 601, z = 7 },
+            { x = 1069, y = 613, z = 7 },
+        },
+        mid = {
+            { x = 1077, y = 607, z = 7 },
+            { x = 1049, y = 607, z = 7 },
+            { x = 1063, y = 619, z = 7 },
+            { x = 1063, y = 595, z = 7 },
+        },
+        edge = {
+            { x = 1087, y = 607, z = 7 },
+            { x = 1039, y = 607, z = 7 },
+            { x = 1063, y = 629, z = 7 },
+            { x = 1063, y = 585, z = 7 },
+        },
     },
-    edge = {
-        { x = 975,  y = 975,  z = 7 },
-        { x = 1025, y = 975,  z = 7 },
-        { x = 975,  y = 1025, z = 7 },
-        { x = 1025, y = 1025, z = 7 },
+    [3] = {
+        name = "Edron",
+        center = {
+            { x = 1004, y = 574, z = 6 },
+            { x = 1010, y = 574, z = 6 },
+            { x =  998, y = 574, z = 6 },
+            { x = 1004, y = 580, z = 6 },
+            { x = 1004, y = 568, z = 6 },
+            { x = 1010, y = 580, z = 6 },
+        },
+        mid = {
+            { x = 1018, y = 574, z = 6 },
+            { x =  990, y = 574, z = 6 },
+            { x = 1004, y = 586, z = 6 },
+            { x = 1004, y = 562, z = 6 },
+        },
+        edge = {
+            { x = 1028, y = 574, z = 6 },
+            { x =  980, y = 574, z = 6 },
+            { x = 1004, y = 596, z = 6 },
+            { x = 1004, y = 552, z = 6 },
+        },
     },
 }
 
@@ -34,18 +87,22 @@ local POP_EDGE_THRESHOLD = 12
 local SPAWN_RADIUS       = 15
 
 local function getActiveSpawnPoints()
+    local map = WAR_MAPS[WAR_CURRENT_MAP]
+    if not map then map = WAR_MAPS[1] end
+
     local online = Game.getPlayerCount()
     local points = {}
-    for _, pos in ipairs(WAR_SPAWN_ZONES.center) do
+
+    for _, pos in ipairs(map.center) do
         table.insert(points, pos)
     end
-    if online >= POP_MID_THRESHOLD then
-        for _, pos in ipairs(WAR_SPAWN_ZONES.mid) do
+    if online >= POP_MID_THRESHOLD and map.mid then
+        for _, pos in ipairs(map.mid) do
             table.insert(points, pos)
         end
     end
-    if online >= POP_EDGE_THRESHOLD then
-        for _, pos in ipairs(WAR_SPAWN_ZONES.edge) do
+    if online >= POP_EDGE_THRESHOLD and map.edge then
+        for _, pos in ipairs(map.edge) do
             table.insert(points, pos)
         end
     end
@@ -77,10 +134,8 @@ local function scoreSpawnPoint(pos, playerTeamId)
         if creature:isPlayer() then
             local t = WarCurrentTeam and WarCurrentTeam[creature:getId()]
             if t then
-                if t == playerTeamId then
-                    allies = allies + 1
-                else
-                    enemies = enemies + 1
+                if t == playerTeamId then allies = allies + 1
+                else enemies = enemies + 1
                 end
             end
         end
@@ -119,7 +174,6 @@ function WarGetBestSpawnPoint(player)
         end
     end
 
-    -- Se todos os pontos têm score negativo, escolhe o de menor penalidade
     local chosen = (bestScore ~= nil and bestScore < 0) and leastPenPos or bestPos
     return Position(chosen.x, chosen.y, chosen.z)
 end
