@@ -5,7 +5,8 @@
 --  Comandos disponíveis para jogadores:
 --    !frags   — Placar atual de frags por time
 --    !online  — Jogadores online agrupados por time
---    !time    — Tempo restante para rotação (baseado em frags)
+--    !joinlow — Muda para o time com menos jogadores (Recompensa: 2 tokens)
+--    !streak  — Ver sua sequência atual de abates
 --    !help    — Lista de comandos da war
 -- ============================================================
 
@@ -23,6 +24,8 @@ local TEAM_INFO = {
 }
 
 local WAR_FRAG_GOAL = 100  -- deve coincidir com war_score_rotation.lua
+
+WAR_STREAK = 45202
 
 -- ─── Helpers ─────────────────────────────────────────────────
 
@@ -128,6 +131,114 @@ end
 onlineCmd:separator(" ")
 onlineCmd:register()
 
+-- ─── Comando: !joinlow ───────────────────────────────────────
+
+local joinLowCmd = TalkAction("!joinlow")
+
+function joinLowCmd.onSay(player, words, param)
+    if player:getGroup():getId() >= 4 then return false end
+    
+    local playerTeamId = getPlayerTeamId(player)
+    
+    -- 1. Identificar o time com menos jogadores ativos no campo
+    local activePlayers = Game.getPlayers()
+    local counts = { [1]=0, [2]=0, [3]=0, [4]=0, [5]=0, [6]=0, [7]=0 }
+    
+    for _, p in ipairs(activePlayers) do
+        if p:getGroup():getId() < 4 then
+            local tid = (WarCurrentTeam and WarCurrentTeam[p:getId()]) or getPlayerTeamId(p)
+            if tid and counts[tid] then
+                counts[tid] = counts[tid] + 1
+            end
+        end
+    end
+    
+    local lowestTeamId = 1
+    local lowestCount  = counts[1]
+    for tid = 2, 7 do
+        if counts[tid] < lowestCount then
+            lowestCount = counts[tid]
+            lowestTeamId = tid
+        end
+    end
+    
+    -- 2. Validar se já está no time mais baixo
+    if playerTeamId == lowestTeamId then
+        player:sendTextMessage(MESSAGE_STATUS_SMALL, "Você já está no time com menos jogadores.")
+        return false
+    end
+    
+    -- 3. Executar a mudança
+    -- Atualiza em memória
+    if WarCurrentTeam then
+        WarCurrentTeam[player:getId()] = lowestTeamId
+    end
+    
+    -- Atualiza no Banco de Dados (temporário nesta sessão, resetado no startup)
+    db.query(string.format(
+        "UPDATE `guild_membership` SET `guild_id` = %d WHERE `player_id` = %d",
+        lowestTeamId, player:getGuid()
+    ))
+    
+    -- 4. Recompensas e Efeitos
+    if addTokens then
+        addTokens(player, 2)
+    end
+    
+    local newTeamName = TEAM_INFO[lowestTeamId] and TEAM_INFO[lowestTeamId].name or "Time " .. lowestTeamId
+    player:sendTextMessage(MESSAGE_STATUS_CONSOLE_BLUE, 
+        string.format("[ Balanced ] Você mudou para o %s! Recompensa: 2 War Tokens.", newTeamName))
+    
+    -- Forçar atualização de outfit (guild colors)
+    player:sendTextMessage(MESSAGE_STATUS_SMALL, "Suas cores de time serão atualizadas no próximo spawn ou respawn.")
+    
+    -- Teleportar para o spawn para evitar abusos tácticos no meio da fight
+    local spawnPos = WarGetBestSpawnPoint and WarGetBestSpawnPoint(player) or player:getTown():getTemplePosition()
+    player:teleportTo(spawnPos)
+    spawnPos:sendMagicEffect(CONST_ME_TELEPORT)
+    
+    if applySpawnProtection then
+        applySpawnProtection(player)
+    end
+    
+    return false
+end
+
+joinLowCmd:separator(" ")
+joinLowCmd:register()
+
+-- ─── Comando: !streak ────────────────────────────────────────
+
+local streakCmd = TalkAction("!streak")
+
+function streakCmd.onSay(player, words, param)
+    local streak = math.max(0, player:getStorageValue(WAR_STREAK))
+    player:sendTextMessage(MESSAGE_STATUS_CONSOLE_BLUE, 
+        string.format("Sua sequencia atual e de %d abates sem morrer.", streak))
+    return false
+end
+
+streakCmd:separator(" ")
+streakCmd:register()
+
+-- ─── Atalho: !shop ───────────────────────────────────────────
+
+local shopCmd = TalkAction("!shop")
+
+function shopCmd.onSay(player, words, param)
+    -- Chama a lógica do !buy enviando param vazio para mostrar o menu
+    local buy = TalkAction("!buy")
+    if buy and buy.onSay then
+        return buy.onSay(player, "!buy", "")
+    end
+    -- Fallback caso a tentativa de chamar direto falhe
+    player:sendTextMessage(MESSAGE_STATUS_SMALL, "Use !buy para abrir a loja.")
+    return false
+end
+
+shopCmd:separator(" ")
+shopCmd:register()
+
 -- ─── Comando: !help (war) ────────────────────────────────────
 
 local helpCmd = TalkAction("!warhelp")
@@ -143,10 +254,12 @@ function helpCmd.onSay(player, words, param)
         "",
         "  !frags     — Placar de frags por time",
         "  !warteams  — Jogadores online por time",
+        "  !joinlow   — Mudar para o time com menos players (+2 tokens)",
+        "  !buy       — Loja de upgrades (stats/skills/tiers)",
         "  !warhelp   — Este menu",
         "",
-        "  Logins: 1/1=Antica  2/2=Nova  3/3=Secura",
-        "          4/4=Amera   5/5=Calmera  6/6=Hiberna  7/7=Harmonia",
+        "  Ganhos: 1 token por Kill | 0.5 por Assistencia",
+        "  Dica: Upgrades de !buy sao perdidos ao morrer!",
         "",
         string.format("  Meta do round: %d frags. Vença e a arena rotaciona!", WAR_FRAG_GOAL),
     }, "\n")

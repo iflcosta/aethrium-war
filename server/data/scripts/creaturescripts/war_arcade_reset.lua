@@ -10,6 +10,9 @@ local WAR_LEVEL = 250
 local L = WAR_LEVEL - 1
 local WAR_EXP = math.floor((50 * (L * L * L) - 150 * (L * L) + 400 * L) / 3)
 
+local WAR_XP      = 100000000
+local WAR_STREAK  = 45202
+
 local WAR_STATS = {
     -- Knight (Level 1-250: 3850 HP, 1245 Mana, 6520 Cap)
     [4] = { hp = 3850, mana = 1245, cap = 6520, ml = 10, defaultSkill = 120 },
@@ -240,7 +243,22 @@ function warDeath.onPrepareDeath(player, killer)
             WarPlayerKills[kid] = { name = realKiller:getName(), teamId = teamId, kills = 0 }
         end
         WarPlayerKills[kid].kills = WarPlayerKills[kid].kills + 1
+
+        -- [KILLSTREAK] Anúncios Globais
+        local streak = math.max(0, realKiller:getStorageValue(WAR_STREAK)) + 1
+        realKiller:setStorageValue(WAR_STREAK, streak)
+        
+        if streak == 3 then
+            Game.broadcastMessage(string.format("[KILLSTREAK] %s is on a Killing Spree! (3 abates)", realKiller:getName()), MESSAGE_STATUS_WARNING)
+        elseif streak == 5 then
+            Game.broadcastMessage(string.format("[KILLSTREAK] %s is on a Rampage! (5 abates)", realKiller:getName()), MESSAGE_STATUS_WARNING)
+        elseif streak == 10 then
+            Game.broadcastMessage(string.format("[KILLSTREAK] %s is GODLIKE! (10 abates)", realKiller:getName()), MESSAGE_STATUS_WARNING)
+        end
     end
+    
+    -- Reseta streak da vítima
+    player:setStorageValue(WAR_STREAK, 0)
     if addTokenFraction then
         local killerId = realKiller and realKiller:getId() or 0
         local damageMap = player:getDamageMap()
