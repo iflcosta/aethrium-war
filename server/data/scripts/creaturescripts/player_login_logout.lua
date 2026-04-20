@@ -67,7 +67,8 @@ function loginMessage.onLogin(player)
         end, 500, player:getId())
     end
 
-    player:openChannel(10)
+    player:openChannel(3) -- Guild Channel (Team Chat)
+    player:openChannel(10) -- Help/Loot Channel
 
     if configManager.getBoolean(RESET_SYSTEM_ENABLED) then
         local reductionMultiplier = player:getResetExpReduction()

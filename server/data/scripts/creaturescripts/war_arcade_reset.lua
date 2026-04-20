@@ -226,6 +226,13 @@ function warDeath.onPrepareDeath(player, killer)
     -- 2. Processamento Dinâmico de Kill
     -- [FRAG] Atualiza o placar das Guildas (usa o killer principal)
     if realKiller and realKiller:isPlayer() and realKiller:getId() ~= player:getId() then
+        -- Anti-Farm: Bloqueio por IP parm
+        if realKiller:getIp() == player:getIp() then
+            realKiller:sendTextMessage(MESSAGE_STATUS_SMALL, "[ Anti-Farm ] Abates no mesmo IP nao geram recompensas.")
+            player:setStorageValue(WAR_STREAK, 0)
+            return
+        end
+        
         updateWarScore(realKiller)
     end
 
@@ -255,6 +262,14 @@ function warDeath.onPrepareDeath(player, killer)
         elseif streak == 10 then
             Game.broadcastMessage(string.format("[KILLSTREAK] %s is GODLIKE! (10 abates)", realKiller:getName()), MESSAGE_STATUS_WARNING)
         end
+    end
+    
+    -- [SHUT DOWN] Recompensa por encerrar sequência inimiga
+    local victimStreak = math.max(0, player:getStorageValue(WAR_STREAK))
+    if realKiller and realKiller:isPlayer() and victimStreak >= 5 then
+        local bonus = 3
+        if addTokens then addTokens(realKiller, bonus) end
+        Game.broadcastMessage(string.format("SHUT DOWN! %s encerrou a sequencia de %d kills de %s! Recompensa: +%d tokens.", realKiller:getName(), victimStreak, player:getName(), bonus), MESSAGE_STATUS_WARNING)
     end
     
     -- Reseta streak da vítima

@@ -25,11 +25,19 @@ local TEAM_NAMES = {
 
 local function getTeamCounts()
     local counts = {}
+    local usedIps = {} -- [teamId] = { [ip] = true }
+
     for pid, tid in pairs(WarCurrentTeam) do
         if not WarLobbyPlayers[pid] then
             local p = Player(pid)
             if p and p:getGroup():getId() < 4 then
-                counts[tid] = (counts[tid] or 0) + 1
+                local ip = p:getIp()
+                usedIps[tid] = usedIps[tid] or {}
+                
+                if not usedIps[tid][ip] then
+                    counts[tid] = (counts[tid] or 0) + 1
+                    usedIps[tid][ip] = true
+                end
             else
                 WarCurrentTeam[pid] = nil
             end
