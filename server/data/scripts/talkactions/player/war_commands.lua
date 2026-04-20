@@ -7,7 +7,8 @@
 --    !online  — Jogadores online agrupados por time
 --    !joinlow — Muda para o time com menos jogadores (Recompensa: 2 tokens)
 --    !streak  — Ver sua sequência atual de abates
---    !help    — Lista de comandos da war
+--    !help    — Tutorial completo e funcionamento
+--    !commands — Lista rápida de comandos da war
 -- ============================================================
 
 -- ─── Mapeamento de Times ─────────────────────────────────────
@@ -239,34 +240,69 @@ end
 shopCmd:separator(" ")
 shopCmd:register()
 
--- ─── Comando: !help (war) ────────────────────────────────────
+-- ─── Comando: !help / !commands (Central) ─────────────────────
 
-local helpCmd = TalkAction("!warhelp")
+local helpCmd = TalkAction("!help")
+local commandsCmd = TalkAction("!commands")
 
-function helpCmd.onSay(player, words, param)
+local function sendUniversalHelp(player)
     local myTeamId   = getPlayerTeamId(player)
     local myTeamInfo = TEAM_INFO[myTeamId]
     local myTeam     = myTeamInfo and myTeamInfo.name or "Sem time"
 
-    local msg = table.concat({
-        "⚔ [=== AETHRIUM WAR — COMANDOS ===] ⚔",
-        string.format("  Seu time: %s", myTeam),
+    local lines = {
+        "⚔ [=== BEM-VINDO AO AETHRIUM WAR ===] ⚔",
         "",
-        "  !frags     — Placar de frags por time",
-        "  !warteams  — Jogadores online por time",
-        "  !joinlow   — Mudar para o time com menos players (+2 tokens)",
-        "  !buy       — Loja de upgrades (stats/skills/tiers)",
-        "  !warhelp   — Este menu",
+        "CONTEXTO DO SERVIDOR:",
+        "O Aethrium War e uma simulacao de guerra arcade entre as 7 Grandes Nacoes.",
+        "Nao ha RPG lento aqui: voce nasce pronto para a batalha!",
         "",
-        "  Ganhos: 1 token por Kill | 0.5 por Assistencia",
-        "  Dica: Upgrades de !buy sao perdidos ao morrer!",
+        "COMO FUNCIONA:",
+        "1. ROUNDS: Os mapas (Thais, Venore, Edron) rotacionam a cada 20 minutos.",
+        "2. TIMES: Sua conta (1-7) define seu time permanente.",
+        "3. ECONOMIA: Ganhe 1 Token por kill e 0.5 por assistencia.",
+        "4. UPGRADES: Use !buy para comprar Skills, ML e Tiers de Itens.",
+        "⚠️ IMPORTANTE: Upgrades da loja sao PERDIDOS ao morrer. Tokens nao.",
         "",
-        string.format("  Meta do round: %d frags. Vença e a arena rotaciona!", WAR_FRAG_GOAL),
-    }, "\n")
+        "LISTA DE COMANDOS:",
+        "  !frags     - Placar atual do round (Meta de vitoria)",
+        "  !warteams  - Jogadores online e seus times",
+        "  !buy / !shop - Abre a loja de tokens (Status temporarios)",
+        "  !streak    - Veja quantos abates voce fez sem morrer",
+        "  !joinlow   - Muda voce para o time mais precisado (+2 tokens)",
+        "  !commands  - Esta lista rapida de comandos",
+        "  !help      - Tutorial e funcionamento do servidor",
+        "",
+        "  Times: 1=Antica | 2=Nova | 3=Secura | 4=Amera",
+        "         5=Calmera | 6=Hiberna | 7=Harmonia",
+        "",
+        string.format("Seu Time: %s", myTeam:upper()),
+    }
 
-    player:sendTextMessage(MESSAGE_STATUS_CONSOLE_BLUE, msg)
+    player:sendTextMessage(MESSAGE_STATUS_CONSOLE_BLUE, table.concat(lines, "\n"))
+end
+
+function helpCmd.onSay(player, words, param)
+    sendUniversalHelp(player)
+    return false
+end
+
+function commandsCmd.onSay(player, words, param)
+    sendUniversalHelp(player)
     return false
 end
 
 helpCmd:separator(" ")
 helpCmd:register()
+
+commandsCmd:separator(" ")
+commandsCmd:register()
+
+-- Manter !warhelp como alias legado
+local warHelpAlias = TalkAction("!warhelp")
+function warHelpAlias.onSay(player, words, param)
+    sendUniversalHelp(player)
+    return false
+end
+warHelpAlias:separator(" ")
+warHelpAlias:register()
