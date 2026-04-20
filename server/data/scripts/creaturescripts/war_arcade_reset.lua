@@ -13,6 +13,8 @@ local WAR_EXP = math.floor((50 * (L * L * L) - 150 * (L * L) + 400 * L) / 3)
 local WAR_XP      = 100000000
 local WAR_STREAK  = 45202
 
+WAR_FIRST_BLOOD_DONE = false
+
 local WAR_STATS = {
     -- Knight (Level 1-250: 3850 HP, 1245 Mana, 6520 Cap)
     [4] = { hp = 3850, mana = 1245, cap = 6520, ml = 10, defaultSkill = 120 },
@@ -239,6 +241,13 @@ function warDeath.onPrepareDeath(player, killer)
     -- [TOKENS] Killer ganha 1 token; assistências ganham 1 fração (2 = 1 token)
     if addTokens and realKiller and realKiller:isPlayer() and realKiller:getId() ~= player:getId() then
         addTokens(realKiller, 1)
+        
+        -- [FIRST BLOOD] Bônus para o primeiro abate do round
+        if not WAR_FIRST_BLOOD_DONE then
+            WAR_FIRST_BLOOD_DONE = true
+            addTokens(realKiller, 1) -- +1 token bônus (total 2)
+            Game.broadcastMessage(string.format("FIRST BLOOD! %s derramou o primeiro sangue de %s!", realKiller:getName(), player:getName()), MESSAGE_STATUS_WARNING)
+        end
     end
 
     -- [MVP] Tracking de kills por player durante o round (em memória, reseta na rotação)

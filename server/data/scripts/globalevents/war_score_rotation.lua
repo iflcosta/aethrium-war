@@ -73,6 +73,9 @@ local function executeRotation()
     if isRotating then return end
     isRotating = true
 
+    -- Reseta First Blood para o novo round
+    WAR_FIRST_BLOOD_DONE = false
+
     -- 1. Busca time vencedor do round pelo placar atual
     db.asyncStoreQuery(
         "SELECT g.`id`, g.`name`, IFNULL(SUM(ws.`frags`), 0) AS total " ..
