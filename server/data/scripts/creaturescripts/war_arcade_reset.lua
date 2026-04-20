@@ -102,10 +102,8 @@ function resetPlayerToArcadeState(player)
         local diff = baseSkill - player:getSkillLevel(sk)
         if diff ~= 0 then player:addSkillLevel(sk, diff) end
     end
-    if SKILL_MAGLEVEL then
-        local diff = targetStats.ml - player:getMagicLevel()
-        if diff ~= 0 then player:addSkillLevel(SKILL_MAGLEVEL, diff) end
-    end
+    local mlDiff = targetStats.ml - player:getMagicLevel()
+    if mlDiff ~= 0 then player:addMagicLevel(mlDiff) end
 
     -- Limpa conditions adversas e skulls temporárias
     player:removeCondition(CONDITION_INFIGHT)
@@ -161,6 +159,9 @@ function warLogin.onLogin(player)
     -- ─── Registro de Eventos Críticos ──────────────────────────
     player:registerEvent("WarArcadeDeath")
     player:registerEvent("WarKillfeed")
+    player:registerEvent("WarSpawnProtectDamage")
+    player:registerEvent("WarManaChange")
+    player:registerEvent("WarMomentumMelee")
 
     -- Liberação massiva de Addons para todos os outfits (8.60)
     if player:getStorageValue(88888) ~= 1 then
@@ -265,6 +266,11 @@ function warDeath.onPrepareDeath(player, killer)
     
     -- 3. Aplica o reset de guerra instantâneo (Restore HP/Mana/Skills)
     resetPlayerToArcadeState(player)
+
+    -- Proteção imediata: evita dano durante os 2s de espera antes do teleporte
+    if WarSpawnProtection then
+        WarSpawnProtection[player:getId()] = true
+    end
 
     -- 4. Respawn dinâmico com 2s de delay (estilo CS2 Deathmatch)
     local pid = player:getId()

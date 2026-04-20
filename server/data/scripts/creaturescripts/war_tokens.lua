@@ -1,11 +1,18 @@
 -- ============================================================
---  Aethrium War — War Tokens + Combat Modifiers (Crit/Dodge)
+--  Aethrium War — War Tokens
 -- ============================================================
 
-WAR_TOKENS          = 45200  -- tokens inteiros
-WAR_TOKEN_FRACTIONS = 45201  -- frações: 0 ou 1; ao chegar em 2 vira 1 token
-WAR_CRIT_CHANCE     = 45210  -- % de chance de critical hit
-WAR_DODGE_CHANCE    = 45211  -- % de chance de esquivar
+WAR_TOKENS          = 45200
+WAR_TOKEN_FRACTIONS = 45201
+
+local NATIVE_SPECIAL_SKILLS = {
+    SPECIALSKILL_CRITICALHITCHANCE,
+    SPECIALSKILL_CRITICALHITAMOUNT,
+    SPECIALSKILL_LIFELEECHCHANCE,
+    SPECIALSKILL_LIFELEECHAMOUNT,
+    SPECIALSKILL_MANALEECHCHANCE,
+    SPECIALSKILL_MANALEECHAMOUNT,
+}
 
 -- ─── Helpers de Token ────────────────────────────────────────
 
@@ -29,7 +36,6 @@ function spendTokens(player, amount)
     return true
 end
 
--- Assistência: 2 frações = 1 token
 function addTokenFraction(player)
     local fracs = player:getStorageValue(WAR_TOKEN_FRACTIONS)
     if fracs < 0 then fracs = 0 end
@@ -43,44 +49,18 @@ function addTokenFraction(player)
     end
 end
 
--- Chamado em resetPlayerToArcadeState: zera tudo ao morrer
+-- Zera tokens e special skills nativas ao morrer.
+-- Tier-based items (dodge/fatal/momentum/transcendence) resetam via restoreWarItems.
 function resetTokensOnDeath(player)
     player:setStorageValue(WAR_TOKENS, 0)
     player:setStorageValue(WAR_TOKEN_FRACTIONS, 0)
-    player:setStorageValue(WAR_CRIT_CHANCE, 0)
-    player:setStorageValue(WAR_DODGE_CHANCE, 0)
-end
-
--- ─── Combat Modifiers: Crit e Dodge via healthchange ─────────
-
-local combatMod = CreatureEvent("WarCombatModifiers")
-function combatMod.onHealthChange(creature, attacker, primaryDamage, primaryType, secondaryDamage, secondaryType, origin)
-    if primaryDamage <= 0 then
-        return primaryDamage, primaryType, secondaryDamage, secondaryType
-    end
-
-    -- Dodge: receiver esquiva do dano
-    if creature:isPlayer() then
-        local dodge = creature:getStorageValue(WAR_DODGE_CHANCE)
-        if dodge > 0 and math.random(100) <= dodge then
-            creature:getPosition():sendMagicEffect(CONST_ME_POFF)
-            creature:sendTextMessage(MESSAGE_STATUS_SMALL, "[ Esquivou! ]")
-            return 0, primaryType, 0, secondaryType
+    for _, skill in ipairs(NATIVE_SPECIAL_SKILLS) do
+        local current = player:getSpecialSkill(skill)
+        if current and current > 0 then
+            player:addSpecialSkill(skill, -current)
         end
     end
-
-    -- Critical: attacker aplica +50% de dano
-    if attacker and attacker:isPlayer() then
-        local crit = attacker:getStorageValue(WAR_CRIT_CHANCE)
-        if crit > 0 and math.random(100) <= crit then
-            local bonus = math.floor(primaryDamage * 0.5)
-            attacker:getPosition():sendMagicEffect(CONST_ME_MAGIC_BLUE)
-            attacker:sendTextMessage(MESSAGE_STATUS_SMALL, "[ Critical Hit! ]")
-            return primaryDamage + bonus, primaryType, secondaryDamage, secondaryType
-        end
-    end
-
-    return primaryDamage, primaryType, secondaryDamage, secondaryType
+    -- Momentum e Transcendence (storage-based)
+    if WAR_MOMENTUM      then player:setStorageValue(WAR_MOMENTUM, 0) end
+    if WAR_TRANSCENDENCE then player:setStorageValue(WAR_TRANSCENDENCE, 0) end
 end
-combatMod:type("healthchange")
-combatMod:register()

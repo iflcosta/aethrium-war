@@ -6,7 +6,7 @@ WarCurrentTeam  = {}  -- [playerId] = teamId  (runtime; limpo no logout)
 WarLobbyPlayers = {}  -- [playerId] = true
 
 -- Coordenadas do lobby (área neutra, sem PvP) — substituir após mapeamento
-WAR_LOBBY_POS = { x = 1024, y = 633, z = 7 }  -- placeholder: templo padrão
+WAR_LOBBY_POS = { x = 155, y = 433, z = 7 }
 
 local WAR_MAX_DIFF             = 2
 local WAR_LOBBY_CHECK_INTERVAL = 5000

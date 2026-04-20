@@ -1,131 +1,147 @@
--- Mapeamento de itens por vocação BASE (1-4, 9)
--- Vocs promovidas (5-8, 10) são mapeadas para a base automaticamente
+-- ============================================================
+--  Aethrium War — First Items & Restore
+-- ============================================================
+
 local WAR_ITEMS = {
-	[VOCATION.ID.SORCERER] = {
-		items = {
-			{ 8072, 1 }, -- spellbook of enlightenment
-			{ 8092, 1 }, -- wand of starstorm
-			{ 8043, 1 }, -- focus cape
-			{ 3210, 1 }, -- hat of the mad
-			{ 645,  1 }, -- blue legs
-			{ 3079, 1 }, -- boots of haste
-			{ 3055, 1 }, -- platinum amulet
-		},
-		container = {
-			{ 3155, 100 }, -- sd
-			{ 3160, 100 }, -- uh
-			{ 238,  100 }, -- great mana potion
-			{ 3003,   1 }, -- rope
-			{ 5710,   1 }, -- light shovel
-		},
-	},
+    -- ─── Sorcerer ────────────────────────────────────────────
+    [VOCATION.ID.SORCERER] = {
+        items = {
+            { 3071, 1 }, -- wand of inferno
+            { 8072, 1 }, -- spellbook of enlightenment
+            { 3381, 1 }, -- crown armor
+            { 3385, 1 }, -- crown helmet
+            { 3382, 1 }, -- crown legs
+            { 3079, 1 }, -- boots of haste
+            { 3055, 1 }, -- platinum amulet
+        },
+        container = {
+            { 3155, 100 }, -- sudden death rune
+            { 3160,  50 }, -- ultimate healing rune
+            { 3191,  50 }, -- great fireball rune
+            { 3149,  50 }, -- energy bomb rune
+            { 3175,  50 }, -- stone shower rune
+            { 3198,  50 }, -- heavy magic missile rune
+            { 23373, 50 }, -- ultimate mana potion
+        },
+    },
 
-	[VOCATION.ID.DRUID] = {
-		items = {
-			{ 8072, 1 }, -- spellbook of enlightenment
-			{ 8082, 1 }, -- rod of underworld
-			{ 8043, 1 }, -- focus cape
-			{ 3210, 1 }, -- hat of the mad
-			{ 645,  1 }, -- blue legs
-			{ 3079, 1 }, -- boots of haste
-			{ 3055, 1 }, -- platinum amulet
-		},
-		container = {
-			{ 3155, 100 }, -- sd
-			{ 3160, 100 }, -- uh
-			{ 238,  100 }, -- great mana potion
-			{ 3003,   1 }, -- rope
-			{ 5710,   1 }, -- light shovel
-		},
-	},
+    -- ─── Druid ───────────────────────────────────────────────
+    [VOCATION.ID.DRUID] = {
+        items = {
+            { 3067, 1 }, -- hailstorm rod
+            { 8072, 1 }, -- spellbook of enlightenment
+            { 3381, 1 }, -- crown armor
+            { 3385, 1 }, -- crown helmet
+            { 3382, 1 }, -- crown legs
+            { 3079, 1 }, -- boots of haste
+            { 3055, 1 }, -- platinum amulet
+        },
+        container = {
+            { 3160, 100 }, -- ultimate healing rune
+            { 3155,  50 }, -- sudden death rune
+            { 3161,  50 }, -- avalanche rune
+            { 3165,  50 }, -- paralyze rune
+            { 3156,  50 }, -- wild growth rune
+            { 3175,  30 }, -- stone shower rune
+            { 23373, 50 }, -- ultimate mana potion
+        },
+    },
 
-	[VOCATION.ID.PALADIN] = {
-		items = {
-			{ 3414,  1 }, -- mastermind shield
-			{ 7378,  1 }, -- royal spear
-			{ 8063,  1 }, -- paladin armor
-			{ 10385, 1 }, -- zaoan helmet
-			{ 645,   1 }, -- blue legs
-			{ 3079,  1 }, -- boots of haste
-			{ 3055,  1 }, -- platinum amulet
-		},
-		container = {
-			{ 3155, 100 }, -- sd
-			{ 3160, 100 }, -- uh
-			{ 238,  100 }, -- great mana potion
-			{ 3003,   1 }, -- rope
-			{ 5710,   1 }, -- light shovel
-		},
-	},
+    -- ─── Paladin ─────────────────────────────────────────────
+    [VOCATION.ID.PALADIN] = {
+        items = {
+            { 5803,  1 }, -- arbalest
+            { 3414,  1 }, -- mastermind shield
+            { 3366,  1 }, -- magic plate armor
+            { 3387,  1 }, -- demon helmet
+            { 3364,  1 }, -- golden legs
+            { 3079,  1 }, -- boots of haste
+            { 3055,  1 }, -- platinum amulet
+        },
+        container = {
+            { 6528,  500 }, -- infernal bolt
+            { 3155,  100 }, -- sudden death rune
+            { 3160,  100 }, -- ultimate healing rune
+            { 3200,   50 }, -- explosion rune
+            { 3165,   50 }, -- paralyze rune
+            { 23374,  50 }, -- ultimate spirit potion
+        },
+    },
 
-	[VOCATION.ID.KNIGHT] = {
-		items = {
-			{ 3414,  1 }, -- mastermind shield
-			{ 7383,  1 }, -- relic sword
-			{ 3386,  1 }, -- dragon scale mail
-			{ 10385, 1 }, -- zaoan helmet
-			{ 10387, 1 }, -- zaoan legs
-			{ 3079,  1 }, -- boots of haste
-			{ 3055,  1 }, -- platinum amulet
-		},
-		container = {
-			{ 3155, 100 }, -- sd
-			{ 3160, 100 }, -- uh
-			{ 239,  100 }, -- great health potion
-			{ 3003,   1 }, -- rope
-			{ 5710,   1 }, -- light shovel
-		},
-	},
+    -- ─── Knight ──────────────────────────────────────────────
+    [VOCATION.ID.KNIGHT] = {
+        items = {
+            { 3288,  1 }, -- magic sword (equipada por padrão)
+            { 3414,  1 }, -- mastermind shield
+            { 3366,  1 }, -- magic plate armor
+            { 3387,  1 }, -- demon helmet
+            { 3364,  1 }, -- golden legs
+            { 3079,  1 }, -- boots of haste
+            { 3055,  1 }, -- platinum amulet
+        },
+        container = {
+            { 3319,   1 }, -- stonecutter axe
+            { 3309,   1 }, -- thunder hammer
+            { 3155, 100 }, -- sudden death rune
+            { 3160, 100 }, -- ultimate healing rune
+            { 3200, 100 }, -- explosion rune
+            { 3198,  50 }, -- heavy magic missile rune
+            { 7643,  50 }, -- ultimate health potion
+            { 239,   50 }, -- great health potion
+        },
+    },
 }
 
--- Mapeia voc promovida para voc base (5→1, 6→2, 7→3, 8→4, 10→9)
+-- ─── Helpers ─────────────────────────────────────────────────
+
 local function getBaseVocId(vocId)
-	if vocId >= 5 and vocId <= 8 then
-		return vocId - 4
-	elseif vocId == 10 then
-		return 9
-	end
-	return vocId
+    if vocId >= 5 and vocId <= 8 then return vocId - 4 end
+    if vocId == 10 then return 9 end
+    return vocId
 end
 
 local function clearPlayerItems(player)
-	for slot = 1, 10 do
-		local item = player:getSlotItem(slot)
-		if item then item:remove() end
-	end
-	-- Remove a backpack principal (slot 3 = CONST_SLOT_BACKPACK)
-	local bp = player:getSlotItem(3)
-	if bp then bp:remove() end
+    for slot = 1, 10 do
+        local item = player:getSlotItem(slot)
+        if item then item:remove() end
+    end
+    local bp = player:getSlotItem(CONST_SLOT_BACKPACK)
+    if bp then bp:remove() end
 end
 
--- Função global: pode ser chamada no reset de morte também
+-- ─── API Global ───────────────────────────────────────────────
+
 function restoreWarItems(player)
-	if not player or not player:isPlayer() then return end
-	if player:getGroup():getId() >= 4 then return end -- ignora GODs
+    if not player or not player:isPlayer() then return end
+    if player:getGroup():getId() >= 4 then return end
 
-	local baseVocId = getBaseVocId(player:getVocation():getId())
-	local cfg = WAR_ITEMS[baseVocId]
-	if not cfg then return end
+    local baseVocId = getBaseVocId(player:getVocation():getId())
+    local cfg = WAR_ITEMS[baseVocId]
+    if not cfg then return end
 
-	clearPlayerItems(player)
+    clearPlayerItems(player)
 
-	if cfg.items then
-		for _, entry in ipairs(cfg.items) do
-			player:addItem(entry[1], entry[2])
-		end
-	end
+    -- Equipamento fixo
+    if cfg.items then
+        for _, entry in ipairs(cfg.items) do
+            player:addItem(entry[1], entry[2])
+        end
+    end
 
-	local backpack = player:addItem(2854, 1) or player:addItem(1987, 1)
-	if backpack and cfg.container then
-		for _, entry in ipairs(cfg.container) do
-			backpack:addItem(entry[1], entry[2])
-		end
-	end
+    -- Backpack com consumíveis
+    local backpack = player:addItem(2854, 1) or player:addItem(1987, 1)
+    if backpack and cfg.container then
+        for _, entry in ipairs(cfg.container) do
+            backpack:addItem(entry[1], entry[2])
+        end
+    end
 end
+
+-- ─── Evento ──────────────────────────────────────────────────
 
 local firstItems = CreatureEvent("FirstItems")
 function firstItems.onLogin(player)
-	restoreWarItems(player)
-	return true
+    restoreWarItems(player)
+    return true
 end
 firstItems:register()

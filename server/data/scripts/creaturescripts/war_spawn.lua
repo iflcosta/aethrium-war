@@ -4,6 +4,7 @@
 -- ============================================================
 
 WAR_CURRENT_MAP = 1  -- índice da arena ativa; atualizado pela rotação
+WAR_DEBUG_FIXED_SPAWN = true  -- true = spawn fixo no primeiro ponto (para testes)
 
 -- Spawn points por arena e por zona de população.
 -- center: sempre ativo
@@ -14,70 +15,78 @@ WAR_MAPS = {
     [1] = {
         name = "Thais",
         center = {
-            { x = 1024, y = 633, z = 7 },
-            { x = 1030, y = 633, z = 7 },
-            { x = 1018, y = 633, z = 7 },
-            { x = 1024, y = 639, z = 7 },
-            { x = 1024, y = 627, z = 7 },
-            { x = 1030, y = 639, z = 7 },
+            { x = 173, y = 221, z = 7 },
+            { x = 190, y = 212, z = 7 },
+            { x = 153, y = 212, z = 7 },
+            { x = 174, y = 192, z = 7 },
+            { x = 216, y = 213, z = 7 },
+            { x = 133, y = 214, z = 7 },
+            { x = 142, y = 236, z = 7 },
+            { x = 230, y = 199, z = 7 },
         },
         mid = {
-            { x = 1038, y = 633, z = 7 },
-            { x = 1010, y = 633, z = 7 },
-            { x = 1024, y = 645, z = 7 },
-            { x = 1024, y = 621, z = 7 },
+            { x = 229, y = 242, z = 7 },
+            { x = 229, y = 258, z = 7 },
+            { x = 207, y = 252, z = 7 },
+            { x = 185, y = 249, z = 7 },
+            { x = 156, y = 249, z = 7 },
+            { x = 128, y = 246, z = 7 },
         },
         edge = {
-            { x = 1048, y = 633, z = 7 },
-            { x = 1000, y = 633, z = 7 },
-            { x = 1024, y = 653, z = 7 },
-            { x = 1024, y = 613, z = 7 },
+            { x = 172, y = 187, z = 7 },
+            { x = 200, y = 180, z = 7 },
+            { x = 230, y = 179, z = 7 },
+            { x = 173, y = 177, z = 7 },
+            { x = 193, y = 230, z = 7 },
         },
     },
     [2] = {
         name = "Venore",
         center = {
-            { x = 1063, y = 607, z = 7 },
-            { x = 1069, y = 607, z = 7 },
-            { x = 1057, y = 607, z = 7 },
-            { x = 1063, y = 613, z = 7 },
-            { x = 1063, y = 601, z = 7 },
-            { x = 1069, y = 613, z = 7 },
+            { x = 613, y = 157, z = 6 },
+            { x = 615, y = 143, z = 6 },
+            { x = 614, y = 175, z = 6 },
+            { x = 595, y = 158, z = 6 },
+            { x = 623, y = 189, z = 6 },
         },
         mid = {
-            { x = 1077, y = 607, z = 7 },
-            { x = 1049, y = 607, z = 7 },
-            { x = 1063, y = 619, z = 7 },
-            { x = 1063, y = 595, z = 7 },
+            { x = 658, y = 159, z = 6 },
+            { x = 580, y = 141, z = 6 },
+            { x = 592, y = 139, z = 6 },
+            { x = 595, y = 182, z = 6 },
+            { x = 597, y = 208, z = 6 },
         },
         edge = {
-            { x = 1087, y = 607, z = 7 },
-            { x = 1039, y = 607, z = 7 },
-            { x = 1063, y = 629, z = 7 },
-            { x = 1063, y = 585, z = 7 },
+            { x = 597, y = 219, z = 6 },
+            { x = 559, y = 215, z = 6 },
+            { x = 534, y = 212, z = 6 },
+            { x = 558, y = 126, z = 6 },
+            { x = 668, y = 125, z = 6 },
+            { x = 614, y = 212, z = 6 },
         },
     },
     [3] = {
         name = "Edron",
         center = {
-            { x = 1004, y = 574, z = 6 },
-            { x = 1010, y = 574, z = 6 },
-            { x =  998, y = 574, z = 6 },
-            { x = 1004, y = 580, z = 6 },
-            { x = 1004, y = 568, z = 6 },
-            { x = 1010, y = 580, z = 6 },
+            { x = 1064, y = 260, z = 7 },
+            { x = 1048, y = 249, z = 7 },
+            { x = 1043, y = 283, z = 7 },
+            { x = 1031, y = 293, z = 7 },
+            { x = 1060, y = 305, z = 7 },
         },
         mid = {
-            { x = 1018, y = 574, z = 6 },
-            { x =  990, y = 574, z = 6 },
-            { x = 1004, y = 586, z = 6 },
-            { x = 1004, y = 562, z = 6 },
+            { x = 1080, y = 306, z = 7 },
+            { x = 1086, y = 284, z = 7 },
+            { x = 1099, y = 296, z = 7 },
+            { x = 1087, y = 337, z = 7 },
+            { x = 1093, y = 263, z = 7 },
         },
         edge = {
-            { x = 1028, y = 574, z = 6 },
-            { x =  980, y = 574, z = 6 },
-            { x = 1004, y = 596, z = 6 },
-            { x = 1004, y = 552, z = 6 },
+            { x = 1110, y = 247, z = 7 },
+            { x = 1131, y = 238, z = 7 },
+            { x = 1145, y = 214, z = 7 },
+            { x = 1179, y = 227, z = 7 },
+            { x = 1144, y = 192, z = 7 },
         },
     },
 }
@@ -149,30 +158,41 @@ end
 
 -- Retorna a melhor Position de spawn para o player dado.
 function WarGetBestSpawnPoint(player)
+    if WAR_DEBUG_FIXED_SPAWN then
+        local map = WAR_MAPS[WAR_CURRENT_MAP]
+        if map and map.center and map.center[1] then
+            return Position(map.center[1].x, map.center[1].y, map.center[1].z)
+        end
+    end
     local teamId = getPlayerTeamId(player)
     local points = getActiveSpawnPoints()
 
     if #points == 0 then
         local town = player:getTown()
-        return town and town:getTemplePosition() or Position(1024, 633, 7)
+        return town and town:getTemplePosition() or Position(173, 221, 7)
     end
 
-    local bestPos      = nil
     local bestScore    = nil
-    local leastPenPos  = nil
     local leastPenalty = math.huge
+    local bestCandidates = {}
+    local leastPenPos    = nil
 
     for _, pos in ipairs(points) do
         local score, penalty = scoreSpawnPoint(pos, teamId)
         if bestScore == nil or score > bestScore then
-            bestScore = score
-            bestPos   = pos
+            bestScore    = score
+            bestCandidates = { pos }
+        elseif score == bestScore then
+            table.insert(bestCandidates, pos)
         end
         if penalty < leastPenalty then
             leastPenalty = penalty
             leastPenPos  = pos
         end
     end
+
+    -- Empates quebrados aleatoriamente
+    local bestPos = bestCandidates[math.random(#bestCandidates)]
 
     local chosen = (bestScore ~= nil and bestScore < 0) and leastPenPos or bestPos
     return Position(chosen.x, chosen.y, chosen.z)
