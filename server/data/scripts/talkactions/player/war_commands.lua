@@ -227,13 +227,11 @@ streakCmd:register()
 local shopCmd = TalkAction("!shop")
 
 function shopCmd.onSay(player, words, param)
-    -- Chama a lógica do !buy enviando param vazio para mostrar o menu
-    local buy = TalkAction("!buy")
-    if buy and buy.onSay then
-        return buy.onSay(player, "!buy", "")
+    if showShop then
+        showShop(player)
+    else
+        player:sendTextMessage(MESSAGE_STATUS_SMALL, "Use !buy para abrir a loja.")
     end
-    -- Fallback caso a tentativa de chamar direto falhe
-    player:sendTextMessage(MESSAGE_STATUS_SMALL, "Use !buy para abrir a loja.")
     return false
 end
 

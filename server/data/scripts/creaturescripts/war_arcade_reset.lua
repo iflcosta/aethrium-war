@@ -175,7 +175,12 @@ function warLogin.onLogin(player)
         end
         player:setStorageValue(88888, 1)
     end
-    
+
+    -- Sistema de Lobby (balanceamento por time)
+    if checkWarLobbyOnLogin then
+        checkWarLobbyOnLogin(player)
+    end
+
     return true
 end
 warLogin:register()
@@ -260,17 +265,9 @@ function warDeath.onPrepareDeath(player, killer)
         end
         WarPlayerKills[kid].kills = WarPlayerKills[kid].kills + 1
 
-        -- [KILLSTREAK] Anúncios Globais
+        -- [KILLSTREAK] Atualiza streak (anúncios feitos pelo war_killfeed.lua)
         local streak = math.max(0, realKiller:getStorageValue(WAR_STREAK)) + 1
         realKiller:setStorageValue(WAR_STREAK, streak)
-        
-        if streak == 3 then
-            Game.broadcastMessage(string.format("[KILLSTREAK] %s is on a Killing Spree! (3 abates)", realKiller:getName()), MESSAGE_STATUS_WARNING)
-        elseif streak == 5 then
-            Game.broadcastMessage(string.format("[KILLSTREAK] %s is on a Rampage! (5 abates)", realKiller:getName()), MESSAGE_STATUS_WARNING)
-        elseif streak == 10 then
-            Game.broadcastMessage(string.format("[KILLSTREAK] %s is GODLIKE! (10 abates)", realKiller:getName()), MESSAGE_STATUS_WARNING)
-        end
     end
     
     -- [SHUT DOWN] Recompensa por encerrar sequência inimiga

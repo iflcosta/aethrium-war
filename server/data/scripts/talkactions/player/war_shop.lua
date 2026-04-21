@@ -132,7 +132,7 @@ local SHOP_ITEMS = {
 
 local SHOP_ORDER = { "skill", "ml", "crit", "critdmg", "lifeleech", "lifeleechamt", "manaleech", "manaleechamt", "dodge", "fatal", "momentum", "transcendence" }
 
-local function showShop(player)
+function showShop(player)
     local vocId = player:getVocation():getId()
     local armorTier  = (player:getSlotItem(CONST_SLOT_ARMOR)  and player:getSlotItem(CONST_SLOT_ARMOR):getTier())  or 0
     local weaponTier = (player:getSlotItem(CONST_SLOT_LEFT)   and player:getSlotItem(CONST_SLOT_LEFT):getTier())   or

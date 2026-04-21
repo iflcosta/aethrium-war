@@ -4,7 +4,7 @@
 -- ============================================================
 
 WAR_CURRENT_MAP = 1  -- índice da arena ativa; atualizado pela rotação
-WAR_DEBUG_FIXED_SPAWN = true  -- true = spawn fixo no primeiro ponto (para testes)
+WAR_DEBUG_FIXED_SPAWN = false
 
 -- Spawn points por arena e por zona de população.
 -- center: sempre ativo
