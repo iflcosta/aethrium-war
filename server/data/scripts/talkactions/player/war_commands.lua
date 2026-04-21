@@ -134,11 +134,24 @@ onlineCmd:register()
 
 -- ─── Comando: !joinlow ───────────────────────────────────────
 
+local WAR_JOINLOW_CD    = 45220          -- storage key do cooldown
+local WAR_JOINLOW_SECS  = 20 * 60       -- 1 round = 20 minutos
+
 local joinLowCmd = TalkAction("!joinlow")
 
 function joinLowCmd.onSay(player, words, param)
     if player:getGroup():getId() >= 4 then return false end
-    
+
+    -- Cooldown: 1 uso por round
+    local now = os.time()
+    local lastUse = player:getStorageValue(WAR_JOINLOW_CD)
+    if lastUse > 0 and (now - lastUse) < WAR_JOINLOW_SECS then
+        local remaining = WAR_JOINLOW_SECS - (now - lastUse)
+        player:sendTextMessage(MESSAGE_STATUS_SMALL,
+            string.format("!joinlow disponivel em %d minutos.", math.ceil(remaining / 60)))
+        return false
+    end
+
     local playerTeamId = getPlayerTeamId(player)
     
     -- 1. Identificar o time com menos jogadores ativos no campo
@@ -182,6 +195,7 @@ function joinLowCmd.onSay(player, words, param)
     ))
     
     -- 4. Recompensas e Efeitos
+    player:setStorageValue(WAR_JOINLOW_CD, os.time())
     if addTokens then
         addTokens(player, 2)
     end
