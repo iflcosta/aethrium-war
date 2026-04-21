@@ -2,8 +2,8 @@
 --  Aethrium War — Momentum & Transcendence
 -- ============================================================
 
-WAR_MOMENTUM      = 45202
-WAR_TRANSCENDENCE = 45203
+WAR_MOMENTUM      = 45204
+WAR_TRANSCENDENCE = 45205
 
 local MOMENTUM_MAX_TIERS      = 10  -- 10 * 2% = 20%
 local TRANSCENDENCE_MAX_TIERS = 5   -- 5 * 5% = 25%

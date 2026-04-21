@@ -232,7 +232,7 @@ function warDeath.onPrepareDeath(player, killer)
         if realKiller:getIp() == player:getIp() then
             realKiller:sendTextMessage(MESSAGE_STATUS_SMALL, "[ Anti-Farm ] Abates no mesmo IP nao geram recompensas.")
             player:setStorageValue(WAR_STREAK, 0)
-            return
+            return false
         end
         
         updateWarScore(realKiller)

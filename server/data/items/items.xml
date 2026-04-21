@@ -15915,6 +15915,7 @@
 	</item>
 	<item id="6528" article="an" name="infernal bolt">
 		<attribute key="weaponType" value="ammunition" />
+		<attribute key="slotType" value="ammo" />
 		<attribute key="ammotype" value="bolt" />
 		<attribute key="shootType" value="infernalbolt" />
 		<attribute key="maxhitchance" value="91" />
