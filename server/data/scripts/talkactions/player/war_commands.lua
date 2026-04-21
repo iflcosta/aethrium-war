@@ -132,95 +132,7 @@ end
 onlineCmd:separator(" ")
 onlineCmd:register()
 
--- ─── Comando: !joinlow ───────────────────────────────────────
-
-local WAR_JOINLOW_CD    = 45220          -- storage key do cooldown
-local WAR_JOINLOW_SECS  = 20 * 60       -- 1 round = 20 minutos
-
-local joinLowCmd = TalkAction("!joinlow")
-
-function joinLowCmd.onSay(player, words, param)
-    if player:getGroup():getId() >= 4 then return false end
-
-    -- Cooldown: 1 uso por round
-    local now = os.time()
-    local lastUse = player:getStorageValue(WAR_JOINLOW_CD)
-    if lastUse > 0 and (now - lastUse) < WAR_JOINLOW_SECS then
-        local remaining = WAR_JOINLOW_SECS - (now - lastUse)
-        player:sendTextMessage(MESSAGE_STATUS_SMALL,
-            string.format("!joinlow disponivel em %d minutos.", math.ceil(remaining / 60)))
-        return false
-    end
-
-    local playerTeamId = getPlayerTeamId(player)
-    
-    -- 1. Identificar o time com menos jogadores ativos no campo
-    local activePlayers = Game.getPlayers()
-    local counts = { [1]=0, [2]=0, [3]=0, [4]=0, [5]=0, [6]=0, [7]=0 }
-    
-    for _, p in ipairs(activePlayers) do
-        if p:getGroup():getId() < 4 then
-            local tid = (WarCurrentTeam and WarCurrentTeam[p:getId()]) or getPlayerTeamId(p)
-            if tid and counts[tid] then
-                counts[tid] = counts[tid] + 1
-            end
-        end
-    end
-    
-    local lowestTeamId = 1
-    local lowestCount  = counts[1]
-    for tid = 2, 7 do
-        if counts[tid] < lowestCount then
-            lowestCount = counts[tid]
-            lowestTeamId = tid
-        end
-    end
-    
-    -- 2. Validar se já está no time mais baixo
-    if playerTeamId == lowestTeamId then
-        player:sendTextMessage(MESSAGE_STATUS_SMALL, "Você já está no time com menos jogadores.")
-        return false
-    end
-    
-    -- 3. Executar a mudança
-    -- Atualiza em memória
-    if WarCurrentTeam then
-        WarCurrentTeam[player:getId()] = lowestTeamId
-    end
-    
-    -- Atualiza no Banco de Dados (temporário nesta sessão, resetado no startup)
-    db.query(string.format(
-        "UPDATE `guild_membership` SET `guild_id` = %d WHERE `player_id` = %d",
-        lowestTeamId, player:getGuid()
-    ))
-    
-    -- 4. Recompensas e Efeitos
-    player:setStorageValue(WAR_JOINLOW_CD, os.time())
-    if addTokens then
-        addTokens(player, 2)
-    end
-    
-    local newTeamName = TEAM_INFO[lowestTeamId] and TEAM_INFO[lowestTeamId].name or "Time " .. lowestTeamId
-    player:sendTextMessage(MESSAGE_STATUS_CONSOLE_BLUE, 
-        string.format("[ Balanced ] Você mudou para o %s! Recompensa: 2 War Tokens.", newTeamName))
-    
-    -- Forçar atualização de outfit (guild colors)
-    player:sendTextMessage(MESSAGE_STATUS_SMALL, "Suas cores de time serão atualizadas no próximo spawn ou respawn.")
-    
-    -- Teleportar para o spawn para evitar abusos tácticos no meio da fight
-    local spawnPos = WarGetBestSpawnPoint and WarGetBestSpawnPoint(player) or player:getTown():getTemplePosition()
-    player:teleportTo(spawnPos)
-    spawnPos:sendMagicEffect(CONST_ME_TELEPORT)
-    
-    if applySpawnProtection then
-        applySpawnProtection(player)
-    end
-    
-    return false
-end
-
-joinLowCmd:separator(" ")
-joinLowCmd:register()
+-- !joinlow desabilitado por enquanto
 
 -- ─── Comando: !streak ────────────────────────────────────────
 
@@ -281,7 +193,6 @@ local function sendUniversalHelp(player)
         "  !warteams  - Jogadores online e seus times",
         "  !buy / !shop - Abre a loja de tokens (Status temporarios)",
         "  !streak    - Veja quantos abates voce fez sem morrer",
-        "  !joinlow   - Muda voce para o time mais precisado (+2 tokens)",
         "  !commands  - Esta lista rapida de comandos",
         "  !help      - Tutorial e funcionamento do servidor",
         "",
