@@ -16,6 +16,7 @@ local WAR_ITEMS = {
             { 3055, 1 }, -- platinum amulet
         },
         container = {
+            { 3731, 300 }, -- fire mushroom (20min de food)
             { 3155, 1 }, -- sudden death rune
             { 3160, 1 }, -- ultimate healing rune
             { 3191, 1 }, -- great fireball rune
@@ -39,6 +40,7 @@ local WAR_ITEMS = {
             { 3055, 1 }, -- platinum amulet
         },
         container = {
+            { 3731, 300 }, -- fire mushroom (20min de food)
             { 3160, 1 }, -- ultimate healing rune
             { 3155, 1 }, -- sudden death rune
             { 3161, 1 }, -- avalanche rune
@@ -60,6 +62,7 @@ local WAR_ITEMS = {
             { 3055, 1 }, -- platinum amulet
         },
         container = {
+            { 3731, 300 }, -- fire mushroom (20min de food)
             { 5803, 1 }, -- arbalest (two-handed, equip para usar bolts sem shield)
             { 6528, 1 }, -- infernal bolt
             { 7368, 1 }, -- assassin star (usar na mao esquerda + shield na direita)
@@ -83,6 +86,7 @@ local WAR_ITEMS = {
             { 3055, 1 }, -- platinum amulet
         },
         container = {
+            { 3731, 300 }, -- fire mushroom (20min de food)
             { 3319,  1 }, -- stonecutter axe
             { 3309,  1 }, -- thunder hammer
             { 3155,  1 }, -- sudden death rune
