@@ -59,6 +59,17 @@ event.onLook = function(self, thing, position, distance, description)
 			end
 		end
 	end
+
+	-- [Aethrium War] Exibe o time de teste ativo, se aplicável
+	if thing:isPlayer() then
+		local teamId = WarCurrentTeam and WarCurrentTeam[thing:getId()]
+		if teamId and teamId >= 1 and teamId <= 3 then
+			local teamNames = { [1] = "Antica", [2] = "Nova", [3] = "Secura" }
+			local teamName = teamNames[teamId]
+			description = description .. "\n[ TIME ATIVO: " .. teamName .. " ]"
+		end
+	end
+
 	return description
 end
 event:register()

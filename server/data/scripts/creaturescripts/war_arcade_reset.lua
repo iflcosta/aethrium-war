@@ -137,11 +137,23 @@ end
 
 local warLogin = CreatureEvent("WarArcadeLogin")
 function warLogin.onLogin(player)
+    -- Ignora GODs e Administradores para evitar crashs/stats errados
+    if player:getGroup():getId() >= 4 then
+        return true
+    end
+
     resetPlayerToArcadeState(player)
     
     -- ─── Configuração de Outfit Inicial por Vocação ───────────
     local vocationId = player:getVocation():getId()
-    local isMale = player:getSex() == PLAYERSEX_MALE
+    local sex = player:getSex()
+    -- Debug removido, lógica atualizada para aceitar o valor 3 que o seu motor está retornando
+    if sex == 3 then 
+        player:setSex(1) 
+        sex = 1
+    end
+    
+    local isMale = (sex ~= 0) -- Tudo que não for 0 agora é considerado Homem
     local newLookType = nil
 
     if vocationId == 4 or vocationId == 8 then -- Knight
@@ -237,10 +249,9 @@ function warDeath.onPrepareDeath(player, killer)
         if realKiller:getIp() == player:getIp() then
             realKiller:sendTextMessage(MESSAGE_STATUS_SMALL, "[ Anti-Farm ] Abates no mesmo IP nao geram recompensas.")
             player:setStorageValue(WAR_STREAK, 0)
-            return false
+        else
+            updateWarScore(realKiller)
         end
-        
-        updateWarScore(realKiller)
     end
 
     -- [TOKENS] Killer ganha 1 token; assistências ganham 1 fração (2 = 1 token)
@@ -266,12 +277,13 @@ function warDeath.onPrepareDeath(player, killer)
         WarPlayerKills[kid].kills = WarPlayerKills[kid].kills + 1
 
         -- [KILLSTREAK] Atualiza streak (anúncios feitos pelo war_killfeed.lua)
-        local streak = math.max(0, realKiller:getStorageValue(WAR_STREAK)) + 1
+        local currentStreak = tonumber(realKiller:getStorageValue(WAR_STREAK)) or 0
+        local streak = math.max(0, currentStreak) + 1
         realKiller:setStorageValue(WAR_STREAK, streak)
     end
     
     -- [SHUT DOWN] Recompensa por encerrar sequência inimiga
-    local victimStreak = math.max(0, player:getStorageValue(WAR_STREAK))
+    local victimStreak = math.max(0, tonumber(player:getStorageValue(WAR_STREAK)) or 0)
     if realKiller and realKiller:isPlayer() and victimStreak >= 5 then
         local bonus = 3
         if addTokens then addTokens(realKiller, bonus) end

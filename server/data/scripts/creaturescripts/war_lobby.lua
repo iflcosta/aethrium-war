@@ -10,6 +10,7 @@ WAR_LOBBY_POS = { x = 155, y = 433, z = 7 }
 
 local WAR_MAX_DIFF             = 2
 local WAR_LOBBY_CHECK_INTERVAL = 5000
+local WAR_TEAM_STORAGE         = 45005 -- Storage para o time temporário (1, 2 ou 3)
 
 local TEAM_NAMES = {
     [1] = "Antica",
@@ -117,14 +118,29 @@ end
 -- ─── API pública ─────────────────────────────────────────────
 
 local function fetchTeamId(player)
+    -- Primeiro, verifica se o jogador já tem um time temporário atribuído por Storage
+    local storageTeam = player:getStorageValue(WAR_TEAM_STORAGE)
+    if storageTeam and storageTeam >= 1 and storageTeam <= 3 then
+        return storageTeam
+    end
+
+    -- Se não tiver storage, busca a guilda real no banco
     local res = db.storeQuery(string.format(
         "SELECT `guild_id` FROM `guild_membership` WHERE `player_id` = %d LIMIT 1",
         player:getGuid()
     ))
+    
     if not res then return nil end
     local guildId = result.getNumber(res, "guild_id")
     result.free(res)
-    return guildId > 0 and guildId or nil
+    
+    -- Se a guilda for 1, 2 ou 3, ela é o time.
+    if guildId >= 1 and guildId <= 3 then
+        return guildId
+    end
+    
+    -- Se for guilda 4-7 ou sem guilda, retorna nil para ser processado no login
+    return nil
 end
 
 function enterLobby(player)
@@ -141,22 +157,58 @@ function checkWarLobbyOnLogin(player)
     if player:getGroup():getId() >= 4 then return end
 
     local cid    = player:getId()
-    local teamId = fetchTeamId(player)
-    if not teamId then return end
+    local pGuid  = player:getGuid()
+    
+    -- Busca a guilda atual no DB
+    local guildRes = db.storeQuery(string.format("SELECT `guild_id` FROM `guild_membership` WHERE `player_id` = %d LIMIT 1", pGuid))
+    local realGuild = 0
+    if guildRes then
+        realGuild = result.getNumber(guildRes, "guild_id")
+        result.free(guildRes)
+    end
 
-    -- Coloca temporariamente no lobby para não inflar a contagem durante a verificação
-    WarCurrentTeam[cid]  = teamId
+    local teamId = nil
+
+    -- Se a guilda for 4-7 ou sem guilda, precisamos espelhar para 1-3 via Storage
+    if realGuild > 3 or realGuild == 0 then
+        local storageTeam = player:getStorageValue(WAR_TEAM_STORAGE)
+        if storageTeam and storageTeam >= 1 and storageTeam <= 3 then
+            teamId = storageTeam
+        else
+            -- Escolhe o time de destino (Consolidação)
+            if realGuild >= 4 and realGuild <= 7 then
+                teamId = ((realGuild - 1) % 3) + 1
+            else
+                teamId = math.random(1, 3)
+            end
+            player:setStorageValue(WAR_TEAM_STORAGE, teamId)
+        end
+
+        player:sendTextMessage(MESSAGE_STATUS_CONSOLE_ORANGE, "[ WAR ] Seu time original (" .. (TEAM_NAMES[realGuild] or "Nenhum") .. ") esta inativo. Voce foi recrutado para: " .. TEAM_NAMES[teamId] .. "!")
+        print(">> [STORAGE] Jogador " .. player:getName() .. " movido de G" .. realGuild .. " para G" .. teamId)
+    else
+        teamId = realGuild
+    end
+
+    -- Popula a variável global para outros scripts
+    WarCurrentTeam[cid] = teamId
+    
+    -- FORÇA ATUALIZAÇÃO VISUAL IMEDIATA
+    if WarVisuals and WarVisuals.onLogin then
+        WarVisuals.onLogin(player)
+    end
     WarLobbyPlayers[cid] = true
 
     local pos      = player:getPosition()
     local inLobby  = (pos.x == WAR_LOBBY_POS.x and pos.y == WAR_LOBBY_POS.y and pos.z == WAR_LOBBY_POS.z)
+    local inPZ     = player:getTile():hasFlag(TILESTATE_PROTECTIONZONE)
 
     if isTeamFull(teamId) then
         enterLobby(player)
     else
         WarLobbyPlayers[cid] = nil
-        if inLobby then
-            -- Relog enquanto estava no lobby e agora tem vaga
+        -- Se estiver no lobby ou logando agora em uma zona de proteção (templo), vai pro campo
+        if inLobby or inPZ then
             local spawnPos = WarGetBestSpawnPoint and WarGetBestSpawnPoint(player)
                 or Position(WAR_LOBBY_POS.x, WAR_LOBBY_POS.y, WAR_LOBBY_POS.z)
             player:teleportTo(spawnPos)
@@ -166,7 +218,7 @@ function checkWarLobbyOnLogin(player)
     end
 end
 
--- Limpa o tracking de runtime ao deslogar.
+-- Limpa o tracking de runtime ao deslogar
 function clearWarTracking(player)
     local cid = player:getId()
     WarCurrentTeam[cid]  = nil

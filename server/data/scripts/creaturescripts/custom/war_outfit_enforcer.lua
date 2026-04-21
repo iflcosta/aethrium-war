@@ -14,14 +14,8 @@ local TEAM_COLORS = {
 }
 
 local function getTeamColors(player)
-    local resultId = db.storeQuery(string.format(
-        "SELECT `guild_id` FROM `guild_membership` WHERE `player_id` = %d LIMIT 1",
-        player:getGuid()
-    ))
-    if not resultId then return nil end
-    local guildId = result.getNumber(resultId, "guild_id")
-    result.free(resultId)
-    return TEAM_COLORS[guildId]
+    local teamId = WarCurrentTeam and WarCurrentTeam[player:getId()]
+    return teamId and TEAM_COLORS[teamId] or nil
 end
 
 local WarOutfitEnforcer = CreatureEvent("WarOutfitEnforcer")

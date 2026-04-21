@@ -44,28 +44,18 @@ function loginMessage.onLogin(player)
 
     player:registerEvent("logoutMessage")
 
+    -- Aethrium War: verifica balanceamento de times e popula WarCurrentTeam (Sincrono)
+    if checkWarLobbyOnLogin then
+        checkWarLobbyOnLogin(player)
+    end
+
     -- Aethrium War: Registra os eventos do Motor Arcade para este jogador
     player:registerEvent("WarArcadeDeath")
     player:registerEvent("WarArcadeLogout")
     player:registerEvent("WarVisualManager")
     player:registerEvent("WarOutfitEnforcer")
     player:registerEvent("WarKillfeed")
-
-    -- [Aethrium War] As cores e Outfits agora são gerenciados de forma modular 
-    -- pelos scripts WarVisualManager e WarOutfitEnforcer registrados acima.
-
-    -- Mensagem de boas-vindas da War
-    player:sendTextMessage(MESSAGE_STATUS_DEFAULT,
-        "[Aethrium War] !frags = placar | !warteams = times online | !warhelp = comandos")
-
-    -- Aethrium War: verifica balanceamento de times e popula WarCurrentTeam
-    -- Delay de 500ms para deixar o login inicial (outfit, skills) se estabilizar
-    if checkWarLobbyOnLogin then
-        addEvent(function(cid)
-            local p = Player(cid)
-            if p then checkWarLobbyOnLogin(p) end
-        end, 500, player:getId())
-    end
+    player:registerEvent("WarFriendlyFire")
 
     player:openChannel(3) -- Guild Channel (Team Chat)
     player:openChannel(10) -- Help/Loot Channel

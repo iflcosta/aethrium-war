@@ -13,18 +13,6 @@ WAR_CURRENT_MAP = 1  -- índice ativo em WAR_MAPS (definido em war_spawn.lua)
 
 local isRotating = false
 
--- ─── Avisos de countdown ─────────────────────────────────────
-
-local function scheduleCountdownWarnings()
-    local interval = WAR_ROUND_MINUTES * 60
-    addEvent(function()
-        Game.broadcastMessage("[ Aethrium War ] Novo mapa em 5 minutos!", MESSAGE_STATUS_WARNING)
-    end, (interval - 5 * 60) * 1000)
-    addEvent(function()
-        Game.broadcastMessage("[ Aethrium War ] Novo mapa em 1 minuto!", MESSAGE_STATUS_WARNING)
-    end, (interval - 60) * 1000)
-end
-
 -- ─── Reset + teleporte de todos os players ───────────────────
 
 local function resetAndSpawnAll()
@@ -136,22 +124,34 @@ local function executeRotation()
     )
 end
 
--- ─── GlobalEvent: a cada 20 minutos ──────────────────────────
+-- ─── Loop de Controle de Rounds ──────────────────────────────
 
-local rotEvent = GlobalEvent("WarMapRotation")
-function rotEvent.onThink(interval)
-    executeRotation()
-    scheduleCountdownWarnings()  -- agenda avisos para o próximo ciclo
-    return true
+local function roundCycleLoop()
+    -- Agenda a execução da rotação para o final deste ciclo
+    addEvent(function()
+        executeRotation()
+        -- Inicia o próximo ciclo após o término deste
+        roundCycleLoop()
+    end, WAR_ROUND_MINUTES * 60 * 1000)
+
+    -- Agenda os avisos de countdown baseados no tempo total do round
+    local intervalSecs = WAR_ROUND_MINUTES * 60
+    addEvent(function()
+        Game.broadcastMessage("[ Aethrium War ] Novo mapa em 5 minutos!", MESSAGE_STATUS_WARNING)
+    end, (intervalSecs - 5 * 60) * 1000)
+    
+    addEvent(function()
+        Game.broadcastMessage("[ Aethrium War ] Novo mapa em 1 minuto!", MESSAGE_STATUS_WARNING)
+    end, (intervalSecs - 60) * 1000)
 end
-rotEvent:interval(WAR_ROUND_MINUTES * 60 * 1000)
-rotEvent:register()
 
--- ─── Startup: anuncia arena inicial e agenda avisos ──────────
+-- ─── Startup: anuncia arena inicial e inicia loops ───────────
 
 local startupEvent = GlobalEvent("WarRotationStartup")
 function startupEvent.onStartup()
-    scheduleCountdownWarnings()
+    -- Inicia o loop de rounds (substitui o GlobalEvent instável)
+    roundCycleLoop()
+
     addEvent(function()
         local mapName = WAR_MAPS and WAR_MAPS[WAR_CURRENT_MAP]
             and WAR_MAPS[WAR_CURRENT_MAP].name or "Arena"
@@ -159,7 +159,7 @@ function startupEvent.onStartup()
             string.format("[ Aethrium War ] Arena: %s | Rotacao em %d minutos.",
                 mapName, WAR_ROUND_MINUTES),
             MESSAGE_STATUS_DEFAULT)
-    end, 3000)  -- delay para os outros scripts terminarem de carregar
+    end, 3000)
     return true
 end
 startupEvent:type("startup")
