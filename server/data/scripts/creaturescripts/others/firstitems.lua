@@ -15,13 +15,13 @@ local WAR_ITEMS = {
             { 3055, 1 }, -- platinum amulet
         },
         container = {
-            { 3155, 100 }, -- sudden death rune
-            { 3160,  50 }, -- ultimate healing rune
-            { 3191,  50 }, -- great fireball rune
-            { 3149,  50 }, -- energy bomb rune
-            { 3175,  50 }, -- stone shower rune
-            { 3198,  50 }, -- heavy magic missile rune
-            { 23373, 50 }, -- ultimate mana potion
+            { 3155, 1 }, -- sudden death rune
+            { 3160, 1 }, -- ultimate healing rune
+            { 3191, 1 }, -- great fireball rune
+            { 3149, 1 }, -- energy bomb rune
+            { 3175, 1 }, -- stone shower rune
+            { 3198, 1 }, -- heavy magic missile rune
+            { 23373, 1 }, -- ultimate mana potion
         },
     },
 
@@ -37,58 +37,58 @@ local WAR_ITEMS = {
             { 3055, 1 }, -- platinum amulet
         },
         container = {
-            { 3160, 100 }, -- ultimate healing rune
-            { 3155,  50 }, -- sudden death rune
-            { 3161,  50 }, -- avalanche rune
-            { 3165,  50 }, -- paralyze rune
-            { 3156,  50 }, -- wild growth rune
-            { 3175,  30 }, -- stone shower rune
-            { 23373, 50 }, -- ultimate mana potion
+            { 3160, 1 }, -- ultimate healing rune
+            { 3155, 1 }, -- sudden death rune
+            { 3161, 1 }, -- avalanche rune
+            { 3165, 1 }, -- paralyze rune
+            { 3156, 1 }, -- wild growth rune
+            { 3175, 1 }, -- stone shower rune
+            { 23373, 1 }, -- ultimate mana potion
         },
     },
 
     -- ─── Paladin ─────────────────────────────────────────────
     [VOCATION.ID.PALADIN] = {
         items = {
-            { 3414,  1 }, -- mastermind shield
-            { 3366,  1 }, -- magic plate armor
-            { 3387,  1 }, -- demon helmet
-            { 3364,  1 }, -- golden legs
-            { 3079,  1 }, -- boots of haste
-            { 3055,  1 }, -- platinum amulet
+            { 3414, 1 }, -- mastermind shield
+            { 3366, 1 }, -- magic plate armor
+            { 3387, 1 }, -- demon helmet
+            { 3364, 1 }, -- golden legs
+            { 3079, 1 }, -- boots of haste
+            { 3055, 1 }, -- platinum amulet
         },
         container = {
-            { 5803,    1 }, -- arbalest (two-handed, equip para usar bolts sem shield)
-            { 6528,  500 }, -- infernal bolt
-            { 7368,   50 }, -- assassin star (usar na mao esquerda + shield na direita)
-            { 3155,  100 }, -- sudden death rune
-            { 3160,  100 }, -- ultimate healing rune
-            { 3200,   50 }, -- explosion rune
-            { 3165,   50 }, -- paralyze rune
-            { 23374,  50 }, -- ultimate spirit potion
+            { 5803, 1 }, -- arbalest (two-handed, equip para usar bolts sem shield)
+            { 6528, 1 }, -- infernal bolt
+            { 7368, 1 }, -- assassin star (usar na mao esquerda + shield na direita)
+            { 3155, 1 }, -- sudden death rune
+            { 3160, 1 }, -- ultimate healing rune
+            { 3200, 1 }, -- explosion rune
+            { 3165, 1 }, -- paralyze rune
+            { 23374, 1 }, -- ultimate spirit potion
         },
     },
 
     -- ─── Knight ──────────────────────────────────────────────
     [VOCATION.ID.KNIGHT] = {
         items = {
-            { 3288,  1 }, -- magic sword (equipada por padrão)
-            { 3414,  1 }, -- mastermind shield
-            { 3366,  1 }, -- magic plate armor
-            { 3387,  1 }, -- demon helmet
-            { 3364,  1 }, -- golden legs
-            { 3079,  1 }, -- boots of haste
-            { 3055,  1 }, -- platinum amulet
+            { 3288, 1 }, -- magic sword (equipada por padrão)
+            { 3414, 1 }, -- mastermind shield
+            { 3366, 1 }, -- magic plate armor
+            { 3387, 1 }, -- demon helmet
+            { 3364, 1 }, -- golden legs
+            { 3079, 1 }, -- boots of haste
+            { 3055, 1 }, -- platinum amulet
         },
         container = {
-            { 3319,   1 }, -- stonecutter axe
-            { 3309,   1 }, -- thunder hammer
-            { 3155, 100 }, -- sudden death rune
-            { 3160, 100 }, -- ultimate healing rune
-            { 3200, 100 }, -- explosion rune
-            { 3198,  50 }, -- heavy magic missile rune
-            { 7643,  50 }, -- ultimate health potion
-            { 239,   50 }, -- great health potion
+            { 3319,  1 }, -- stonecutter axe
+            { 3309,  1 }, -- thunder hammer
+            { 3155,  1 }, -- sudden death rune
+            { 3160,  1 }, -- ultimate healing rune
+            { 3200,  1 }, -- explosion rune
+            { 3198,  1 }, -- heavy magic missile rune
+            { 7643,  1 }, -- ultimate health potion
+            { 239,   1 }, -- great health potion
         },
     },
 }
