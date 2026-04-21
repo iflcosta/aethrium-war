@@ -8,9 +8,9 @@ local WAR_ITEMS = {
         items = {
             { 3071, 1 }, -- wand of inferno
             { 8072, 1 }, -- spellbook of enlightenment
-            { 3381, 1 }, -- crown armor
-            { 3385, 1 }, -- crown helmet
-            { 3382, 1 }, -- crown legs
+            { 8062, 1 }, -- robe of the underworld (armor 12, sorc only)
+            { 3385, 1 }, -- crown helmet (armor 7, sem restricao de vocacao)
+            {  822, 1 }, -- lightning legs (armor 8, mage only)
             { 3079, 1 }, -- boots of haste
             { 3055, 1 }, -- platinum amulet
         },
@@ -30,9 +30,9 @@ local WAR_ITEMS = {
         items = {
             { 3067, 1 }, -- hailstorm rod
             { 8072, 1 }, -- spellbook of enlightenment
-            { 3381, 1 }, -- crown armor
-            { 3385, 1 }, -- crown helmet
-            { 3382, 1 }, -- crown legs
+            { 8038, 1 }, -- robe of the ice queen (armor 12, druid only)
+            { 3385, 1 }, -- crown helmet (armor 7, sem restricao de vocacao)
+            {  823, 1 }, -- glacier kilt (armor 8, mage only)
             { 3079, 1 }, -- boots of haste
             { 3055, 1 }, -- platinum amulet
         },
@@ -50,7 +50,6 @@ local WAR_ITEMS = {
     -- ─── Paladin ─────────────────────────────────────────────
     [VOCATION.ID.PALADIN] = {
         items = {
-            { 5803,  1 }, -- arbalest
             { 3414,  1 }, -- mastermind shield
             { 3366,  1 }, -- magic plate armor
             { 3387,  1 }, -- demon helmet
@@ -59,7 +58,9 @@ local WAR_ITEMS = {
             { 3055,  1 }, -- platinum amulet
         },
         container = {
+            { 5803,    1 }, -- arbalest (two-handed, equip para usar bolts sem shield)
             { 6528,  500 }, -- infernal bolt
+            { 7368,   50 }, -- assassin star (usar na mao esquerda + shield na direita)
             { 3155,  100 }, -- sudden death rune
             { 3160,  100 }, -- ultimate healing rune
             { 3200,   50 }, -- explosion rune
