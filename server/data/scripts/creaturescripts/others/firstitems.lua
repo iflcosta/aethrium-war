@@ -8,6 +8,7 @@ local WAR_ITEMS = {
         items = {
             { 3071, 1 }, -- wand of inferno
             { 8072, 1 }, -- spellbook of enlightenment
+            { 3416, 1 }, -- demon shield
             { 8062, 1 }, -- robe of the underworld (armor 12, sorc only)
             { 3385, 1 }, -- crown helmet (armor 7, sem restricao de vocacao)
             {  822, 1 }, -- lightning legs (armor 8, mage only)
@@ -30,6 +31,7 @@ local WAR_ITEMS = {
         items = {
             { 3067, 1 }, -- hailstorm rod
             { 8072, 1 }, -- spellbook of enlightenment
+            { 3416, 1 }, -- demon shield
             { 8038, 1 }, -- robe of the ice queen (armor 12, druid only)
             { 3385, 1 }, -- crown helmet (armor 7, sem restricao de vocacao)
             {  823, 1 }, -- glacier kilt (armor 8, mage only)
