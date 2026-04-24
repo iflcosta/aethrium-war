@@ -11,7 +11,7 @@ Services = {
 }
 
 Servers_init = {
-    ["189.46.133.165"] = {
+    ["wwar.servegame.com"] = {
         ["port"] = 7171,
         ["protocol"] = 860,
         ["httpLogin"] = false
