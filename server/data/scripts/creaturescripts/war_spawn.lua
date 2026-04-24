@@ -1,10 +1,10 @@
 -- ============================================================
---  Aethrium War — Sistema de Spawn Dinâmico (CS2 Deathmatch)
---  Três arenas no mapa aethrium-war.otbm: Thais, Venore, Edron
+--  World War — Sistema de Spawn Dinâmico (CS2 Deathmatch)
+--  Três arenas no mapa world-war.otbm: Thais, Venore, Edron
 -- ============================================================
 
 WAR_CURRENT_MAP = 1  -- índice da arena ativa; atualizado pela rotação
-WAR_DEBUG_FIXED_SPAWN = true  -- true = spawn fixo no primeiro ponto (para testes)
+WAR_DEBUG_FIXED_SPAWN = false  -- true = spawn fixo no primeiro ponto (para testes)
 
 -- Spawn points por arena e por zona de população.
 -- center: sempre ativo
@@ -119,9 +119,16 @@ local function getActiveSpawnPoints()
 end
 
 local function getPlayerTeamId(player)
-    if WarCurrentTeam and WarCurrentTeam[player:getId()] then
-        return WarCurrentTeam[player:getId()]
+    local cid = player:getId()
+    if WarCurrentTeam and WarCurrentTeam[cid] then
+        return WarCurrentTeam[cid]
     end
+    
+    local storageTeam = player:getStorageValue(45005) -- WAR_TEAM_STORAGE
+    if storageTeam and storageTeam >= 1 and storageTeam <= 7 then
+        return storageTeam
+    end
+
     local res = db.storeQuery(string.format(
         "SELECT `guild_id` FROM `guild_membership` WHERE `player_id` = %d LIMIT 1",
         player:getGuid()
@@ -141,7 +148,7 @@ local function scoreSpawnPoint(pos, playerTeamId)
     )
     for _, creature in ipairs(spectators) do
         if creature:isPlayer() then
-            local t = WarCurrentTeam and WarCurrentTeam[creature:getId()]
+            local t = getPlayerTeamId(creature)
             if t then
                 if t == playerTeamId then allies = allies + 1
                 else enemies = enemies + 1
@@ -195,5 +202,11 @@ function WarGetBestSpawnPoint(player)
     local bestPos = bestCandidates[math.random(#bestCandidates)]
 
     local chosen = (bestScore ~= nil and bestScore < 0) and leastPenPos or bestPos
-    return Position(chosen.x, chosen.y, chosen.z)
+    
+    -- Adiciona um pequeno offset aleatório para não nascerem exatamente no mesmo sqm
+    local finalPos = Position(chosen.x, chosen.y, chosen.z)
+    finalPos.x = finalPos.x + math.random(-1, 1)
+    finalPos.y = finalPos.y + math.random(-1, 1)
+    
+    return finalPos
 end

@@ -29,7 +29,7 @@ boostedSpawnMultiplier = 1.0     -- Default spawn time
 accountManager = false
 namelockManager = true
 newPlayerChooseVoc = true
--- Spawn inicial: centro do mapa Aethrium War (Thais arena)
+-- Spawn inicial: centro do mapa World War (Thais arena)
 newPlayerSpawnPosX = 1024
 newPlayerSpawnPosY = 633
 newPlayerSpawnPosZ = 7
@@ -72,18 +72,18 @@ expFromPlayersLevelRange = 75
 -- NOTE: maxPlayers set to 0 means no limit
 -- NOTE: allowWalkthrough is only applicable to players
 -- NOTE: statusCountMaxPlayersPerIp allows you to only count up to X players per IP in status response (0 = disabled)
-ip = "192.168.15.43"
+ip = "wwar.servegame.com"
 bindOnlyGlobalAddress = false
 loginProtocolPort = 7171
 gameProtocolPort = 7172
 statusProtocolPort = 7171
 adminPort = 7170
 maxPlayers = 500
-motd = "Welcome to The Forgotten Server!"
+motd = "Welcome to World War!"
 onePlayerOnlinePerAccount = false
 allowClones = false
 allowWalkthrough = true
-serverName = "Forgotten"
+serverName = "World War"
 statusTimeout = 5000
 statusCountMaxPlayersPerIp = 0
 replaceKickOnLogin = true

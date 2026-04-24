@@ -1,5 +1,5 @@
 -- ============================================================
--- Aethrium War — Snapshot Initialization Tool
+-- World War — Snapshot Initialization Tool
 -- Este script deve ser carregado ou executado uma vez para configurar o Snapshot.
 -- ============================================================
 

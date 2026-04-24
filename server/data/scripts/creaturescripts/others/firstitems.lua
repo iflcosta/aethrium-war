@@ -1,5 +1,5 @@
 -- ============================================================
---  Aethrium War — First Items & Restore
+--  World War — First Items & Restore
 -- ============================================================
 
 local WAR_ITEMS = {
@@ -95,6 +95,7 @@ local WAR_ITEMS = {
             { 3198,  1 }, -- heavy magic missile rune
             { 7643,  1 }, -- ultimate health potion
             { 239,   1 }, -- great health potion
+            { 237,   1 }, -- strong mana potion
         },
     },
 }

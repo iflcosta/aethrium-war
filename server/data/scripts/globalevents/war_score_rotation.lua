@@ -1,6 +1,6 @@
 -- ============================================================
---  Aethrium War — Rotação de Mapa por Tempo (20 minutos)
---  Mapa: aethrium-war.otbm (Thais + Venore + Edron unificados)
+--  World War — Rotação de Mapa por Tempo (20 minutos)
+--  Mapa: world-war.otbm (Thais + Venore + Edron unificados)
 -- ============================================================
 
 local WAR_ROUND_MINUTES  = 20
@@ -137,11 +137,11 @@ local function roundCycleLoop()
     -- Agenda os avisos de countdown baseados no tempo total do round
     local intervalSecs = WAR_ROUND_MINUTES * 60
     addEvent(function()
-        Game.broadcastMessage("[ Aethrium War ] Novo mapa em 5 minutos!", MESSAGE_STATUS_WARNING)
+        Game.broadcastMessage("[ World War ] Novo mapa em 5 minutos!", MESSAGE_STATUS_WARNING)
     end, (intervalSecs - 5 * 60) * 1000)
     
     addEvent(function()
-        Game.broadcastMessage("[ Aethrium War ] Novo mapa em 1 minuto!", MESSAGE_STATUS_WARNING)
+        Game.broadcastMessage("[ World War ] Novo mapa em 1 minuto!", MESSAGE_STATUS_WARNING)
     end, (intervalSecs - 60) * 1000)
 end
 
@@ -149,15 +149,15 @@ end
 
 local startupEvent = GlobalEvent("WarRotationStartup")
 function startupEvent.onStartup()
-    -- Inicia o loop de rounds (substitui o GlobalEvent instável)
-    roundCycleLoop()
+    -- Rotação desabilitada por solicitação:
+    -- roundCycleLoop()
 
     addEvent(function()
         local mapName = WAR_MAPS and WAR_MAPS[WAR_CURRENT_MAP]
             and WAR_MAPS[WAR_CURRENT_MAP].name or "Arena"
         Game.broadcastMessage(
-            string.format("[ Aethrium War ] Arena: %s | Rotacao em %d minutos.",
-                mapName, WAR_ROUND_MINUTES),
+            string.format("[ World War ] Arena: %s | Rotacao Desativada.",
+                mapName),
             MESSAGE_STATUS_DEFAULT)
     end, 3000)
     return true

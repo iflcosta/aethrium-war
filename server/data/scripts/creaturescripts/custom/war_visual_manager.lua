@@ -1,5 +1,5 @@
 -- ============================================================
---  Aethrium War — Visual Manager (v3.1)
+--  World War — Visual Manager (v3.1)
 --  Gerencia Outfits e Cores Nativas.
 -- ============================================================
 
@@ -38,11 +38,10 @@ function visualEvent.onLogin(player)
     local teamId = WarCurrentTeam and WarCurrentTeam[player:getId()]
     if not teamId then return true end
 
-    local pSex = player:getSex()
-    if pSex ~= PLAYERSEX_MALE and pSex ~= PLAYERSEX_FEMALE and pSex ~= PLAYERSEX_WAR_MALE then
+    -- Força todos os jogadores a serem do sexo masculino (1)
+    if player:getSex() ~= PLAYERSEX_MALE then
         player:setSex(PLAYERSEX_MALE)
     end
-    if pSex == PLAYERSEX_WAR_MALE then player:setSex(PLAYERSEX_MALE) end
 
     local maleOutfits = { 128, 129, 130, 131, 132, 133, 134, 143, 144, 145, 146, 151, 152, 153, 154, 251, 268, 273, 278, 289, 325, 328, 335, 367, 430, 432, 463, 464, 465, 466, 472, 512, 516, 541, 542 }
     local femaleOutfits = { 136, 137, 138, 139, 140, 141, 142, 147, 148, 149, 150, 155, 156, 157, 158, 252, 269, 270, 279, 288, 324, 329, 336, 366, 431, 433, 471, 513, 514, 541, 542 }

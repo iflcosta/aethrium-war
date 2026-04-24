@@ -1,5 +1,5 @@
 -- ============================================================
---  Aethrium War — Motor de Reset Arcade (V4 — Dynamic 250)
+--  World War — Motor de Reset Arcade (V4 — Dynamic 250)
 --  Arquivo: data/scripts/creaturescripts/war_arcade_reset.lua
 -- ============================================================
 
@@ -188,7 +188,7 @@ function warLogin.onLogin(player)
         player:setStorageValue(88888, 1)
     end
 
-    -- Sistema de Lobby (balanceamento por time)
+    --  World War — Lobby de Balanceamento
     if checkWarLobbyOnLogin then
         checkWarLobbyOnLogin(player)
     end
@@ -258,7 +258,7 @@ function warDeath.onPrepareDeath(player, killer)
     if addTokens and realKiller and realKiller:isPlayer() and realKiller:getId() ~= player:getId() then
         addTokens(realKiller, 1)
         
-        -- [FIRST BLOOD] Bônus para o primeiro abate do round
+        -- [FIRST BLOOD]--  Três arenas no mapa world-war.otbm: Thais, Venore, Edron
         if not WAR_FIRST_BLOOD_DONE then
             WAR_FIRST_BLOOD_DONE = true
             addTokens(realKiller, 1) -- +1 token bônus (total 2)
@@ -311,6 +311,7 @@ function warDeath.onPrepareDeath(player, killer)
     distributePvPExperience(player)
     
     -- [VISUAL] Dispara o KillFeed
+  --  World War — Killfeed Visual
     if WarKillfeed and WarKillfeed.recordKill then
         WarKillfeed.recordKill(player, realKiller)
     end
@@ -323,7 +324,7 @@ function warDeath.onPrepareDeath(player, killer)
         WarSpawnProtection[player:getId()] = true
     end
 
-    -- 4. Respawn dinâmico com 2s de delay (estilo CS2 Deathmatch)
+    -- 4. Respawn--  World War — Sistema de Spawn Dinâmico (CS2 Deathmatch)
     local pid = player:getId()
     addEvent(function(cid)
         local p = Player(cid)
@@ -336,10 +337,9 @@ function warDeath.onPrepareDeath(player, killer)
             spawnPos = town and town:getTemplePosition() or Position(1024, 633, 7)
         end
         p:teleportTo(spawnPos)
-        spawnPos:sendMagicEffect(CONST_ME_TELEPORT)
         p:sendTextMessage(MESSAGE_STATUS_CONSOLE_RED, "Você foi derrotado e voltou ao campo.")
         if applySpawnProtection then
-            applySpawnProtection(p)
+            applySpawnProtection(p, spawnPos)
         end
     end, 2000, pid)
     

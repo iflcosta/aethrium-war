@@ -1,5 +1,5 @@
 -- ============================================================
---  Aethrium War — Comandos de Guerra
+--  World War — Comandos de Guerra
 --  Arquivo: server/data/scripts/talkactions/player/war_commands.lua
 --
 --  Comandos disponíveis para jogadores:
@@ -175,10 +175,10 @@ local function sendUniversalHelp(player)
     local myTeam     = myTeamInfo and myTeamInfo.name or "Sem time"
 
     local lines = {
-        "⚔ [=== BEM-VINDO AO AETHRIUM WAR ===] ⚔",
+        "⚔ [=== BEM-VINDO AO WORLD WAR ===] ⚔",
         "",
         "CONTEXTO DO SERVIDOR:",
-        "O Aethrium War e uma simulacao de guerra arcade entre as 7 Grandes Nacoes.",
+        "O World War e uma simulacao de guerra arcade entre as 7 Grandes Nacoes.",
         "Nao ha RPG lento aqui: voce nasce pronto para a batalha!",
         "",
         "COMO FUNCIONA:",

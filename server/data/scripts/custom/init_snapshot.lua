@@ -1,5 +1,5 @@
 -- ============================================================
--- Aethrium War — Snapshot Auto-Init
+-- World War — Snapshot Auto-Init
 -- Executa ao iniciar o servidor para garantir que a tabela Snapshot exista e esteja correta.
 -- ============================================================
 

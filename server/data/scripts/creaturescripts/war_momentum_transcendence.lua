@@ -1,5 +1,5 @@
 -- ============================================================
---  Aethrium War — Momentum & Transcendence
+--  World War — Momentum & Transcendence
 -- ============================================================
 
 WAR_MOMENTUM      = 45204

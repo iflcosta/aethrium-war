@@ -1,5 +1,5 @@
 -- ============================================================
---  Aethrium War — Spawn Protection (5 segundos)
+--  World War — Spawn Protection (5 segundos)
 -- ============================================================
 
 WarSpawnProtection = {}  -- [playerId] = true
@@ -9,14 +9,15 @@ local EFFECT_INTERVAL = 600
 local MOVE_POLL_MS    = 200   -- intervalo de checagem de movimento
 local EFFECT_TYPE     = CONST_ME_MAGIC_BLUE
 
-local function pulseEffect(cid)
+local function pulseEffect(cid, forcedPos)
     if not WarSpawnProtection[cid] then return end
     local p = Player(cid)
     if not p then
         WarSpawnProtection[cid] = nil
         return
     end
-    p:getPosition():sendMagicEffect(EFFECT_TYPE)
+    local pos = forcedPos or p:getPosition()
+    pos:sendMagicEffect(EFFECT_TYPE)
     addEvent(pulseEffect, EFFECT_INTERVAL, cid)
 end
 
@@ -47,13 +48,13 @@ local function watchMovement(cid, ox, oy, oz)
 end
 
 -- Ativa 5s de invulnerabilidade com efeito visual pulsante.
-function applySpawnProtection(player)
+function applySpawnProtection(player, forcedPos)
     if not player or not player:isPlayer() then return end
     if player:getGroup():getId() >= 4 then return end
     local cid = player:getId()
-    local pos = player:getPosition()
+    local pos = forcedPos or player:getPosition()
     WarSpawnProtection[cid] = true
-    pulseEffect(cid)
+    pulseEffect(cid, pos)
     addEvent(watchMovement, MOVE_POLL_MS, cid, pos.x, pos.y, pos.z)
     addEvent(expireProtection, PROTECT_MS, cid)
     player:sendTextMessage(MESSAGE_STATUS_SMALL, "[ Proteção de spawn ativa por 5 segundos. ]")

@@ -6,9 +6,14 @@
 
 #include "enums.h"
 
+struct AccountCharacter {
+	std::string name;
+	std::string vocationName;
+};
+
 struct Account
 {
-	std::vector<std::string> characters;
+	std::vector<AccountCharacter> characters;
 	std::string name;
 	std::string key;
 	uint32_t id = 0;

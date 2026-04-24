@@ -89,11 +89,21 @@ bool IOLoginData::loginserverAuthentication(std::string_view name, std::string_v
 	account.tibiaCoins = result->getNumber<uint64_t>("tibia_coins");
 
     result = db.storeQuery(fmt::format(
-        "SELECT `name` FROM `players` WHERE `account_id` = {:d} AND `deletion` = 0 ORDER BY `name` ASC", account.id));
+        "SELECT `name`, `vocation` FROM `players` WHERE `account_id` = {:d} AND `deletion` = 0 ORDER BY `name` ASC", account.id));
     if (result) {
         do {
-            std::string charName = std::string{result->getString("name")};
-            account.characters.push_back(charName);
+            AccountCharacter charEntry;
+            charEntry.name = std::string{result->getString("name")};
+            
+            uint16_t vocId = result->getNumber<uint16_t>("vocation");
+            Vocation* voc = g_vocations.getVocation(vocId);
+            if (voc) {
+                charEntry.vocationName = voc->getVocName();
+            } else {
+                charEntry.vocationName = "None";
+            }
+            
+            account.characters.push_back(charEntry);
         } while (result->next());
     } else {
     }

@@ -1,5 +1,5 @@
 -- ============================================================
---  Aethrium War — Friendly Fire Enforcer (50% Damage)
+--  World War — Friendly Fire Enforcer (50% Damage)
 --  Reduz o dano entre aliados do mesmo time.
 -- ============================================================
 

@@ -1,5 +1,5 @@
 -- ============================================================
---  Aethrium War — Reinicialização de Times no Startup
+--  World War — Reinicialização de Times no Startup
 --  Garante que todos os players voltem para o time original (Account ID)
 -- ============================================================
 
@@ -16,9 +16,9 @@ function warStartup.onStartup()
     ]]
     
     if db.query(query) then
-        print(">> [Aethrium War] Times reinicializados com sucesso baseados no ID da conta.")
+        print(">> [World War] Times reinicializados com sucesso baseados no ID da conta.")
     else
-        print(">> [Aethrium War] Erro ao reinicializar times no startup.")
+        print(">> [World War] Erro ao reinicializar times no startup.")
     end
 
     -- Limpa o placar de frags para um novo recomeço do servidor?

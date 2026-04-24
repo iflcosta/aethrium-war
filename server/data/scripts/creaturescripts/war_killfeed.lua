@@ -1,5 +1,5 @@
 -- ============================================================
---  Aethrium War — Killfeed Visual
+--  World War — Killfeed Visual
 --  Arquivo: server/data/scripts/creaturescripts/war_killfeed.lua
 --
 --  Separado do war_arcade_reset.lua para manter responsabilidades claras:

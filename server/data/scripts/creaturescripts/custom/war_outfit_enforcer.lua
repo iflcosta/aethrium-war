@@ -1,5 +1,5 @@
 -- ============================================================
---  Aethrium War — Outfit Enforcer
+--  World War — Outfit Enforcer
 --  Impede que jogadores alterem as cores do time.
 -- ============================================================
 

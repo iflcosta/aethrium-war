@@ -1,5 +1,5 @@
 -- ============================================================
---  Aethrium War — Lobby de Balanceamento
+--  World War — Lobby de Balanceamento
 -- ============================================================
 
 WarCurrentTeam  = {}  -- [playerId] = teamId  (runtime; limpo no logout)
@@ -61,9 +61,24 @@ end
 -- Retorna true se o time teamId estiver cheio (campo, sem lobby players).
 -- O player verificado deve já estar em WarLobbyPlayers para não inflar a contagem.
 function isTeamFull(teamId)
+    -- Balanceador desativado para testes: todas as equipes liberadas.
+    return false
+end
+
+-- Retorna o time (1, 2 ou 3) com menos jogadores online.
+local function getSmallestTeam()
     local counts = getTeamCounts()
-    local avg    = getTeamAverage(counts)
-    return (counts[teamId] or 0) >= avg + WAR_MAX_DIFF
+    local smallestTeam = 1
+    local minPlayers = counts[1] or 0
+
+    for tid = 2, 3 do
+        local n = counts[tid] or 0
+        if n < minPlayers then
+            minPlayers = n
+            smallestTeam = tid
+        end
+    end
+    return smallestTeam
 end
 
 -- ─── HUD ─────────────────────────────────────────────────────
@@ -104,10 +119,9 @@ local function lobbyCheckLoop(cid)
         local spawnPos = WarGetBestSpawnPoint and WarGetBestSpawnPoint(player)
             or Position(WAR_LOBBY_POS.x, WAR_LOBBY_POS.y, WAR_LOBBY_POS.z)
         player:teleportTo(spawnPos)
-        spawnPos:sendMagicEffect(CONST_ME_TELEPORT)
         player:sendTextMessage(MESSAGE_STATUS_CONSOLE_BLUE, "[ Vaga aberta! Entrando no campo de batalha. ]")
         if applySpawnProtection then
-            applySpawnProtection(player)
+            applySpawnProtection(player, spawnPos)
         end
         return
     end
@@ -169,23 +183,17 @@ function checkWarLobbyOnLogin(player)
 
     local teamId = nil
 
-    -- Se a guilda for 4-7 ou sem guilda, precisamos espelhar para 1-3 via Storage
-    if realGuild > 3 or realGuild == 0 then
-        local storageTeam = player:getStorageValue(WAR_TEAM_STORAGE)
-        if storageTeam and storageTeam >= 1 and storageTeam <= 3 then
-            teamId = storageTeam
-        else
-            -- Escolhe o time de destino (Consolidação)
-            if realGuild >= 4 and realGuild <= 7 then
-                teamId = ((realGuild - 1) % 3) + 1
-            else
-                teamId = math.random(1, 3)
-            end
-            player:setStorageValue(WAR_TEAM_STORAGE, teamId)
-        end
+    -- Se a guilda for 4-7 ou sem guilda, agora todas as 7 equipes são válidas.
+    if realGuild == 0 then
+        -- Escolhe o time baseado no ID da conta (1/1 -> 1, 2/2 -> 2, etc.)
+        local accountId = player:getAccountId()
+        teamId = (accountId % 7)
+        if teamId == 0 then teamId = 7 end
+        
+        player:setStorageValue(WAR_TEAM_STORAGE, teamId)
 
-        player:sendTextMessage(MESSAGE_STATUS_CONSOLE_ORANGE, "[ WAR ] Seu time original (" .. (TEAM_NAMES[realGuild] or "Nenhum") .. ") esta inativo. Voce foi recrutado para: " .. TEAM_NAMES[teamId] .. "!")
-        print(">> [STORAGE] Jogador " .. player:getName() .. " movido de G" .. realGuild .. " para G" .. teamId)
+        player:sendTextMessage(MESSAGE_STATUS_CONSOLE_ORANGE, "[ TEST MODE ] Voce entrou no time padrão da sua conta: " .. TEAM_NAMES[teamId] .. "!")
+        print(">> [ACCOUNT] Jogador " .. player:getName() .. " (Acc: " .. accountId .. ") escalado para G" .. teamId)
     else
         teamId = realGuild
     end
@@ -203,18 +211,16 @@ function checkWarLobbyOnLogin(player)
     local inLobby  = (pos.x == WAR_LOBBY_POS.x and pos.y == WAR_LOBBY_POS.y and pos.z == WAR_LOBBY_POS.z)
     local inPZ     = player:getTile():hasFlag(TILESTATE_PROTECTIONZONE)
 
-    if isTeamFull(teamId) then
-        enterLobby(player)
-    else
-        WarLobbyPlayers[cid] = nil
-        -- Se estiver no lobby ou logando agora em uma zona de proteção (templo), vai pro campo
-        if inLobby or inPZ then
-            local spawnPos = WarGetBestSpawnPoint and WarGetBestSpawnPoint(player)
-                or Position(WAR_LOBBY_POS.x, WAR_LOBBY_POS.y, WAR_LOBBY_POS.z)
-            player:teleportTo(spawnPos)
-            spawnPos:sendMagicEffect(CONST_ME_TELEPORT)
-            if applySpawnProtection then applySpawnProtection(player) end
-        end
+    -- Lobby desativado para testes: todos vão direto pro campo
+    WarLobbyPlayers[cid] = nil
+    
+    local spawnPos = WarGetBestSpawnPoint and WarGetBestSpawnPoint(player)
+        or Position(WAR_LOBBY_POS.x, WAR_LOBBY_POS.y, WAR_LOBBY_POS.z)
+        
+    player:teleportTo(spawnPos)
+    
+    if applySpawnProtection then 
+        applySpawnProtection(player, spawnPos) 
     end
 end
 

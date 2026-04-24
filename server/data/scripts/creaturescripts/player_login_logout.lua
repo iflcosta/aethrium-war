@@ -33,7 +33,7 @@ function loginMessage.onLogin(player)
     end
     player:sendTextMessage(MESSAGE_STATUS_DEFAULT, loginStr)
 
-    -- Aethrium War: todos os players recebem vocação promovida automaticamente
+    -- World War: todos os players recebem vocação promovida automaticamente
     local vocation = player:getVocation()
     local promotion = vocation:getPromotion()
     if promotion then
@@ -44,12 +44,7 @@ function loginMessage.onLogin(player)
 
     player:registerEvent("logoutMessage")
 
-    -- Aethrium War: verifica balanceamento de times e popula WarCurrentTeam (Sincrono)
-    if checkWarLobbyOnLogin then
-        checkWarLobbyOnLogin(player)
-    end
-
-    -- Aethrium War: Registra os eventos do Motor Arcade para este jogador
+    -- World War: Registra os eventos do Motor Arcade para este jogador
     player:registerEvent("WarArcadeDeath")
     player:registerEvent("WarArcadeLogout")
     player:registerEvent("WarVisualManager")

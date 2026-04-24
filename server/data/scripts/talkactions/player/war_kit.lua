@@ -1,5 +1,5 @@
 -- ============================================================
---  Aethrium War — Kit de Arma (!kit)
+--  World War — Kit de Arma (!kit)
 --  Apenas para Knights: escolhe tipo de arma antes do spawn.
 --  O kit é restaurado automaticamente ao morrer/resetar.
 -- ============================================================
