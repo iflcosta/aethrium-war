@@ -131,6 +131,12 @@ function resetPlayerToArcadeState(player)
     if restoreWarItems then
         restoreWarItems(player)
     end
+
+    -- Garante que não perca itens/skills na morte (PvP War)
+    -- Usamos Blessings como método garantido em TFS 1.x
+    for i = 1, 5 do
+        player:addBlessing(i)
+    end
 end
 
 -- ─── Evento: Login do Jogador ────────────────────────────────
@@ -192,6 +198,16 @@ function warLogin.onLogin(player)
     if checkWarLobbyOnLogin then
         checkWarLobbyOnLogin(player)
     end
+
+    -- Teleport para o spawn dinâmico (necessário pois agora a morte é real e ele loga no templo)
+    local spawnPos
+    if WarGetBestSpawnPoint then
+        spawnPos = WarGetBestSpawnPoint(player)
+    else
+        local town = player:getTown()
+        spawnPos = town and town:getTemplePosition() or Position(173, 221, 7)
+    end
+    player:teleportTo(spawnPos)
 
     return true
 end
@@ -316,35 +332,27 @@ function warDeath.onPrepareDeath(player, killer)
         WarKillfeed.recordKill(player, realKiller)
     end
     
-    -- 3. Aplica o reset de guerra instantâneo (Restore HP/Mana/Skills)
-    resetPlayerToArcadeState(player)
+    -- Retorna TRUE para permitir a morte real do Tibia
+    return true
+end
 
-    -- Proteção imediata: evita dano durante os 2s de espera antes do teleporte
-    if WarSpawnProtection then
-        WarSpawnProtection[player:getId()] = true
+function warDeath.onDeath(player, corpse, killer, mostDamageKiller, lastHitUnjustified, mostDamageUnjustified)
+    -- [LOOT] Adiciona 1 God Flower dentro de uma BAG no corpo
+    if corpse then
+        local bag = corpse:addItem(1987, 1) -- Adiciona uma Bag
+        if bag then
+            bag:addItem(2981, 1) -- Coloca a God Flower na bag
+        else
+            corpse:addItem(2981, 1) -- Fallback
+        end
     end
 
-    -- 4. Respawn--  World War — Sistema de Spawn Dinâmico (CS2 Deathmatch)
-    local pid = player:getId()
-    addEvent(function(cid)
-        local p = Player(cid)
-        if not p then return end
-        local spawnPos
-        if WarGetBestSpawnPoint then
-            spawnPos = WarGetBestSpawnPoint(p)
-        else
-            local town = p:getTown()
-            spawnPos = town and town:getTemplePosition() or Position(1024, 633, 7)
-        end
-        p:teleportTo(spawnPos)
-        p:sendTextMessage(MESSAGE_STATUS_CONSOLE_RED, "Você foi derrotado e voltou ao campo.")
-        if applySpawnProtection then
-            applySpawnProtection(p, spawnPos)
-        end
-    end, 2000, pid)
-    
-    -- Retorna FALSO para cancelar a morte original do Tibia
-    -- Isso evita a tela de "You are Dead", perda de itens e queda de level real.
-    return false
+    -- [POSITION FIX] Força o player a ir para o templo para evitar logar no local da morte
+    local town = player:getTown()
+    if town then
+        player:teleportTo(town:getTemplePosition())
+    end
+
+    return true
 end
 warDeath:register()

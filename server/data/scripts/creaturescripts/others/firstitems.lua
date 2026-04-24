@@ -6,48 +6,52 @@ local WAR_ITEMS = {
     -- ─── Sorcerer ────────────────────────────────────────────
     [VOCATION.ID.SORCERER] = {
         items = {
+            { 3420, 1 }, -- demon shield
             { 3071, 1 }, -- wand of inferno
-            { 8072, 1 }, -- spellbook of enlightenment
-            { 3416, 1 }, -- demon shield
-            { 8062, 1 }, -- robe of the underworld (armor 12, sorc only)
-            { 3385, 1 }, -- crown helmet (armor 7, sem restricao de vocacao)
-            {  822, 1 }, -- lightning legs (armor 8, mage only)
+            { 3567, 1 }, -- blue robe
+            { 3387, 1 }, -- demon helmet
+            { 645, 1 }, -- blue legs
             { 3079, 1 }, -- boots of haste
             { 3055, 1 }, -- platinum amulet
         },
         container = {
-            { 3731, 50 }, -- fire mushroom
+            { 3731, 100 }, -- fire mushroom
             { 3155, 1 }, -- sudden death rune
             { 3160, 1 }, -- ultimate healing rune
             { 3191, 1 }, -- great fireball rune
             { 3149, 1 }, -- energy bomb rune
+            { 3192, 1 }, -- fire bomb rune
+            { 3148, 1 }, -- destroy field rune
+            { 3180, 1 }, -- magic wall rune
             { 3175, 1 }, -- stone shower rune
             { 3198, 1 }, -- heavy magic missile rune
-            { 23373, 1 }, -- ultimate mana potion
+            { 238, 1 }, -- great mana potion
         },
     },
 
     -- ─── Druid ───────────────────────────────────────────────
     [VOCATION.ID.DRUID] = {
         items = {
-            { 3067, 1 }, -- hailstorm rod
-            { 8072, 1 }, -- spellbook of enlightenment
-            { 3416, 1 }, -- demon shield
-            { 8038, 1 }, -- robe of the ice queen (armor 12, druid only)
-            { 3385, 1 }, -- crown helmet (armor 7, sem restricao de vocacao)
-            {  823, 1 }, -- glacier kilt (armor 8, mage only)
+            { 3420, 1 }, -- demon shield
+            { 8084, 1 }, -- springsprout rod
+            { 3567, 1 }, -- blue robe
+            { 3387, 1 }, -- demon helmet
+            { 645, 1 }, -- blue legs
             { 3079, 1 }, -- boots of haste
             { 3055, 1 }, -- platinum amulet
         },
         container = {
-            { 3731, 50 }, -- fire mushroom
+            { 3731, 100 }, -- fire mushroom
             { 3160, 1 }, -- ultimate healing rune
             { 3155, 1 }, -- sudden death rune
             { 3161, 1 }, -- avalanche rune
             { 3165, 1 }, -- paralyze rune
             { 3156, 1 }, -- wild growth rune
+            { 3192, 1 }, -- fire bomb rune
+            { 3148, 1 }, -- destroy field rune
+            { 3180, 1 }, -- magic wall rune
             { 3175, 1 }, -- stone shower rune
-            { 23373, 1 }, -- ultimate mana potion
+            { 238, 1 }, -- great mana potion
         },
     },
 
@@ -62,7 +66,7 @@ local WAR_ITEMS = {
             { 3055, 1 }, -- platinum amulet
         },
         container = {
-            { 3731, 50 }, -- fire mushroom
+            { 3731, 100 }, -- fire mushroom
             { 5803, 1 }, -- arbalest (two-handed, equip para usar bolts sem shield)
             { 6528, 1 }, -- infernal bolt
             { 7368, 1 }, -- assassin star (usar na mao esquerda + shield na direita)
@@ -70,15 +74,19 @@ local WAR_ITEMS = {
             { 3160, 1 }, -- ultimate healing rune
             { 3200, 1 }, -- explosion rune
             { 3165, 1 }, -- paralyze rune
+            { 3192, 1 }, -- fire bomb rune
+            { 3148, 1 }, -- destroy field rune
+            { 3180, 1 }, -- magic wall rune
             { 23374, 1 }, -- ultimate spirit potion
+            { 237, 1 }, -- strong mana potion
         },
     },
 
     -- ─── Knight ──────────────────────────────────────────────
     [VOCATION.ID.KNIGHT] = {
         items = {
-            { 3288, 1 }, -- magic sword (equipada por padrão)
             { 3414, 1 }, -- mastermind shield
+            { 3288, 1 }, -- magic sword (equipada por padrão)
             { 3366, 1 }, -- magic plate armor
             { 3387, 1 }, -- demon helmet
             { 3364, 1 }, -- golden legs
@@ -86,16 +94,19 @@ local WAR_ITEMS = {
             { 3055, 1 }, -- platinum amulet
         },
         container = {
-            { 3731, 50 }, -- fire mushroom
+            { 3731, 100 }, -- fire mushroom
             { 3319,  1 }, -- stonecutter axe
             { 3309,  1 }, -- thunder hammer
             { 3155,  1 }, -- sudden death rune
             { 3160,  1 }, -- ultimate healing rune
             { 3200,  1 }, -- explosion rune
             { 3198,  1 }, -- heavy magic missile rune
+            { 3192, 1 }, -- fire bomb rune
+            { 3148, 1 }, -- destroy field rune
+            { 3180, 1 }, -- magic wall rune
             { 7643,  1 }, -- ultimate health potion
             { 239,   1 }, -- great health potion
-            { 237,   1 }, -- strong mana potion
+            { 268,   1 }, -- mana potion
         },
     },
 }
@@ -141,6 +152,13 @@ function restoreWarItems(player)
     if backpack and cfg.container then
         for _, entry in ipairs(cfg.container) do
             backpack:addItem(entry[1], entry[2])
+        end
+        -- Backpack extra para God Flowers (pois não estão agrupando)
+        local flowerBP = backpack:addItem(1988, 1)
+        if flowerBP then
+            for i = 1, 10 do
+                flowerBP:addItem(2981, 1)
+            end
         end
     end
 end

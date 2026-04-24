@@ -195,7 +195,7 @@ function EnterGame.init()
     if Servers_init then
         if table.size(Servers_init) == 1 then
             local hostInit, valuesInit = next(Servers_init)
-            EnterGame.setUniqueServer(hostInit, valuesInit.port, valuesInit.protocol)
+            EnterGame.setDefaultServer(hostInit, valuesInit.port, valuesInit.protocol)
             EnterGame.setHttpLogin(valuesInit.httpLogin)
         elseif not host or host == "" then
             local hostInit, valuesInit = next(Servers_init)

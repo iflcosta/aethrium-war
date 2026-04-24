@@ -5437,7 +5437,7 @@
 	<item id="2980" article="a" name="water pipe">
 		<attribute key="weight" value="6500" />
 	</item>
-	<item id="2981" name="god flowers">
+	<item id="2981" name="god flowers" stackable="1">
 		<attribute key="weight" value="1100" />
 	</item>
 	<item id="2982" article="an" name="indoor plant">

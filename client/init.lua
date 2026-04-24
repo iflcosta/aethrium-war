@@ -11,7 +11,7 @@ Services = {
 }
 
 Servers_init = {
-    ["127.0.0.1"] = {
+    ["189.46.133.165"] = {
         ["port"] = 7171,
         ["protocol"] = 860,
         ["httpLogin"] = false
