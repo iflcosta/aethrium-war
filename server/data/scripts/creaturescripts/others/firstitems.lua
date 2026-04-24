@@ -154,9 +154,9 @@ function restoreWarItems(player)
             backpack:addItem(entry[1], entry[2])
         end
         -- Backpack extra para God Flowers (pois não estão agrupando)
-        local flowerBP = backpack:addItem(1988, 1)
+        local flowerBP = backpack:addItem(2859, 1)
         if flowerBP then
-            for i = 1, 10 do
+            for i = 1, 5 do
                 flowerBP:addItem(2981, 1)
             end
         end
