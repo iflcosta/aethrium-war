@@ -26,4 +26,5 @@ function warFriendlyFire.onHealthChange(creature, attacker, primaryDamage, prima
     return primaryDamage, primaryType, secondaryDamage, secondaryType
 end
 
+warFriendlyFire:type("healthchange")
 warFriendlyFire:register()

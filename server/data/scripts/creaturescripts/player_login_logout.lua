@@ -45,6 +45,7 @@ function loginMessage.onLogin(player)
     player:registerEvent("logoutMessage")
 
     -- World War: Registra os eventos do Motor Arcade para este jogador
+    player:registerEvent("WarArcadePrepareDeath")
     player:registerEvent("WarArcadeDeath")
     player:registerEvent("WarArcadeLogout")
     player:registerEvent("WarVisualManager")

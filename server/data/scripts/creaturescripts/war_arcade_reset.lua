@@ -211,6 +211,7 @@ function warLogin.onLogin(player)
 
     return true
 end
+warLogin:type("login")
 warLogin:register()
 
 local function distributePvPExperience(player)
@@ -249,8 +250,8 @@ end
 
 -- ─── Evento: Preparo para a Morte (Instant Respawn) ──────────
 
-local warDeath = CreatureEvent("WarArcadeDeath")
-function warDeath.onPrepareDeath(player, killer)
+local warPrepareDeath = CreatureEvent("WarArcadePrepareDeath")
+function warPrepareDeath.onPrepareDeath(player, killer)
     -- 1. Identificar o Assassino Real para o Killfeed/Score
     local realKiller = killer
     if not realKiller or not realKiller:isPlayer() then
@@ -335,7 +336,10 @@ function warDeath.onPrepareDeath(player, killer)
     -- Retorna TRUE para permitir a morte real do Tibia
     return true
 end
+warPrepareDeath:type("preparedeath")
+warPrepareDeath:register()
 
+local warDeath = CreatureEvent("WarArcadeDeath")
 function warDeath.onDeath(player, corpse, killer, mostDamageKiller, lastHitUnjustified, mostDamageUnjustified)
     -- [LOOT] Adiciona 1 God Flower dentro de uma BAG no corpo
     if corpse then
@@ -347,12 +351,7 @@ function warDeath.onDeath(player, corpse, killer, mostDamageKiller, lastHitUnjus
         end
     end
 
-    -- [POSITION FIX] Força o player a ir para o templo para evitar logar no local da morte
-    local town = player:getTown()
-    if town then
-        player:teleportTo(town:getTemplePosition())
-    end
-
     return true
 end
+warDeath:type("death")
 warDeath:register()
