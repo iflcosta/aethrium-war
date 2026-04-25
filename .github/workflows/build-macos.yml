@@ -1,0 +1,60 @@
+name: Build - MacOS (SDL2)
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "client/src/**"
+      - "client/CMakeLists.txt"
+      - ".github/workflows/build-macos.yml"
+
+jobs:
+  build:
+    name: MacOS Build (SDL2)
+    runs-on: macos-latest
+    
+    defaults:
+      run:
+        working-directory: client
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install MacOS Dependencies
+        run: |
+          brew install ccache ninja
+
+      - name: Get vcpkg commit ID
+        id: vcpkg-step
+        run: |
+          vcpkgCommitId=$(grep '.builtin-baseline' vcpkg.json | awk -F: '{print $2}' | tr -d '," ')
+          echo "vcpkgGitCommitId=$vcpkgCommitId" >> $GITHUB_OUTPUT
+
+      - name: Setup vcpkg
+        uses: lukka/run-vcpkg@v11
+        with:
+          vcpkgGitCommitId: ${{ steps.vcpkg-step.outputs.vcpkgGitCommitId }}
+
+      - name: Install CMake and Ninja
+        uses: lukka/get-cmake@v3.29.2
+
+      - name: Configure and Build
+        run: |
+          cmake -G Ninja -S . -B build \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_TOOLCHAIN_FILE=$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake \
+            -DTOGGLE_BIN_FOLDER=ON \
+            -DOPTIONS_ENABLE_IPO=OFF
+
+          cmake --build build --target otclient
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: otclient-macos
+          path: client/build/bin/

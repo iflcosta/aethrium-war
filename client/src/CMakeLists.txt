@@ -1,4 +1,4 @@
-project(otclient)
+﻿project(otclient)
 
 # *****************************************************************************
 # Options
@@ -140,6 +140,7 @@ if(APPLE)
   # Required for Physfs
   find_library(FOUNDATION Foundation REQUIRED)
   find_library(IOKIT IOKit REQUIRED)
+  find_package(SDL2 CONFIG REQUIRED)
 endif()
 if(UNIX AND NOT APPLE AND NOT ANDROID AND NOT WASM)
   find_package(X11 REQUIRED)
@@ -351,23 +352,9 @@ if (TOGGLE_FRAMEWORK_GRAPHICS)
           framework/graphics/texture.cpp
           framework/graphics/texturemanager.cpp
           framework/graphics/shadermanager.cpp
-  )
-endif()
-
-if(WIN32)
-  set(SOURCE_FILES ${SOURCE_FILES} framework/platform/win32window.cpp)
-elseif(UNIX AND NOT APPLE AND NOT ANDROID AND NOT WASM)
-  set(SOURCE_FILES ${SOURCE_FILES} framework/platform/x11window.cpp)
-elseif(APPLE)
-  # For now, we allow X11 on Apple if found, otherwise it will fail at link time
-  # which is better than failing at compile time with missing headers
-  if(X11_FOUND)
-    set(SOURCE_FILES ${SOURCE_FILES} framework/platform/x11window.cpp)
-  endif()
-endif()
-
-if (TOGGLE_FRAMEWORK_GRAPHICS)
-  set(SOURCE_FILES ${SOURCE_FILES}
+          framework/platform/win32window.cpp
+          $<$<NOT:$<PLATFORM_ID:Darwin>>:framework/platform/x11window.cpp>
+          $<$<PLATFORM_ID:Darwin>:framework/platform/sdl2window.cpp>
           framework/ui/uianchorlayout.cpp
           framework/ui/uiboxlayout.cpp
           framework/ui/uigridlayout.cpp
@@ -805,7 +792,8 @@ else() # Linux
           protobuf::libprotobuf protobuf
           absl::log_internal_check_op
           Threads::Threads
-          X11::X11
+          $<$<PLATFORM_ID:Darwin>:SDL2::SDL2>
+          $<$<NOT:$<PLATFORM_ID:Darwin>>:X11::X11>
           asio::asio
           OpenAL::OpenAL
           LibLZMA::LibLZMA

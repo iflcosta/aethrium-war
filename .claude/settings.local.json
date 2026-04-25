@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xargs grep *)",
+      "Bash(mysql -u root aethrium-war -e \"SELECT p.name, p.vocation, p.lookhead, p.lookbody, p.looklegs, p.lookfeet, p.looktype, g.name as guild_name, gm.rank_id FROM players p LEFT JOIN guild_membership gm ON gm.player_id = p.id LEFT JOIN guilds g ON g.id = gm.guild_id WHERE p.name = 'Bubble';\")",
+      "Bash(sqlite3 aethrium.db \"SELECT p.name, p.vocation, p.lookhead, p.lookbody, p.looklegs, p.lookfeet, p.looktype, g.name as guild_name, gm.rank_id FROM players p LEFT JOIN guild_membership gm ON gm.player_id = p.id LEFT JOIN guilds g ON g.id = gm.guild_id WHERE p.name = 'Bubble';\")",
+      "Bash(where mysql *)",
+      "Bash(where sqlite3 *)"
+    ]
+  }
+}
