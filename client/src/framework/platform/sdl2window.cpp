@@ -21,6 +21,7 @@
  */
 
 #include "sdl2window.h"
+#include <framework/global.h>
 #include <framework/core/clock.h>
 #include <framework/graphics/image.h>
 #include <framework/core/application.h>
@@ -35,26 +36,26 @@ SDL2Window::SDL2Window()
 void SDL2Window::init()
 {
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) < 0) {
-        g_logger.fatal(stdext::format("SDL could not initialize! SDL_Error: %s", SDL_GetError()));
+        g_logger.fatal("SDL could not initialize! SDL_Error: {}", SDL_GetError());
         return;
     }
 
-    SDL_GL_set_attribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
-    SDL_GL_set_attribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
-    SDL_GL_set_attribute(SDL_GL_DOUBLEBUFFER, 1);
-    SDL_GL_set_attribute(SDL_GL_DEPTH_SIZE, 24);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
     uint32_t windowFlags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI;
     
     m_window = SDL_CreateWindow("OTClient", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 600, windowFlags);
     if (!m_window) {
-        g_logger.fatal(stdext::format("Window could not be created! SDL_Error: %s", SDL_GetError()));
+        g_logger.fatal("Window could not be created! SDL_Error: {}", SDL_GetError());
         return;
     }
 
     m_context = SDL_GL_CreateContext(m_window);
     if (!m_context) {
-        g_logger.fatal(stdext::format("OpenGL context could not be created! SDL_Error: %s", SDL_GetError()));
+        g_logger.fatal("OpenGL context could not be created! SDL_Error: {}", SDL_GetError());
         return;
     }
 

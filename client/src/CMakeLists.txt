@@ -1,4 +1,4 @@
-﻿project(otclient)
+project(otclient)
 
 # *****************************************************************************
 # Options
@@ -775,7 +775,7 @@ else() # Linux
           ${ZLIB_LIBRARY}
           ${NLOHMANN_JSON_LIBRARY}
           ${GLEW_LIBRARY}
-          ${OPENGL_LIBRARIES}
+          $<$<NOT:$<PLATFORM_ID:Darwin>>:${OPENGL_LIBRARIES}>
           ${DirectX_LIBRARY}
           ${DirectX_LIBRARIES}
           ${OGG_LIBRARY}
@@ -793,6 +793,7 @@ else() # Linux
           absl::log_internal_check_op
           Threads::Threads
           $<$<PLATFORM_ID:Darwin>:SDL2::SDL2>
+          $<$<PLATFORM_ID:Darwin>:-Wl,-framework,OpenGL>
           $<$<NOT:$<PLATFORM_ID:Darwin>>:X11::X11>
           asio::asio
           OpenAL::OpenAL

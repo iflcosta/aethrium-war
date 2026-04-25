@@ -1,4 +1,4 @@
-name: Build - MacOS (SDL2)
+name: Build - MacOS M1 (SDL2)
 
 on:
   workflow_dispatch:
@@ -15,8 +15,8 @@ env:
 
 jobs:
   build:
-    name: MacOS Build (SDL2)
-    runs-on: macos-13
+    name: MacOS M1 Build (SDL2)
+    runs-on: macos-latest
 
     steps:
       - name: Checkout repository
@@ -42,15 +42,25 @@ jobs:
       - name: Install CMake and Ninja
         uses: lukka/get-cmake@v3.29.2
 
+      - name: Cache ccache
+        uses: actions/cache@v4
+        with:
+          path: ~/.ccache
+          key: macos-m1-ccache-${{ github.sha }}
+          restore-keys: |
+            macos-m1-ccache-
+
       - name: Configure and Build
         run: |
           export PATH="/usr/local/bin:$PATH"
           cmake -G Ninja -S . -B build \
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_TOOLCHAIN_FILE=$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake \
+            -DVCPKG_TARGET_TRIPLET=arm64-osx \
             -DCMAKE_MAKE_PROGRAM=$(which ninja) \
             -DTOGGLE_BIN_FOLDER=ON \
             -DOPTIONS_ENABLE_IPO=OFF \
+            -DOPTIONS_ENABLE_CCACHE=ON \
             -DX_VCPKG_BINARY_CACHING=OFF
 
           cmake --build build --target otclient
@@ -58,5 +68,5 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: otclient-macos
+          name: otclient-macos-m1
           path: build/bin/
