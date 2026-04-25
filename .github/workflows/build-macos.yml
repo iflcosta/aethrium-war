@@ -5,10 +5,6 @@ on:
   push:
     branches:
       - main
-    paths:
-      - "client/src/**"
-      - "client/CMakeLists.txt"
-      - ".github/workflows/build-macos.yml"
 
 permissions:
   contents: write
