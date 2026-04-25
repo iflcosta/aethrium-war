@@ -4,8 +4,8 @@ local function targetFunction(creature, target)
 		return
 	end
 
-	local min = math.floor(((player:getLevel() / 5) + (player:getMagicLevel() * 5.7) + 26))
-	local max = math.floor(((player:getLevel() / 5) + (player:getMagicLevel() * 10.43) + 62))
+	local min = math.floor(((player:getLevel() / 2) + (player:getMagicLevel() * 5.7) + 26))
+	local max = math.floor(((player:getLevel() / 2) + (player:getMagicLevel() * 10.43) + 62))
 
 	local harmony = player:getHarmony()
 	local multiplier = 1 + (harmony * 0.6)

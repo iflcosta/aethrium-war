@@ -6,8 +6,8 @@ combat:setParameter(COMBAT_PARAM_EFFECT, CONST_ME_ENERGYAREA)
 combat:setArea(createCombatArea(AREA_BEAM8))
 
 local function callback(player, level, magicLevel)
-	local min = (level / 5) + (magicLevel * 3.6) + 22
-	local max = (level / 5) + (magicLevel * 6) + 37
+	local min = (level / 2) + (magicLevel * 3.6) + 22
+	local max = (level / 2) + (magicLevel * 6) + 37
 	return -min, -max
 end
 

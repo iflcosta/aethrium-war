@@ -8,8 +8,8 @@ combat:setParameter(COMBAT_PARAM_BLOCKARMOR, true)
 combat:setArea(createCombatArea(AREA_CIRCLE1X1))
 
 local function callback(player, level, magicLevel)
-	local min = (level / 5) + (magicLevel * 1.6) + 9
-	local max = (level / 5) + (magicLevel * 3.2) + 19
+	local min = (level / 2) + (magicLevel * 1.6) + 9
+	local max = (level / 2) + (magicLevel * 3.2) + 19
 	return -min, -max
 end
 

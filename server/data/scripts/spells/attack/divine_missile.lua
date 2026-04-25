@@ -6,8 +6,8 @@ combat:setParameter(COMBAT_PARAM_EFFECT, CONST_ME_HOLYDAMAGE)
 combat:setParameter(COMBAT_PARAM_DISTANCEEFFECT, CONST_ANI_SMALLHOLY)
 
 local function callback(player, level, magicLevel)
-	local min = (level / 5) + (magicLevel * 1.9) + 8
-	local max = (level / 5) + (magicLevel * 3) + 18
+	local min = (level / 2) + (magicLevel * 1.9) + 8
+	local max = (level / 2) + (magicLevel * 3) + 18
 	return -min, -max
 end
 

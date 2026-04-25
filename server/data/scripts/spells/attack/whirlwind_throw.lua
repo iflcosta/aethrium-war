@@ -8,8 +8,8 @@ combat:setParameter(COMBAT_PARAM_BLOCKARMOR, true)
 combat:setParameter(COMBAT_PARAM_USECHARGES, true)
 
 local function callback(player, skill, attack, factor)
-	local min = (player:getLevel() / 5) + (skill * attack * 0.01) + 1
-	local max = (player:getLevel() / 5) + (skill * attack * 0.03) + 6
+	local min = (player:getLevel() / 2) + (skill * attack * 0.01) + 1
+	local max = (player:getLevel() / 2) + (skill * attack * 0.03) + 6
 	return -min, -max
 end
 

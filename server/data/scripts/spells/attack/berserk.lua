@@ -8,8 +8,8 @@ combat:setParameter(COMBAT_PARAM_USECHARGES, true)
 combat:setArea(createCombatArea(AREA_SQUARE1X1))
 
 local function callback(player, skill, attack, factor)
-	local min = (player:getLevel() / 5) + (skill * attack * 0.03) + 7
-	local max = (player:getLevel() / 5) + (skill * attack * 0.05) + 11
+	local min = (player:getLevel() / 2) + (skill * attack * 0.03) + 7
+	local max = (player:getLevel() / 2) + (skill * attack * 0.05) + 11
 	return -min, -max
 end
 

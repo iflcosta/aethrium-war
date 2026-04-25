@@ -7,8 +7,8 @@ combat:setParameter(COMBAT_PARAM_DISPEL, CONDITION_PARALYZE)
 combat:setParameter(COMBAT_PARAM_AGGRESSIVE, false)
 
 local function callback(player, level, magicLevel)
-	local min = (level / 5) + (magicLevel * 6.8) + 42
-	local max = (level / 5) + (magicLevel * 12.9) + 90
+	local min = (level / 2) + (magicLevel * 6.8) + 42
+	local max = (level / 2) + (magicLevel * 12.9) + 90
 	return min, max
 end
 

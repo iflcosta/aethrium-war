@@ -8,8 +8,8 @@ combat:setParameter(COMBAT_PARAM_TARGETCASTERORTOPMOST, true)
 combat:setParameter(COMBAT_PARAM_AGGRESSIVE, false)
 
 local function callback(player, level, magicLevel)
-	local min = (level / 5) + (magicLevel * 7.3) + 42
-	local max = (level / 5) + (magicLevel * 12.4) + 90
+	local min = (level / 2) + (magicLevel * 7.3) + 42
+	local max = (level / 2) + (magicLevel * 12.4) + 90
 	return min, max
 end
 

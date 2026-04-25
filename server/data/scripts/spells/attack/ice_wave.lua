@@ -6,8 +6,8 @@ combat:setParameter(COMBAT_PARAM_EFFECT, CONST_ME_ICEAREA)
 combat:setArea(createCombatArea(AREA_WAVE4, AREADIAGONAL_WAVE4))
 
 local function callback(player, level, magicLevel)
-	local min = (level / 5) + (magicLevel * 0.8) + 5
-	local max = (level / 5) + (magicLevel * 2) + 12
+	local min = (level / 2) + (magicLevel * 0.8) + 5
+	local max = (level / 2) + (magicLevel * 2) + 12
 	return -min, -max
 end
 

@@ -6,8 +6,8 @@ combat:setParameter(COMBAT_PARAM_EFFECT, CONST_ME_STONES)
 combat:setParameter(COMBAT_PARAM_DISTANCEEFFECT, CONST_ANI_EARTH)
 
 local function callback(player, level, magicLevel)
-	local min = (level / 5) + (magicLevel * 0.8) + 5
-	local max = (level / 5) + (magicLevel * 1.6) + 10
+	local min = (level / 2) + (magicLevel * 0.8) + 5
+	local max = (level / 2) + (magicLevel * 1.6) + 10
 	return -min, -max
 end
 
