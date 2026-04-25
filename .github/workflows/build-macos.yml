@@ -53,9 +53,10 @@ jobs:
           cmake -G Ninja -S . -B build \
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_TOOLCHAIN_FILE=$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake \
+            -DCMAKE_MAKE_PROGRAM=$(which ninja) \
             -DTOGGLE_BIN_FOLDER=ON \
             -DOPTIONS_ENABLE_IPO=OFF \
-            -DVCPKG_BINARY_SOURCES="clear"
+            -DX_VCPKG_BINARY_CACHING=OFF
 
           cmake --build build --target otclient
 
