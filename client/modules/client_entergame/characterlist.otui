@@ -176,7 +176,7 @@ MainWindow
     anchors.bottom: accountStatusCaption.top
     margin-bottom: 5
     padding: 1
-    focusable: false
+    focusable: true
     vertical-scrollbar: characterListScrollBar
     auto-focus: first
     @onSetup: |

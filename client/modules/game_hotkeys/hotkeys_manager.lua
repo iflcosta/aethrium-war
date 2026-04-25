@@ -225,7 +225,9 @@ function load(forceDefaults)
         end
     end
     if perCharacter and not table.empty(hotkeys) then
-        hotkeys = hotkeys[g_game.getCharacterName()]
+        local player = g_game.getLocalPlayer()
+        local key = player and player:getVocationName() or g_game.getCharacterName()
+        hotkeys = hotkeys[key]
     end
 
     hotkeyList = {}
@@ -280,7 +282,8 @@ function save()
     end
 
     if perCharacter then
-        local char = g_game.getCharacterName()
+        local player = g_game.getLocalPlayer()
+        local char = player and player:getVocationName() or g_game.getCharacterName()
         if not hotkeys[char] then
             hotkeys[char] = {}
         end
