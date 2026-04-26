@@ -101,7 +101,6 @@ function init()
 
     skillsButton = modules.game_mainpanel.addToggleButton('skillsButton', tr('Skills') .. ' (Alt+S)',
                                                                    '/images/options/button_skills', toggle, false, 1)
-    skillsButton:setOn(true)
     skillsWindow = g_ui.loadUI('skills')
     skillsWindow:setContentMinimumHeight(80)
 
