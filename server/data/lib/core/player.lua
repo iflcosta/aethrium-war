@@ -426,3 +426,8 @@ do
 	
 
 end
+
+WAR_LEVEL_BONUS = 45206
+function getWarLevel(player)
+    return player:getLevel()
+end

@@ -20,16 +20,15 @@ AutoLoot_MaxItemFree = 5
 AutoLoot_MaxItemPremium = 10
 
 -- Boosted Creature
-boostedExpMultiplier = 1.0       -- Disabled (neutralized)
-boostedLootMultiplier = 1.0      -- Disabled (neutralized)
-boostedSpawnMultiplier = 1.0     -- Default spawn time
-
+boostedExpMultiplier = 2.0       -- XP multiplier for boosted creature
+boostedLootMultiplier = 2.0      -- Loot rolls for boosted creature
+boostedSpawnMultiplier = 0.5     -- Spawn interval factor (0.5 = half the time)
 
 -- Account Manager
-accountManager = false
+accountManager = true
 namelockManager = true
 newPlayerChooseVoc = true
--- Spawn inicial: centro do mapa World War (Thais arena)
+-- Spawn inicial: centro do mapa Aethrium War (Thais arena)
 newPlayerSpawnPosX = 1024
 newPlayerSpawnPosY = 633
 newPlayerSpawnPosZ = 7
@@ -43,20 +42,20 @@ generateAccountNumber = false
 
 -- Combat settings
 -- NOTE: valid values for worldType are: "pvp", "no-pvp" and "pvp-enforced"
-worldType = "pvp-enforced"
+worldType = "pvp"
 hotkeyAimbotEnabled = true
 protectionLevel = 1
 killsToRedSkull = 3
 killsToBlackSkull = 6
 pzLocked = 60000
-removeChargesFromRunes = false
-removeChargesFromPotions = false
-removeWeaponAmmunition = false
-removeWeaponCharges = false
+removeChargesFromRunes = true
+removeChargesFromPotions = true
+removeWeaponAmmunition = true
+removeWeaponCharges = true
 timeToDecreaseFrags = 24 * 60 * 60
 whiteSkullTime = 15 * 60
 stairJumpExhaustion = 2000
-experienceByKillingPlayers = true
+experienceByKillingPlayers = false
 pzLockSkullAttacker = false
 allowAutoAttackWithoutExhaustion = true
 
@@ -79,15 +78,15 @@ gameProtocolPort = 7172
 statusProtocolPort = 7171
 adminPort = 7170
 maxPlayers = 500
-motd = "Welcome to World War!"
-onePlayerOnlinePerAccount = false
+motd = "Welcome to The Forgotten Server!"
+onePlayerOnlinePerAccount = true
 allowClones = false
 allowWalkthrough = true
-serverName = "World War"
+serverName = "Forgotten"
 statusTimeout = 5000
 statusCountMaxPlayersPerIp = 0
 replaceKickOnLogin = true
-maxPacketsPerSecond = 25
+maxPacketsPerSecond = 50
 
 -- Connection Limits Config
 -- NOTE: maxConnections: maximum total concurrent connections (0 = no limit)
@@ -97,15 +96,15 @@ maxPacketsPerSecond = 25
 -- NOTE: connectionRateLimitMS: minimum interval between connections from the same IP (in ms)
 maxConnections = 2000
 maxConnectionsPerIP = 10
-networkThreads = 2
+networkThreads = 4
 connectionRateLimitAllowed = 10
-connectionRateLimitMS = 500
+connectionRateLimitMS = 200
 
 -- Deaths
 -- NOTE: Leave deathLosePercent as -1 if you want to use the default
 -- death penalty formula. For the old formula, set it to 10. For
 -- no skill/experience loss, set it to 0.
-deathLosePercent = 0
+deathLosePercent = -1
 
 -- Houses
 -- NOTE: houseLevel, when buying a house, ask for the necessary level.
@@ -113,9 +112,8 @@ deathLosePercent = 0
 -- NOTE: valid values for houseRentPeriod are: "daily", "weekly", "monthly", "yearly"
 -- use any other value to disable the rent system
 houseLevel = 150
-housePriceEachSQM = -1
+housePriceEachSQM = 1000
 houseRentPeriod = "never"
-
 houseOwnedByAccount = false
 houseDoorShowPrice = true
 onlyInvitedCanMoveHouseItems = true
@@ -150,11 +148,11 @@ tokenProtectionExceptions = { 3043, 3035, 3031, 3492, 3577, 3578, 3579, 3580, 35
 blockedTeleportIds = { 1949, 10840, 10842, 11553, 11554 }
 
 -- Rates for reward boss system
-rewardBaseRate = 0
-rewardRateDamageDone = 0
-rewardRateDamageTaken = 0
-rewardRateHealingDone = 0
-
+-- If a player meets their share of the expectedScore (totalScore/contributors), they receive a lootRate according to the rewardBaseRate.
+rewardBaseRate = 1
+rewardRateDamageDone = 1
+rewardRateDamageTaken = 0.5
+rewardRateHealingDone = 0.3
 
 -- Scheduler Task Intervals
 MOVE_CREATURE_INTERVAL = 250
@@ -175,8 +173,7 @@ mapName = "aethrium-war"
 mapAuthor = "Skyyzyy"
 
 -- Market
-marketOfferDuration = 0
-
+marketOfferDuration = 30 * 24 * 60 * 60
 premiumToCreateMarketOffer = true
 checkExpiredMarketOffersEachMinutes = 60
 maxMarketOffersAtATimePerPlayer = 100
@@ -185,7 +182,7 @@ maxMarketOffersAtATimePerPlayer = 100
 mysqlHost = "127.0.0.1"
 mysqlUser = "root"
 mysqlPass = "6652827"
-mysqlDatabase = "aethrium-war"
+mysqlDatabase = "worldwar"
 mysqlPort = 3306
 mysqlSock = ""
 
@@ -201,7 +198,7 @@ allowChangeOutfit = true
 freePremium = true
 kickIdlePlayerAfterMinutes = 15
 maxMessageBuffer = 4
-emoteSpells = false
+emoteSpells = true
 classicEquipmentSlots = true
 classicAttackSpeed = false
 showScriptsLogInConsole = false
@@ -212,8 +209,7 @@ minimumLevelToSendPrivate = 1
 premiumToSendPrivate = false
 forceMonsterTypesOnLoad = true
 cleanProtectionZones = false
-bedOfflineTraining = false
-
+bedOfflineTraining = true
 showPlayerLogInConsole = true
 healthGainColour = 95
 manaGainColour = 5
@@ -261,28 +257,52 @@ serverSaveShutdown = true
 -- minlevel and multiplier are MANDATORY
 -- maxlevel is OPTIONAL, but is considered infinite by default
 -- to disable stages, create a stage with minlevel 1 and no maxlevel
-experienceStages = nil
+experienceStages = {
+	{ minlevel = 1, maxlevel = 8, multiplier = 7 },
+	{ minlevel = 9, maxlevel = 20, multiplier = 6 },
+	{ minlevel = 21, maxlevel = 50, multiplier = 5 },
+	{ minlevel = 51, maxlevel = 100, multiplier = 4 },
+	{ minlevel = 101, multiplier = 3 }
+}
 
 -- Skill stages (skill level based multiplier)
 -- NOTE: to use a flat skill multiplier (rateSkill), set skillStages to nil
 -- minlevel and multiplier are MANDATORY
 -- maxlevel is OPTIONAL, but is considered infinite by default
-skillStages = nil
+skillStages = {
+	{ minlevel = 1, maxlevel = 30, multiplier = 113 },
+	{ minlevel = 31, maxlevel = 40, multiplier = 98 },
+	{ minlevel = 41, maxlevel = 50, multiplier = 83 },
+	{ minlevel = 51, maxlevel = 60, multiplier = 68 },
+	{ minlevel = 61, maxlevel = 70, multiplier = 60 },
+	{ minlevel = 71, maxlevel = 80, multiplier = 38 },
+	{ minlevel = 81, maxlevel = 90, multiplier = 23 },
+	{ minlevel = 91, maxlevel = 100, multiplier = 15 },
+	{ minlevel = 101, maxlevel = 110, multiplier = 3 },
+	{ minlevel = 111, multiplier = 1 }
+}
 
 -- Magic level stages (magic level based multiplier)
 -- NOTE: to use a flat magic multiplier (rateMagic), set magicLevelStages to nil
 -- minlevel and multiplier are MANDATORY
 -- maxlevel is OPTIONAL, but is considered infinite by default
-magicLevelStages = nil
+magicLevelStages = {
+	{ minlevel = 0, maxlevel = 50, multiplier = 38 },
+	{ minlevel = 51, maxlevel = 70, multiplier = 35 },
+	{ minlevel = 71, maxlevel = 80, multiplier = 23 },
+	{ minlevel = 81, maxlevel = 100, multiplier = 15 },
+	{ minlevel = 101, maxlevel = 110, multiplier = 3 },
+	{ minlevel = 111, multiplier = 1 }
+}
 
 -- Rates
 -- NOTE: rateExp is not used if you have enabled stages above
 -- NOTE: rateSkill is not used if skillStages is defined above
 -- NOTE: rateMagic is not used if magicLevelStages is defined above
 rateExp = 5
-rateSkill = 1
-rateLoot = 0
-rateMagic = 1
+rateSkill = 3
+rateLoot = 2
+rateMagic = 3
 rateSpawn = 1
 spawnMultiplier = 1
 
@@ -292,8 +312,8 @@ spawnMultiplier = 1
 -- NOTE: maxPlayerSpeed is the absolute fastest a player can travel, it is not recommended to change this.
 -- 5000 for GODs, 900 for players.
 playerSpeedPerLevel = 1
-playerMinSpeed = 120
-playerMaxSpeed = 2500
+playerMinSpeed = 110
+playerMaxSpeed = 9999
 maxGodSpeed = 5000
 
 -- Spawn Start Effect & Timer
@@ -328,19 +348,21 @@ removeOnDespawn = true
 walkToSpawnRadius = 15
 
 -- Stamina Configs
-staminaSystem = false
+-- These options are fully configurable, including regenerating by attacking the trainer or while in a protection zone.
+staminaSystem = true
 timeToRegenMinuteStamina = 3 * 60
 timeToRegenMinutePremiumStamina = 6 * 60
 
 -- Stamina in PZ (Regeneration)
-staminaPz = false
+staminaPz = true
 staminaOrangeDelay = 1
 staminaGreenDelay = 5
 staminaPzGain = 1
 
 -- Stamina in Trainers
-staminaTrainer = false
-
+-- Trainer Names = Place a list of trainer names, so you can train;
+-- when you attack a certain target, you will start to regenerate.
+staminaTrainer = true
 staminaTrainerNames = "Trainer;Training Dummy"
 staminaTrainerDelay = 5
 staminaTrainerGain = 1
@@ -371,7 +393,7 @@ statsVerySlowLogTime = 0
 
 -- Admin Protocol
 adminPort = 7170
-adminPassword = "admin"
+adminPassword = "wwar2026"
 adminLocalhostOnly = true
 adminRequireLogin = true
 adminEncryption = ""

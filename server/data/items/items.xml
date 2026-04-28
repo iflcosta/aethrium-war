@@ -3795,7 +3795,14 @@
 			<attribute key="eventType" value="stepin" />
 		</attribute>
 	</item>
-	<item id="2139" name="RESERVED SPRITE" />
+	<item id="2139" name="magic wall">
+		<attribute key="type" value="magicfield" />
+		<attribute key="blocksolid" value="1" />
+		<attribute key="blockprojectile" value="1" />
+		<attribute key="blockpath" value="1" />
+		<attribute key="duration" value="20" />
+		<attribute key="field" value="none" />
+	</item>
 	<item id="2140" name="ashes">
 		<attribute key="type" value="magicfield" />
 		<attribute key="field" value="fire">
@@ -5759,7 +5766,7 @@
 		<attribute key="weight" value="80" />
 		<attribute key="script" value="moveevent">
 			<attribute key="slot" value="ring" />
-			<attribute key="vocation" value="Knight;true, Paladin;true, Elite Knight, Royal Paladin, Monk;true, Exalted Monk" />
+			<attribute key="vocation" value="Knight;true, Paladin;true, Elite Knight, Royal Paladin, Monk;true, Exalted Monk, Sorcerer;true, Master Sorcerer, Druid;true, Elder Druid" />
 		</attribute>
 	</item>
 	<item id="3052" article="a" name="life ring">

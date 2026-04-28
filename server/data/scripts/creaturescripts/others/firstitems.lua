@@ -26,6 +26,7 @@ local WAR_ITEMS = {
             { 3175, 1 }, -- stone shower rune
             { 3198, 1 }, -- heavy magic missile rune
             { 238, 1 }, -- great mana potion
+            { 23373, 1 }, -- ultimate mana potion
         },
     },
 
@@ -52,6 +53,7 @@ local WAR_ITEMS = {
             { 3180, 1 }, -- magic wall rune
             { 3175, 1 }, -- stone shower rune
             { 238, 1 }, -- great mana potion
+            { 23373, 1 }, -- ultimate mana potion
         },
     },
 
